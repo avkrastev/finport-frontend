@@ -1,0 +1,22 @@
+{
+  "name": "finport",
+  "version": "1.0.0",
+  "description": "My Financial Portfolio",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/avkrastev/finport.git"
+  },
+  "author": "Alexander Krastev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/avkrastev/finport/issues"
+  },
+  "homepage": "https://github.com/avkrastev/finport#readme",
+  "dependencies": {
+    "express": "^4.17.3"
+  }
+}
