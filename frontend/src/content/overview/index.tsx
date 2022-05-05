@@ -1,36 +1,35 @@
+import { Box, Container, Card } from '@mui/material';
 import { Helmet } from 'react-helmet-async';
-import PageHeader from '../dashboards/Crypto/PageHeader';
-import PageTitleWrapper from 'src/components/PageTitleWrapper';
-import { Grid, Container } from '@mui/material';
-import Footer from 'src/components/Footer';
 
-import AccountBalance from '../dashboards/Crypto/AccountBalance';
+import { styled } from '@mui/material/styles';
+import LoginForm from './LoginForm';
 
-function DashboardCrypto() {
+const OverviewWrapper = styled(Box)(
+  () => `
+    overflow: auto;
+    flex: 1;
+    overflow-x: hidden;
+    align-items: center;
+`
+);
+
+function Overview() {
+
   return (
-    <>
+    <OverviewWrapper>
       <Helmet>
-        <title>Crypto Dashboard</title>
+        <title>Welcome to FinPort</title>
       </Helmet>
-      <PageTitleWrapper>
-        <PageHeader />
-      </PageTitleWrapper>
       <Container maxWidth="lg">
-        <Grid
-          container
-          direction="row"
-          justifyContent="center"
-          alignItems="stretch"
-          spacing={3}
-        >
-          <Grid item xs={12}>
-            <AccountBalance />
-          </Grid>
-        </Grid>
+        <Box display="flex" justifyContent="center" py={5} alignItems="center">
+          {/* <Logo /> */}
+        </Box>
+        <Card sx={{ p: 10, mb: 10, borderRadius: 12 }}>
+          <LoginForm />
+        </Card>
       </Container>
-      <Footer />
-    </>
+    </OverviewWrapper>
   );
 }
 
-export default DashboardCrypto;
+export default Overview;

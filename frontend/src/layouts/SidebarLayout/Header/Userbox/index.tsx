@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useContext } from 'react';
 
 import { NavLink } from 'react-router-dom';
 
@@ -22,6 +22,7 @@ import ExpandMoreTwoToneIcon from '@mui/icons-material/ExpandMoreTwoTone';
 import AccountBoxTwoToneIcon from '@mui/icons-material/AccountBoxTwoTone';
 import LockOpenTwoToneIcon from '@mui/icons-material/LockOpenTwoTone';
 import AccountTreeTwoToneIcon from '@mui/icons-material/AccountTreeTwoTone';
+import { AuthContext } from '../../../../utils/context/authContext';
 
 const UserBoxButton = styled(Button)(
   ({ theme }) => `
@@ -59,7 +60,7 @@ const UserBoxDescription = styled(Typography)(
 );
 
 function HeaderUserbox() {
-
+  const auth = useContext(AuthContext);
   const user =
   {
     name: 'Alexander Krastev',
@@ -141,9 +142,12 @@ function HeaderUserbox() {
         </List>
         <Divider />
         <Box sx={{ m: 1 }}>
-          <Button color="primary" fullWidth>
-            <LockOpenTwoToneIcon sx={{ mr: 1 }} />
-            Sign out
+          <Button 
+            color="primary" 
+            fullWidth 
+            onClick={() => auth.logout()}>
+              <LockOpenTwoToneIcon sx={{ mr: 1 }} />
+              Sign out
           </Button>
         </Box>
       </Popover>

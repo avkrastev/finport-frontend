@@ -2,15 +2,15 @@ import { alpha, createTheme, lighten, darken } from '@mui/material';
 import '@mui/lab/themeAugmentation';
 
 const themeColors = {
-  primary: '#5569ff',
-  secondary: '#6E759F',
-  success: '#44D600',
-  warning: '#FFA319',
-  error: '#FF1943',
-  info: '#33C2FF',
-  black: '#223354',
+  primary: '#52796f',
+  secondary: '#84a98c',
+  success: '#90be6d',
+  warning: '#f9c74f',
+  error: '#f3722c',
+  info: '#577590',
+  black: '#001219',
   white: '#ffffff',
-  primaryAlt: '#000C57'
+  primaryAlt: '#354f52'
 };
 
 const colors = {
@@ -28,7 +28,7 @@ const colors = {
   },
   shadows: {
     success:
-      '0px 1px 4px rgba(68, 214, 0, 0.25), 0px 3px 12px 2px rgba(68, 214, 0, 0.35)',
+      '0px 1px 4px rgba(144,190,109, 0.25), 0px 3px 12px 2px rgba(144,190,109, 0.35)',
     error:
       '0px 1px 4px rgba(255, 25, 67, 0.25), 0px 3px 12px 2px rgba(255, 25, 67, 0.35)',
     info:
@@ -46,16 +46,16 @@ const colors = {
   },
   layout: {
     general: {
-      bodyBg: '#f2f5f9'
+      bodyBg: '#f0efeb'
     },
     sidebar: {
       background: themeColors.white,
       textColor: themeColors.secondary,
-      dividerBg: '#f2f5f9',
-      menuItemColor: '#242E6F',
+      dividerBg: '#cad2c5',
+      menuItemColor: '#2f3e46',
       menuItemColorActive: themeColors.primary,
       menuItemBg: 'transparent',
-      menuItemBgActive: '#f2f5f9',
+      menuItemBgActive: '#cad2c5',
       menuItemIconColor: lighten(themeColors.secondary, 0.3),
       menuItemIconColorActive: themeColors.primary,
       menuItemHeadingColor: darken(themeColors.secondary, 0.3),

@@ -5,18 +5,24 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 
 import ThemeProvider from './theme/ThemeProvider';
 import { CssBaseline } from '@mui/material';
+import { AuthContext } from './utils/context/authContext';
+import { useAuth } from './utils/hooks/auth-hook';
+
 
 const App = () => {
-
-  const content = useRoutes(routes);
+  const { token, login, logout } = useAuth()
+  
+  const content = useRoutes(routes(token));
 
   return (
-    <ThemeProvider>
-      <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <CssBaseline />
-        {content}
-      </LocalizationProvider>
-    </ThemeProvider>
+    <AuthContext.Provider value={{isLoggedIn: !!token, token, login, logout}}>
+      <ThemeProvider>
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <CssBaseline />
+            {content}
+        </LocalizationProvider>
+      </ThemeProvider>
+    </AuthContext.Provider>
   );
 }
 export default App;
