@@ -1,9 +1,20 @@
 import { ReactNode } from 'react';
 
-import DesignServicesTwoToneIcon from '@mui/icons-material/DesignServicesTwoTone';
-import BrightnessLowTwoToneIcon from '@mui/icons-material/BrightnessLowTwoTone';
+//import DesignServicesTwoToneIcon from '@mui/icons-material/DesignServicesTwoTone';
+import DonutSmallTwoToneIcon from '@mui/icons-material/DonutSmallTwoTone';
+import CurrencyBitcoinTwoToneIcon from '@mui/icons-material/CurrencyBitcoinTwoTone';
+import AgricultureTwoToneIcon from '@mui/icons-material/AgricultureTwoTone';
+import AutoGraphTwoToneIcon from '@mui/icons-material/AutoGraphTwoTone';
+import AddchartTwoToneIcon from '@mui/icons-material/AddchartTwoTone';
+import AssessmentTwoToneIcon from '@mui/icons-material/AssessmentTwoTone';
+import AddAPhotoTwoToneIcon from '@mui/icons-material/AddAPhotoTwoTone';
+import MapsHomeWorkTwoToneIcon from '@mui/icons-material/MapsHomeWorkTwoTone';
+import BookTwoToneIcon from '@mui/icons-material/BookTwoTone';
+import GroupTwoToneIcon from '@mui/icons-material/GroupTwoTone';
+import ShowChartTwoToneIcon from '@mui/icons-material/ShowChartTwoTone';
 import TableChartTwoToneIcon from '@mui/icons-material/TableChartTwoTone';
-import AccountCircleTwoToneIcon from '@mui/icons-material/AccountCircleTwoTone';
+//import AccountCircleTwoToneIcon from '@mui/icons-material/AccountCircleTwoTone';
+import AccountBalanceWalletTwoToneIcon from '@mui/icons-material/AccountBalanceWalletTwoTone';
 import BallotTwoToneIcon from '@mui/icons-material/BallotTwoTone';
 import BeachAccessTwoToneIcon from '@mui/icons-material/BeachAccessTwoTone';
 import EmojiEventsTwoToneIcon from '@mui/icons-material/EmojiEventsTwoTone';
@@ -35,7 +46,7 @@ const menuItems: MenuItems[] = [
       {
         name: 'Overview',
         link: '/overview',
-        icon: DesignServicesTwoToneIcon
+        icon: DonutSmallTwoToneIcon
       }
     ]
   },
@@ -45,7 +56,42 @@ const menuItems: MenuItems[] = [
       {
         name: 'Crypto',
         link: '/dashboards/crypto',
-        icon: BrightnessLowTwoToneIcon
+        icon: CurrencyBitcoinTwoToneIcon
+      },
+      {
+        name: 'Stocks',
+        link: '/dashboards/stocks',
+        icon: ShowChartTwoToneIcon
+      },
+      {
+        name: 'Bonds',
+        link: '/dashboards/bonds',
+        icon: BookTwoToneIcon
+      },
+      {
+        name: 'Commodities',
+        link: '/dashboards/commodities',
+        icon: AgricultureTwoToneIcon
+      },
+      {
+        name: 'Real Estates',
+        link: '/dashboards/realestate',
+        icon: MapsHomeWorkTwoToneIcon
+      },
+      {
+        name: 'P2P',
+        link: '/dashboards/p2p',
+        icon: GroupTwoToneIcon
+      },
+      {
+        name: 'ETFs',
+        link: '/dashboards/etf',
+        icon: AddchartTwoToneIcon
+      },
+      {
+        name: 'Miscellaneous',
+        link: '/dashboards/misc',
+        icon: AutoGraphTwoToneIcon
       }
     ]
   },
@@ -58,20 +104,25 @@ const menuItems: MenuItems[] = [
         link: '/management/transactions'
       },
       {
-        name: 'User Profile',
-        icon: AccountCircleTwoToneIcon,
-        link: '/management/profile',
-        items: [
-          {
-            name: 'Profile Details',
-            link: '/management/profile/details'
-          },
-          {
-            name: 'User Settings',
-            link: '/management/profile/settings'
-          }
-        ]
-      }
+        name: 'Reports',
+        icon: AssessmentTwoToneIcon,
+        link: '/management/reports'
+      },
+      {
+        name: 'Snapshots',
+        icon: AddAPhotoTwoToneIcon,
+        link: '/management/snapshots'
+      },
+    ]
+  },
+  {
+    heading: 'Expenses',
+    items: [
+      {
+        name: 'Balances',
+        icon: AccountBalanceWalletTwoToneIcon,
+        link: '/management/balances'
+      },
     ]
   },
   {

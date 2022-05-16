@@ -1,3 +1,4 @@
+import { useState, ChangeEvent, useContext, Fragment } from 'react';
 import {
   Grid,
   Typography,
@@ -5,16 +6,44 @@ import {
   Card,
   Box,
   Divider,
-  Button
+  Button,
+  ListItem,
+  List,
+  ListItemText,
+  Switch,
+  LinearProgress
 } from '@mui/material';
 
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import DoneTwoToneIcon from '@mui/icons-material/DoneTwoTone';
-import Text from 'src/components/Text';
+import CloseTwoToneIcon from '@mui/icons-material/CloseTwoTone';
 import Label from 'src/components/Label';
+import Text from 'src/components/Text';
+import { AuthContext } from '../../../../utils/context/authContext';
+import { updateUser } from '../../../../utils/api/userApiFunction';
 
 function EditProfileTab() {
+  const { authUserData, setUserData } = useContext(AuthContext);
 
+  const [dashboard, setDashboard] = useState(authUserData.categories);
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const category = dashboard.find((dashboard) => dashboard.alias === event.target.name);
+    category.show = event.target.checked;
+
+    async function fetchUserData() {
+      setLoading(true);
+      const responseData = await updateUser(dashboard, 'categories');
+      if (responseData.data) {
+        setUserData(responseData.data, Object.keys(responseData.data)[0]);
+        setDashboard(responseData.data.categories);
+        setLoading(false);
+      }
+    }
+
+    fetchUserData();
+  };
 
   return (
     <Grid container spacing={3}>
@@ -41,98 +70,31 @@ function EditProfileTab() {
           <Divider />
           <CardContent sx={{ p: 4 }}>
             <Typography variant="subtitle2">
-              <Grid container spacing={0}>
-                <Grid item xs={12} sm={4} md={3} textAlign={{ sm: 'right' }}>
+              <Grid container sx={{ p: 2 }}>
+                <Grid item xs={12} sm={12} md={2}>
                   <Box pr={3} pb={2}>
                     Name:
                   </Box>
                 </Grid>
-                <Grid item xs={12} sm={8} md={9}>
+                <Grid item xs={12} sm={12} md={10}>
                   <Text color="black">
-                    <b>Craig Donin</b>
+                    <b>{authUserData.name}</b>
                   </Text>
                 </Grid>
-                <Grid item xs={12} sm={4} md={3} textAlign={{ sm: 'right' }}>
+                <Grid item xs={12} sm={12} md={2}>
                   <Box pr={3} pb={2}>
-                    Date of birth:
+                    E-mail:
                   </Box>
                 </Grid>
-                <Grid item xs={12} sm={8} md={9}>
+                <Grid item xs={12} sm={12} md={3}>
                   <Text color="black">
-                    <b>15 March 1977</b>
+                    <b>{authUserData.email}</b>
                   </Text>
                 </Grid>
-                <Grid item xs={12} sm={4} md={3} textAlign={{ sm: 'right' }}>
-                  <Box pr={3} pb={2}>
-                    Address:
-                  </Box>
-                </Grid>
-                <Grid item xs={12} sm={8} md={9}>
-                  <Box sx={{ maxWidth: { xs: 'auto', sm: 300 } }}>
-                    <Text color="black">
-                      1749 High Meadow Lane, SEQUOIA NATIONAL PARK, California,
-                      93262
-                    </Text>
-                  </Box>
-                </Grid>
-              </Grid>
-            </Typography>
-          </CardContent>
-        </Card>
-      </Grid>
-      <Grid item xs={12}>
-        <Card>
-          <Box
-            p={3}
-            display="flex"
-            alignItems="center"
-            justifyContent="space-between"
-          >
-            <Box>
-              <Typography variant="h4" gutterBottom>
-                Account Settings
-              </Typography>
-              <Typography variant="subtitle2">
-                Manage details related to your account
-              </Typography>
-            </Box>
-            <Button variant="text" startIcon={<EditTwoToneIcon />}>
-              Edit
-            </Button>
-          </Box>
-          <Divider />
-          <CardContent sx={{ p: 4 }}>
-            <Typography variant="subtitle2">
-              <Grid container spacing={0}>
-                <Grid item xs={12} sm={4} md={3} textAlign={{ sm: 'right' }}>
-                  <Box pr={3} pb={2}>
-                    Language:
-                  </Box>
-                </Grid>
-                <Grid item xs={12} sm={8} md={9}>
-                  <Text color="black">
-                    <b>English (US)</b>
-                  </Text>
-                </Grid>
-                <Grid item xs={12} sm={4} md={3} textAlign={{ sm: 'right' }}>
-                  <Box pr={3} pb={2}>
-                    Timezone:
-                  </Box>
-                </Grid>
-                <Grid item xs={12} sm={8} md={9}>
-                  <Text color="black">
-                    <b>GMT +2</b>
-                  </Text>
-                </Grid>
-                <Grid item xs={12} sm={4} md={3} textAlign={{ sm: 'right' }}>
-                  <Box pr={3} pb={2}>
-                    Account status:
-                  </Box>
-                </Grid>
-                <Grid item xs={12} sm={8} md={9}>
-                  <Label color="success">
-                    <DoneTwoToneIcon fontSize="small" />
-                    <b>Active</b>
+                <Grid item xs={12} sm={12} md={7}>
+                  <Label color={authUserData.email_verified ? 'success' : 'error'}>
+                    {authUserData.email_verified ? <DoneTwoToneIcon fontSize="small" /> : <CloseTwoToneIcon fontSize="small" />}
+                    <b>{authUserData.email_verified ? 'Verified' : 'Not verified'}</b>
                   </Label>
                 </Grid>
               </Grid>
@@ -150,44 +112,41 @@ function EditProfileTab() {
           >
             <Box>
               <Typography variant="h4" gutterBottom>
-                Email Addresses
+                Dashboards
               </Typography>
               <Typography variant="subtitle2">
-                Manage details related to your associated email addresses
+                Show/hide dashboards from your portfolio
               </Typography>
             </Box>
-            <Button variant="text" startIcon={<EditTwoToneIcon />}>
-              Edit
-            </Button>
+            <LinearProgress />
           </Box>
           <Divider />
-          <CardContent sx={{ p: 4 }}>
+          <Box sx={{ width: '100%' }}>
+            { loading && <LinearProgress /> }
+          </Box>
+          <CardContent sx={{ p: 1 }}>
             <Typography variant="subtitle2">
-              <Grid container spacing={0}>
-                <Grid item xs={12} sm={4} md={3} textAlign={{ sm: 'right' }}>
-                  <Box pr={3} pb={2}>
-                    Email ID:
-                  </Box>
-                </Grid>
-                <Grid item xs={12} sm={8} md={9}>
-                  <Text color="black">
-                    <b>example@demo.com</b>
-                  </Text>
-                  <Box pl={1} component="span">
-                    <Label color="success">Primary</Label>
-                  </Box>
-                </Grid>
-                <Grid item xs={12} sm={4} md={3} textAlign={{ sm: 'right' }}>
-                  <Box pr={3} pb={2}>
-                    Email ID:
-                  </Box>
-                </Grid>
-                <Grid item xs={12} sm={8} md={9}>
-                  <Text color="black">
-                    <b>demo@example.com</b>
-                  </Text>
-                </Grid>
-              </Grid>
+              <List>
+                {dashboard.map((category, i) => {
+                  return (
+                    <Fragment key={i}>
+                      <ListItem sx={{ p: 1 }}>
+                        <ListItemText
+                          primaryTypographyProps={{ variant: 'h5', gutterBottom: true }}
+                          primary={category.name} 
+                        />
+                        <Switch
+                          color="primary"
+                          checked={category.show}
+                          onChange={handleChange}
+                          name={category.alias}
+                        />
+                      </ListItem>
+                      { i < dashboard.length - 1 && <Divider component="li" /> }
+                  </Fragment>
+                  );
+                })}
+              </List>
             </Typography>
           </CardContent>
         </Card>

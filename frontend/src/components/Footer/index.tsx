@@ -1,4 +1,4 @@
-import { Box, Container, Link, Typography } from '@mui/material';
+import { Box, Container, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 const FooterWrapper = styled(Box)(
@@ -21,12 +21,9 @@ function Footer() {
         >
           <Box>
             <Typography variant="subtitle1">
-              &copy; 2021 - Tokyo Free White React Admin Dashboard
+              &copy; { new Date().getFullYear() } - FinPort
             </Typography>
           </Box>
-          <Typography sx={{ pt: { xs: 2, md: 0 } }} variant="subtitle1">
-            Crafted by <Link href="https://bloomui.com" target="_blank" rel="noopener noreferrer">BloomUI.com</Link>
-          </Typography>
         </Box>
       </Container>
     </FooterWrapper>

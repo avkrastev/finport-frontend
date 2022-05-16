@@ -1,34 +1,35 @@
-import { Box, Container, Card } from '@mui/material';
 import { Helmet } from 'react-helmet-async';
+import PageHeader from '../dashboards/PageHeader';
+import PageTitleWrapper from 'src/components/PageTitleWrapper';
+import { Grid, Container } from '@mui/material';
+import Footer from 'src/components/Footer';
 
-import { styled } from '@mui/material/styles';
-import LoginForm from './LoginForm';
-
-const OverviewWrapper = styled(Box)(
-  () => `
-    overflow: auto;
-    flex: 1;
-    overflow-x: hidden;
-    align-items: center;
-`
-);
+import AccountBalance from '../dashboards/AccountBalance';
 
 function Overview() {
-
   return (
-    <OverviewWrapper>
+    <>
       <Helmet>
-        <title>Welcome to FinPort</title>
+        <title>Overview</title>
       </Helmet>
+      <PageTitleWrapper>
+        <PageHeader title="Overview"/>
+      </PageTitleWrapper>
       <Container maxWidth="lg">
-        <Box display="flex" justifyContent="center" py={5} alignItems="center">
-          {/* <Logo /> */}
-        </Box>
-        <Card sx={{ p: 10, mb: 10, borderRadius: 12 }}>
-          <LoginForm />
-        </Card>
+        <Grid
+          container
+          direction="row"
+          justifyContent="center"
+          alignItems="stretch"
+          spacing={3}
+        >
+          <Grid item xs={12}>
+            <AccountBalance />
+          </Grid>
+        </Grid>
       </Container>
-    </OverviewWrapper>
+      <Footer />
+    </>
   );
 }
 

@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const HttpError = require('../models/http-error');
 const User = require('../models/user');
+const {CATEGORIES} = require('../utils/categories'); 
 
 const signup = async (req, res, next) => {
     const errors = validationResult(req);
@@ -39,7 +40,7 @@ const signup = async (req, res, next) => {
         email,
         image: 'avatar1.jpg',
         password: hashedPassword,
-        categories: [],
+        categories: CATEGORIES,
         assets: []
     });
 
@@ -62,10 +63,15 @@ const signup = async (req, res, next) => {
         return next(error);
     }
 
+    const userData = Object.fromEntries(Object
+                                .entries(newUser.toObject({getters: true}))
+                                .filter(([key]) => !['password', 'id', '__v', '_id'].includes(key)));
+
     res.status(201).json({ 
         userId: newUser.id, 
         email: newUser.email, 
-        token 
+        token, 
+        userData
     });
 }
 
@@ -110,12 +116,51 @@ const login = async (req, res, next) => {
         return next(error);
     }
 
+    const userData = Object.fromEntries(Object
+                                .entries(existingUser.toObject({getters: true}))
+                                .filter(([key]) => !['password', 'id', '__v', '_id'].includes(key)));
+
     res.json({
         userID: existingUser.id,
         email: existingUser.email,
-        token
+        token,
+        userData
     });
+}
+
+const getLoggedInUserData = async (req, res, next) => {        
+    const loggedInUserId = req.userData.userId;
+    let userData = {};
+
+    try {
+        userData = await User.findById(loggedInUserId);
+    } catch(err) {
+        const error = new HttpError('Something went wrong. Please try again!', 500);
+        return next(error);
+    }
+
+    res.json({
+        userData: userData.toObject({getters: true})
+    });
+}
+
+const updateUser = async (req, res, next) => {     
+    const loggedInUserId = req.userData.userId;
+
+    let existingUser;
+
+    try {
+        existingUser = await User.findOneAndUpdate(loggedInUserId, {[req.body.key]: req.body.data});
+    } catch(err) {
+        const error = new HttpError('Something went wrong. Please try again!', 500);
+        return next(error);
+    }
+
+
+    res.json({[req.body.key]: req.body.data});
 }
 
 exports.signup = signup;
 exports.login = login;
+exports.getLoggedInUserData = getLoggedInUserData;
+exports.updateUser = updateUser;

@@ -97,7 +97,7 @@ function LoginForm() {
             try {
                 const responseData = await userLogin(formState.inputs.email.value, formState.inputs.password.value);
                 if (responseData.data) {
-                    auth.login(responseData.data.userID, responseData.data.token); 
+                    auth.login(responseData.data.userID, responseData.data.token, responseData.data.userData); 
                 }
             } catch (err) {
                 // TODO catch error
@@ -106,7 +106,7 @@ function LoginForm() {
             try {
                 const responseData = await userSignUp(formState.inputs.username.value, formState.inputs.email.value, formState.inputs.password.value);
                 if (responseData.data) {
-                    auth.login(responseData.data.userID, responseData.data.token); 
+                    auth.login(responseData.data.userID, responseData.data.token, responseData.data.userData); 
                 }
             } catch (err) {
                 // TODO catch error
@@ -134,7 +134,7 @@ function LoginForm() {
                     component="form"
                     sx={{'& .MuiTextField-root': { m: 1, width: '35ch' }}}
                     noValidate
-                    autoComplete="off"
+                    autoComplete="on"
                 >
                     <div>
                         { !isLogin && 

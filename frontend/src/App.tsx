@@ -10,12 +10,12 @@ import { useAuth } from './utils/hooks/auth-hook';
 
 
 const App = () => {
-  const { token, login, logout } = useAuth()
+  const { token, login, logout, authUserData, setUserData } = useAuth()
   
   const content = useRoutes(routes(token));
 
   return (
-    <AuthContext.Provider value={{isLoggedIn: !!token, token, login, logout}}>
+    <AuthContext.Provider value={{isLoggedIn: !!token, token, login, logout, authUserData, setUserData}}>
       <ThemeProvider>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <CssBaseline />

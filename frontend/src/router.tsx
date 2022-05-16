@@ -13,6 +13,8 @@ const Loader = (Component) => (props) => (
 );
 
 // Pages
+const Login = Loader(lazy(() => import('src/content/login')));
+
 const Overview = Loader(lazy(() => import('src/content/overview')));
 
 // Dashboards
@@ -47,16 +49,7 @@ const routes = (isLoggedIn) => [
     children: [
       {
         path: '/',
-        element: isLoggedIn ? <Navigate to="/dashboards" /> : <Overview />,
-      },
-      {
-        path: 'overview',
-        element: (
-          <Navigate
-            to="/"
-            replace
-          />
-        )
+        element: isLoggedIn ? <Navigate to="/overview" /> : <Login />,
       },
       {
         path: 'status',
@@ -95,6 +88,16 @@ const routes = (isLoggedIn) => [
     ]
   },
   {
+    path: 'overview',
+    element: isLoggedIn ? <SidebarLayout /> : <Navigate to="/" />,
+    children: [
+      {
+        path: '/',
+        element: <Overview />
+      },
+    ]
+  },
+  {
     path: 'dashboards',
     element: isLoggedIn ? <SidebarLayout /> : <Navigate to="/" />,
     children: [
@@ -116,7 +119,7 @@ const routes = (isLoggedIn) => [
   {
     path: 'management',
     element: (
-      <SidebarLayout />
+      isLoggedIn ? <SidebarLayout /> : <Login />
     ),
     children: [
       {
@@ -150,7 +153,7 @@ const routes = (isLoggedIn) => [
           },
           {
             path: 'settings',
-            element: <UserSettings />
+            element: isLoggedIn ? <UserSettings /> : <Login />
           },
         ]
       }
