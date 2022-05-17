@@ -32,6 +32,8 @@ export interface MenuItem {
   badge?: string;
   items?: MenuItem[];
   name: string;
+  alias?: string;
+  show?: Boolean; 
 }
 
 export interface MenuItems {
@@ -46,7 +48,8 @@ const menuItems: MenuItems[] = [
       {
         name: 'Overview',
         link: '/overview',
-        icon: DonutSmallTwoToneIcon
+        icon: DonutSmallTwoToneIcon,
+        show: true
       }
     ]
   },
@@ -55,43 +58,59 @@ const menuItems: MenuItems[] = [
     items: [
       {
         name: 'Crypto',
+        alias: 'crypto',
         link: '/dashboards/crypto',
-        icon: CurrencyBitcoinTwoToneIcon
+        icon: CurrencyBitcoinTwoToneIcon,
+        show: true
       },
       {
         name: 'Stocks',
+        alias: 'stocks',
         link: '/dashboards/stocks',
-        icon: ShowChartTwoToneIcon
+        icon: ShowChartTwoToneIcon,
+        show: true
       },
       {
         name: 'Bonds',
+        alias: 'bonds',
         link: '/dashboards/bonds',
-        icon: BookTwoToneIcon
+        icon: BookTwoToneIcon,
+        show: true
       },
       {
         name: 'Commodities',
+        alias: 'commodities',
         link: '/dashboards/commodities',
-        icon: AgricultureTwoToneIcon
+        icon: AgricultureTwoToneIcon,
+        show: true
       },
       {
         name: 'Real Estates',
+        alias: 'real',
         link: '/dashboards/realestate',
-        icon: MapsHomeWorkTwoToneIcon
+        icon: MapsHomeWorkTwoToneIcon,
+        show: true
       },
       {
         name: 'P2P',
+        alias: 'p2p',
         link: '/dashboards/p2p',
-        icon: GroupTwoToneIcon
+        icon: GroupTwoToneIcon,
+        show: true
       },
       {
         name: 'ETFs',
+        alias: 'etf',
         link: '/dashboards/etf',
-        icon: AddchartTwoToneIcon
+        icon: AddchartTwoToneIcon,
+        show: true
       },
       {
         name: 'Miscellaneous',
+        alias: 'misc',
         link: '/dashboards/misc',
-        icon: AutoGraphTwoToneIcon
+        icon: AutoGraphTwoToneIcon,
+        show: true
       }
     ]
   },
@@ -101,17 +120,20 @@ const menuItems: MenuItems[] = [
       {
         name: 'Transactions',
         icon: TableChartTwoToneIcon,
-        link: '/management/transactions'
+        link: '/management/transactions',
+        show: true
       },
       {
         name: 'Reports',
         icon: AssessmentTwoToneIcon,
-        link: '/management/reports'
+        link: '/management/reports',
+        show: true
       },
       {
         name: 'Snapshots',
         icon: AddAPhotoTwoToneIcon,
-        link: '/management/snapshots'
+        link: '/management/snapshots',
+        show: true
       },
     ]
   },
@@ -121,7 +143,8 @@ const menuItems: MenuItems[] = [
       {
         name: 'Balances',
         icon: AccountBalanceWalletTwoToneIcon,
-        link: '/management/balances'
+        link: '/management/balances',
+        show: true
       },
     ]
   },

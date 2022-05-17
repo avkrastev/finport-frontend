@@ -1,9 +1,10 @@
+import { useContext } from 'react';
 import { ListSubheader, List } from '@mui/material';
 import { useLocation, matchPath } from 'react-router-dom';
 import SidebarMenuItem from './item';
 import menuItems, { MenuItem } from './items';
 import { styled } from '@mui/material/styles';
-
+import { AuthContext } from '../../../../utils/context/authContext';
 
 const MenuWrapper = styled(List)(
   ({ theme }) => `
@@ -176,16 +177,17 @@ const reduceChildRoutes = ({
       </SidebarMenuItem>
     );
   } else {
-    ev.push(
-      <SidebarMenuItem
-        key={key}
-        active={exactMatch}
-        name={item.name}
-        link={item.link}
-        badge={item.badge}
-        icon={item.icon}
-      />
-    );
+    item.show && 
+      ev.push(
+        <SidebarMenuItem
+          key={key}
+          active={exactMatch}
+          name={item.name}
+          link={item.link}
+          badge={item.badge}
+          icon={item.icon}
+        />
+      );
   }
 
   return ev;
@@ -193,12 +195,15 @@ const reduceChildRoutes = ({
 
 function SidebarMenu() {
   const location = useLocation();
+  const { authUserData } = useContext(AuthContext);
 
+  let dashboards = menuItems.find((section) => section.heading === 'Dashboards');
+  dashboards.items = dashboards.items.map((item, i) => Object.assign({}, item, authUserData.categories[i]));
 
   return (
     <>
-      {menuItems.map((section) => (
-        <MenuWrapper
+      {menuItems.map((section) => {
+        return <MenuWrapper
           key={section.heading}
           subheader={
             <ListSubheader component="div" disableSticky>{section.heading}</ListSubheader>
@@ -206,10 +211,10 @@ function SidebarMenu() {
         >
           {renderSidebarMenuItems({
             items: section.items,
-            path: location.pathname
+            path: location.pathname,
           })}
         </MenuWrapper>
-      ))}
+      })}
     </>
   );
 }

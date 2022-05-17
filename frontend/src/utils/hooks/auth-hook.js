@@ -53,6 +53,7 @@ export const useAuth = () => {
       const storedData = JSON.parse(localStorage.getItem('userData'));
       if (storedData) {
         storedData['userData'][key] = userData[key];
+        setAuthUserData(storedData['userData']);
         localStorage.setItem('userData', JSON.stringify(storedData));
       } 
     }, []);
