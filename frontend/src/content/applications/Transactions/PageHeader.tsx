@@ -17,39 +17,6 @@ function PageHeader() {
     setOpenModal(false);
   };
 
-  const modalContent = [
-    {
-      id: "category",
-      label: "Category",
-      type: "text",
-      autofocus: true
-    },  
-    {
-      id: "asset",
-      label: "Asset",
-      type: "text",
-      autofocus: false
-    }, 
-    {      
-      id: "price",
-      label: "Price",
-      type: "number",
-      autofocus: false 
-    },
-    {      
-      id: "quantity",
-      label: "Quantity",
-      type: "number",
-      autofocus: false
-    },
-    {      
-      id: "date",
-      label: "Date",
-      type: "date",
-      autofocus: false 
-    }
-  ];
-
   return (
     <Grid container justifyContent="space-between" alignItems="center">
       <Grid item>
@@ -72,9 +39,8 @@ function PageHeader() {
         <Modal
           open={openModal}
           close={handleClose}
-          title="New transaction"
-          content={modalContent}
           categories={authUserData.categories}
+          tabs={true}
         />
       </Grid>
     </Grid>
