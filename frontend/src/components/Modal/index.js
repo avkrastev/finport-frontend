@@ -4,11 +4,46 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { autocomplete } from '../../utils/api/stocksApiFunction';
+import { currencies } from '../../constants/currencies';
+import { transfers } from '../../constants/common';
 
 function Modal(props) {
   const [value, setValue] = useState(new Date());
   const [tab, setTab] = useState(0);
   const [transferDropdown, setTransferDropdwon] = useState('in');
+  const [transactionForm, setTransactionForm] = useState({
+    category: '',
+    assets: [],
+    asset: '',
+    currency: '',
+    price: '',
+    date: new Date()
+  })
+
+  const handleCategoryChange = (event, value) => {
+    setTransactionForm({
+      ...transactionForm,
+      category: value.alias
+    })
+  }
+
+  const handleAssetChange = (event, value) => {
+    console.log(event.target.value)
+    console.log(value)
+    if (transactionForm.category) {
+      switch (transactionForm.category) {
+        case 'stocks':
+          break;
+        default:
+          setTransactionForm({
+            ...transactionForm,
+            asset: value.alias
+          })
+          break;
+      }
+    }
+
+  }
 
   const handleTabChange = (event, newValue) => {
     setTab(newValue);
@@ -20,50 +55,21 @@ function Modal(props) {
 
   const handleTransferChange = (event) => {
     setTransferDropdwon(event.target.value);
-  };
-
-  const currencies = [
-    {
-      value: 'USD',
-      label: '$',
-    },
-    {
-      value: 'EUR',
-      label: '€',
-    },
-    {
-      value: 'BTC',
-      label: '฿',
-    },
-    {
-      value: 'JPY',
-      label: '¥',
-    },
-  ];
-
-  const transfers = [
-    {
-      value: 'in',
-      label: 'Transfer in',
-    },
-    {
-      value: 'out',
-      label: 'Transfer out',
-    },
-  ];  
+  }; 
 
   useEffect(() => {
-    // declare the data fetching function
     const fetchData = async () => {
       const responseData = await autocomplete('apple');
-      console.log(responseData)
+      setTransactionForm({
+        ...transactionForm,
+        assets: responseData.data.ResultSet.Result
+      })
     }
   
-    // call the function
-    // fetchData()
-    //   // make sure to catch any error
-    //   .catch(console.error);
-  }, [])
+    if (transactionForm.category === 'stocks') {
+      fetchData().catch(console.error);
+    }
+  }, [transactionForm.category])
 
   function a11yProps(index) {
     return {
@@ -97,6 +103,7 @@ function Modal(props) {
                     id="category"
                     sx={{ mt: 2, mb: 1 }}
                     options={props.categories}
+                    onChange={handleCategoryChange}
                     autoHighlight
                     getOptionLabel={(option) => option.name}
                     renderOption={(props, option) => {
@@ -117,14 +124,40 @@ function Modal(props) {
                       />
                     }}
                   />
-                  <TextField
+                  <Autocomplete
+                    id="asset"
+                    sx={{ mt: 2, mb: 1 }}
+                    options={[]}
+                    onChange={handleAssetChange}
+                    autoHighlight
+                    getOptionLabel={(option) => option.name}
+                    renderOption={(props, option) => {
+                      if (option.show) {
+                        return <Box component="li" {...props}>
+                                  {option.name}
+                                </Box>
+                      }
+                    }}
+                    renderInput={(params) => {
+                      return <TextField
+                        {...params}
+                        label="Choose an asset"
+                        inputProps={{
+                          ...params.inputProps,
+                          autoComplete: 'new-password', // disable autocomplete and autofill
+                        }}
+                      />
+                    }}
+                  />
+                  {/* <TextField
+                    onChange={handleAssetChange}
                     sx={{ mt: 1, mb: 1 }}
                     margin="dense"
                     id="asset"
                     label="Asset"
                     type="text"
                     fullWidth
-                  />
+                  /> */}
                   { 
                     tab !== 2 && <Box sx={{ display: 'grid' }}>
                                   <TextField
@@ -166,14 +199,16 @@ function Modal(props) {
                                 ))}
                               </TextField>
                   }
-                  <TextField
-                    sx={{input: {textAlign: "right"}}}
-                    margin="dense"
-                    id="quantity"
-                    label="Quantity"
-                    type="number"
-                    fullWidth
-                  />
+                  {
+                    transactionForm.category !== 'p2p' && <TextField
+                                                            sx={{input: {textAlign: "right"}}}
+                                                            margin="dense"
+                                                            id="quantity"
+                                                            label="Quantity"
+                                                            type="number"
+                                                            fullWidth
+                                                          />
+                  }
                   <LocalizationProvider dateAdapter={AdapterDateFns}>
                     <MobileDatePicker
                       label="Date"
