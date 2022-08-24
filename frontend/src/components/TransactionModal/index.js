@@ -20,32 +20,34 @@ import { autocompleteStocks } from '../../utils/api/stocksApiFunction';
 import { autocompleteCrypto } from '../../utils/api/cryptoApiFunction';
 import { currencies } from '../../constants/currencies';
 import { transfers } from '../../constants/common';
+import { addNewAsset } from '../../utils/api/assetsApiFunction';
 
 function TransactionModal(props) {
   const autoC = useRef(null);
 
   const [tab, setTab] = useState(0);
   const [transferDropdown, setTransferDropdown] = useState('in');
+  const [assetsDropdown, setAssetsDropdown] = useState([]);
 
   const [transactionForm, setTransactionForm] = useState({
     category: '',
-    assets: [],
-    asset: '',
+    name: '',
     symbol: '',
     currency: 'USD',
     price: '',
     quantity: '',
-    date: new Date()
+    date: new Date().toDateString()
   });
 
   const handleCategoryChange = (event, value) => {
     setTransactionForm({
       ...transactionForm,
       category: value.alias,
-      assets: [],
-      asset: '',
+      name: '',
       symbol: ''
     });
+
+    setAssetsDropdown([]);
 
     const ele = autoC.current.getElementsByClassName(
       'MuiAutocomplete-clearIndicator'
@@ -59,7 +61,7 @@ function TransactionModal(props) {
     if (value) {
       setTransactionForm({
         ...transactionForm,
-        asset: value.name,
+        name: value.name,
         symbol: value.symbol
       });
     }
@@ -91,10 +93,11 @@ function TransactionModal(props) {
           break;
       }
 
+      setAssetsDropdown(assets);
+
       setTransactionForm({
         ...transactionForm,
-        assets,
-        asset: '',
+        name: '',
         symbol: ''
       });
     }
@@ -107,8 +110,13 @@ function TransactionModal(props) {
     };
   }
 
-  const submitTransactionForm = () => {
-    console.log(transactionForm);
+  const submitTransactionForm = async () => {
+    try {
+      await addNewAsset(transactionForm);
+      props.close();
+    } catch (err) {
+      // TODO catch error
+    }
   };
 
   return (
@@ -164,7 +172,7 @@ function TransactionModal(props) {
               id="asset"
               sx={{ mt: 2, mb: 1 }}
               onChange={handleAssetChange}
-              options={transactionForm.assets}
+              options={assetsDropdown}
               autoHighlight
               getOptionLabel={(option) => `${option.name} (${option.symbol})`}
               renderOption={(props, option) => {
@@ -251,7 +259,7 @@ function TransactionModal(props) {
                 onChange={(event) => {
                   return setTransactionForm({
                     ...transactionForm,
-                    quantity: event.target.value
+                    quantity: Number(event.target.value)
                   });
                 }}
                 fullWidth

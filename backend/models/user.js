@@ -10,7 +10,7 @@ const userSchema = new Schema({
     password: { type: String, required: true, minlength: 8 },
     image: { type: String, required: false },
     categories: { type: Array },
-    assets: [{ type:mongoose.Types.ObjectId, required: true, ref: 'Crypto' }]
+    assets: [{ type:mongoose.Types.ObjectId, required: true, ref: 'Asset' }]
 });
 
 userSchema.plugin(uniqueValidator);

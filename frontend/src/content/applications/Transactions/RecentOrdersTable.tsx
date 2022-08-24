@@ -27,68 +27,66 @@ import {
 
 import Label from 'src/components/Label';
 import { CryptoOrder, CryptoOrderStatus } from 'src/models/crypto_order';
+import { Asset } from 'src/models/assets';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
 import BulkActions from './BulkActions';
 
 interface RecentOrdersTableProps {
   className?: string;
-  cryptoOrders: CryptoOrder[];
+  cryptoOrders: Asset[];
 }
 
 interface Filters {
   status?: CryptoOrderStatus;
 }
 
-const getStatusLabel = (cryptoOrderStatus: CryptoOrderStatus): JSX.Element => {
-  const map = {
-    failed: {
-      text: 'Failed',
-      color: 'error'
-    },
-    completed: {
-      text: 'Completed',
-      color: 'success'
-    },
-    pending: {
-      text: 'Pending',
-      color: 'warning'
-    }
-  };
+// const getStatusLabel = (cryptoOrderStatus: CryptoOrderStatus): JSX.Element => {
+//   const map = {
+//     failed: {
+//       text: 'Failed',
+//       color: 'error'
+//     },
+//     completed: {
+//       text: 'Completed',
+//       color: 'success'
+//     },
+//     pending: {
+//       text: 'Pending',
+//       color: 'warning'
+//     }
+//   };
 
-  const { text, color }: any = map[cryptoOrderStatus];
+//   const { text, color }: any = map[cryptoOrderStatus];
 
-  return <Label color={color}>{text}</Label>;
-};
+//   return <Label color={color}>{text}</Label>;
+// };
 
-const applyFilters = (
-  cryptoOrders: CryptoOrder[],
-  filters: Filters
-): CryptoOrder[] => {
+const applyFilters = (cryptoOrders: Asset[], filters: Filters): Asset[] => {
   return cryptoOrders.filter((cryptoOrder) => {
     let matches = true;
 
-    if (filters.status && cryptoOrder.status !== filters.status) {
-      matches = false;
-    }
+    // if (filters.status && cryptoOrder.status !== filters.status) {
+    //   matches = false;
+    // }
 
     return matches;
   });
 };
 
 const applyPagination = (
-  cryptoOrders: CryptoOrder[],
+  cryptoOrders: Asset[],
   page: number,
   limit: number
-): CryptoOrder[] => {
+): Asset[] => {
   return cryptoOrders.slice(page * limit, page * limit + limit);
 };
 
 const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
-
   const [selectedCryptoOrders, setSelectedCryptoOrders] = useState<string[]>(
     []
   );
+  console.log(cryptoOrders);
   const selectedBulkActions = selectedCryptoOrders.length > 0;
   const [page, setPage] = useState<number>(0);
   const [limit, setLimit] = useState<number>(5);
@@ -220,10 +218,10 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
                 />
               </TableCell>
               <TableCell>Order Details</TableCell>
-              <TableCell>Order ID</TableCell>
-              <TableCell>Source</TableCell>
-              <TableCell align="right">Amount</TableCell>
-              <TableCell align="right">Status</TableCell>
+              {/* <TableCell>Symbol</TableCell> */}
+              <TableCell>Category</TableCell>
+              <TableCell align="right">Quantity</TableCell>
+              <TableCell align="right">Price</TableCell>
               <TableCell align="right">Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -256,13 +254,14 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
                       gutterBottom
                       noWrap
                     >
-                      {cryptoOrder.orderDetails}
+                      {cryptoOrder.name} ({cryptoOrder.symbol})
                     </Typography>
                     <Typography variant="body2" color="text.secondary" noWrap>
-                      {format(cryptoOrder.orderDate, 'MMMM dd yyyy')}
+                      {/* {format(cryptoOrder.date, 'MMMM dd yyyy')} */}
+                      {cryptoOrder.date}
                     </Typography>
                   </TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     <Typography
                       variant="body1"
                       fontWeight="bold"
@@ -270,10 +269,11 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
                       gutterBottom
                       noWrap
                     >
-                      {cryptoOrder.orderID}
+                      {cryptoOrder.name}
                     </Typography>
-                  </TableCell>
-                  <TableCell>
+                  </TableCell> */}
+                  <TableCell>{cryptoOrder.category}</TableCell>
+                  <TableCell align="right">
                     <Typography
                       variant="body1"
                       fontWeight="bold"
@@ -281,11 +281,11 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
                       gutterBottom
                       noWrap
                     >
-                      {cryptoOrder.sourceName}
+                      {cryptoOrder.quantity}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary" noWrap>
-                      {cryptoOrder.sourceDesc}
-                    </Typography>
+                    {/* <Typography variant="body2" color="text.secondary" noWrap>
+                      {cryptoOrder.name}
+                    </Typography> */}
                   </TableCell>
                   <TableCell align="right">
                     <Typography
@@ -295,18 +295,18 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
                       gutterBottom
                       noWrap
                     >
-                      {cryptoOrder.amountCrypto}
-                      {cryptoOrder.cryptoCurrency}
+                      {numeral(cryptoOrder.price).format(
+                        `${cryptoOrder.currency}0,0.00`
+                      )} &nbsp;
+                      {cryptoOrder.currency}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary" noWrap>
-                      {numeral(cryptoOrder.amount).format(
+                    {/* <Typography variant="body2" color="text.secondary" noWrap>
+                      {numeral(cryptoOrder.price).format(
                         `${cryptoOrder.currency}0,0.00`
                       )}
-                    </Typography>
+                    </Typography> */}
                   </TableCell>
-                  <TableCell align="right">
-                    {getStatusLabel(cryptoOrder.status)}
-                  </TableCell>
+
                   <TableCell align="right">
                     <Tooltip title="Edit Order" arrow>
                       <IconButton
