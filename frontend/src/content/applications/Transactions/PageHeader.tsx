@@ -3,7 +3,7 @@ import { Typography, Button, Grid } from '@mui/material';
 
 import AddTwoToneIcon from '@mui/icons-material/AddTwoTone';
 import { AuthContext } from '../../../utils/context/authContext';
-import Modal from 'src/components/Modal';
+import TransactionModal from '../../../components/TransactionModal';
 
 function PageHeader() {
   const { authUserData } = useContext(AuthContext);
@@ -36,7 +36,7 @@ function PageHeader() {
         >
           Create transaction
         </Button>
-        <Modal
+        <TransactionModal
           open={openModal}
           close={handleClose}
           categories={authUserData.categories}

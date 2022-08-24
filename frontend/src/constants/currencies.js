@@ -8,11 +8,7 @@ export const currencies = [
       label: '€',
     },
     {
-      value: 'BTC',
-      label: '฿',
-    },
-    {
-      value: 'JPY',
-      label: '¥',
+      value: 'BGN',
+      label: 'лв.',
     },
 ];

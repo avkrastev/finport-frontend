@@ -3,13 +3,9 @@ const HttpError = require('../models/http-error');
 const Crypto = require('../models/crypto');
 const User = require('../models/user');
 const mongoose = require('mongoose');
-//const CoinGecko = require('coingecko-api');
-
-//const CoinGeckoClient = new CoinGecko();
 
 const getCrypto = async (req, res, next) => {
     let cryptos;
-    //let data = await CoinGeckoClient.coins.list();
 
     try {
         cryptos = await Crypto.find();
