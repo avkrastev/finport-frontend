@@ -8,7 +8,8 @@ const getAsset = async (req, res, next) => {
   let assets;
 
   try {
-    assets = await Asset.find().sort({ date: 'desc' });
+    const creator = req.userData.userId;
+    assets = await Asset.find({ creator }).sort({ date: 'desc' });
   } catch (err) {
     const error = new HttpError("Something went wrong!", 500);
     return next(error);

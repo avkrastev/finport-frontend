@@ -232,7 +232,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
                     {
                       categoryOptions.find(
                         (category) => category.alias === asset.category
-                      ).name
+                      )?.name
                     }
                   </TableCell>
                   <TableCell align="right">
