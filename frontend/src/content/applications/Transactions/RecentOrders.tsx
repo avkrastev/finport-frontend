@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Card } from '@mui/material';
-import { CryptoOrder } from 'src/models/crypto_order';
 import { Asset } from 'src/models/assets';
 import RecentOrdersTable from './RecentOrdersTable';
 import { subDays } from 'date-fns';

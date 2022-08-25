@@ -58,7 +58,7 @@ const addAsset = async (req, res, next) => {
     user = await User.findById(creator);
   } catch (err) {
     const error = new HttpError(
-      "Adding new asset asset failed, try again. 1",
+      "Adding new asset asset failed, try again.",
       500
     );
     return next(error);
@@ -78,7 +78,7 @@ const addAsset = async (req, res, next) => {
     sess.commitTransaction();
   } catch (err) {
     const error = new HttpError(
-      "Adding new asset asset failed, try again. 2",
+      "Adding new asset asset failed, try again.",
       500
     );
     return next(error);

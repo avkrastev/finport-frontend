@@ -19,7 +19,7 @@ import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { autocompleteStocks } from '../../utils/api/stocksApiFunction';
 import { autocompleteCrypto } from '../../utils/api/cryptoApiFunction';
 import { currencies } from '../../constants/currencies';
-import { transfers } from '../../constants/common';
+import { transfers, p2pPlatforms } from '../../constants/common';
 import { addNewAsset } from '../../utils/api/assetsApiFunction';
 
 function TransactionModal(props) {
@@ -47,9 +47,10 @@ function TransactionModal(props) {
       symbol: ''
     });
 
-    setAssetsDropdown([]);
+    if (value.alias === 'p2p') setAssetsDropdown(p2pPlatforms);
+    else setAssetsDropdown([]);
 
-    const ele = autoC.current.getElementsByClassName(
+    const ele = autoC.current?.getElementsByClassName(
       'MuiAutocomplete-clearIndicator'
     )[0];
     if (ele) {
@@ -79,6 +80,7 @@ function TransactionModal(props) {
           }
           break;
         case 'stocks':
+        case 'etf':
           if (currentVal.length > 2) {
             const responseData = await autocompleteStocks(currentVal);
             assets = responseData.data.bestMatches.map((item) => {
@@ -167,34 +169,57 @@ function TransactionModal(props) {
                 );
               }}
             />
-            <Autocomplete
-              ref={autoC}
-              id="asset"
-              sx={{ mt: 2, mb: 1 }}
-              onChange={handleAssetChange}
-              options={assetsDropdown}
-              autoHighlight
-              getOptionLabel={(option) => `${option.name} (${option.symbol})`}
-              renderOption={(props, option) => {
-                return (
-                  <Box component="li" key={option.symbol} {...props}>
-                    {option.name} ({option.symbol})
-                  </Box>
-                );
-              }}
-              renderInput={(params) => {
-                return (
-                  <TextField
-                    {...params}
-                    label="Choose an asset"
-                    inputProps={{
-                      ...params.inputProps
-                    }}
-                    onChange={handleAssetsDropdownChange}
-                  />
-                );
-              }}
-            />
+            {transactionForm.category === 'misc' ? (
+              <TextField
+                sx={{ mt: 1, mb: 2 }}
+                margin="dense"
+                id="asset"
+                label="Asset"
+                type="text"
+                onChange={(event) => {
+                  return setTransactionForm({
+                    ...transactionForm,
+                    name: event.target.value
+                  });
+                }}
+                fullWidth
+              />
+            ) : (
+              <Autocomplete
+                ref={autoC}
+                id="asset"
+                sx={{ mt: 2, mb: 1 }}
+                onChange={handleAssetChange}
+                options={assetsDropdown}
+                autoHighlight
+                getOptionLabel={(option) =>
+                  option.symbol
+                    ? `${option.name} (${option.symbol})`
+                    : `${option.name}`
+                }
+                renderOption={(props, option) => {
+                  return (
+                    <Box component="li" key={option.symbol} {...props}>
+                      {option.name}{' '}
+                      {option.symbol ? '(' + option.symbol + ')' : ''}
+                    </Box>
+                  );
+                }}
+                renderInput={(params) => {
+                  return (
+                    <TextField
+                      {...params}
+                      label="Choose an asset"
+                      inputProps={{
+                        ...params.inputProps
+                      }}
+                      onChange={handleAssetsDropdownChange}
+                    />
+                  );
+                }}
+              />
+            )}
+
             {tab !== 2 && (
               <Box sx={{ display: 'grid' }}>
                 <TextField

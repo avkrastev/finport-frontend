@@ -32,7 +32,6 @@ import BulkActions from './BulkActions';
 import { AuthContext } from '../../../utils/context/authContext';
 
 interface RecentOrdersTableProps {
-  className?: string;
   assets: Asset[];
 }
 
@@ -74,7 +73,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ assets }) => {
 
   const categoryOptions = [
     { name: 'All', alias: 'all' },
-    ...authUserData.categories.filter((category) => category.show === true)
+    ...authUserData.categories.filter((category: any) => category.show === true)
   ];
 
   const handleStatusChange = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -183,15 +182,9 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ assets }) => {
           </TableHead>
           <TableBody>
             {paginatedAssets.map((asset) => {
-              const isCryptoOrderSelected = selectedAssets.includes(
-                asset.id
-              );
+              const isCryptoOrderSelected = selectedAssets.includes(asset.id);
               return (
-                <TableRow
-                  hover
-                  key={asset.id}
-                  selected={isCryptoOrderSelected}
-                >
+                <TableRow hover key={asset.id} selected={isCryptoOrderSelected}>
                   <TableCell padding="checkbox">
                     <Checkbox
                       color="primary"
@@ -210,7 +203,8 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ assets }) => {
                       gutterBottom
                       noWrap
                     >
-                      {asset.name} ({asset.symbol})
+                      {asset.name}{' '}
+                      {asset.symbol ? '(' + asset.symbol + ')' : ''}
                     </Typography>
                     <Typography variant="body2" color="text.secondary" noWrap>
                       {/* {format(asset.date, 'MMMM dd yyyy')} */}
@@ -251,9 +245,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ assets }) => {
                       gutterBottom
                       noWrap
                     >
-                      {numeral(asset.price).format(
-                        `${asset.currency}0,0.00`
-                      )}{' '}
+                      {numeral(asset.price).format(`${asset.currency}0,0.00`)}{' '}
                       &nbsp;
                       {asset.currency}
                     </Typography>
