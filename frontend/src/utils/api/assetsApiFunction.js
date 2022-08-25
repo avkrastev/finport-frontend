@@ -35,3 +35,39 @@ export async function addNewAsset(transaction) {
     console.log(error);
   }
 }
+
+export async function updateAsset(id) {
+    const token = JSON.parse(localStorage.getItem('userData')).token;
+    try {
+      const response = await axios.patch(
+        `http://localhost:3005/api/assets/${id}`,
+        {
+          headers: {
+            Authorization: `Basic ${token}`
+          }
+        }
+      );
+  
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+export async function deleteAsset(id) {
+  const token = JSON.parse(localStorage.getItem('userData')).token;
+  try {
+    const response = await axios.delete(
+      `http://localhost:3005/api/assets/${id}`,
+      {
+        headers: {
+          Authorization: `Basic ${token}`
+        }
+      }
+    );
+
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+}

@@ -7,15 +7,19 @@ import { BrowserRouter } from 'react-router-dom';
 
 import 'nprogress/nprogress.css';
 import { SidebarProvider } from './contexts/SidebarContext';
+import { store } from './app/store';
+import { Provider } from 'react-redux';
 
 ReactDOM.render(
-  <HelmetProvider>
-    <SidebarProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </SidebarProvider>
-  </HelmetProvider>,
+  <Provider store={store}>
+    <HelmetProvider>
+      <SidebarProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </SidebarProvider>
+    </HelmetProvider>
+  </Provider>,
   document.getElementById('root')
 );
 

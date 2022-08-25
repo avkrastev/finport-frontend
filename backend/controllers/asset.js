@@ -8,7 +8,7 @@ const getAsset = async (req, res, next) => {
   let assets;
 
   try {
-    assets = await Asset.find();
+    assets = await Asset.find().sort({ date: 'desc' });
   } catch (err) {
     const error = new HttpError("Something went wrong!", 500);
     return next(error);
@@ -25,7 +25,7 @@ const getAsset = async (req, res, next) => {
 const getAssetById = async (req, res, next) => {
   let asset;
   try {
-    asset = await Asset.findById(req.params.cid);
+    asset = await Asset.findById(req.params.id);
   } catch (err) {
     const error = new HttpError("Something went wrong!", 500);
     return next(error);
@@ -49,6 +49,7 @@ const addAsset = async (req, res, next) => {
 
   const addNewAsset = new Asset({
     ...req.body.transaction,
+    date: new Date(req.body.transaction.date).toISOString(),
     creator,
   });
 
@@ -97,7 +98,7 @@ const updateAsset = async (req, res, next) => {
 
   let asset;
   try {
-    asset = await Asset.findById(req.params.cid);
+    asset = await Asset.findById(req.params.id);
   } catch (err) {
     const error = new HttpError(
       "Something went wrong, could not find asset by ID.",
@@ -135,7 +136,7 @@ const updateAsset = async (req, res, next) => {
 const deleteAsset = async (req, res, next) => {
   let asset;
   try {
-    asset = await Asset.findById(req.params.cid).populate("creator");
+    asset = await Asset.findById(req.params.id).populate("creator");
   } catch (err) {
     const error = new HttpError(
       "Something went wrong, could not find asset by ID.",

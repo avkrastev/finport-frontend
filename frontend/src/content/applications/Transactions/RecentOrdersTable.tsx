@@ -1,4 +1,5 @@
 import { FC, ChangeEvent, useState, useContext } from 'react';
+import { useDispatch } from 'react-redux';
 import { format } from 'date-fns';
 import numeral from 'numeral';
 import PropTypes from 'prop-types';
@@ -30,9 +31,11 @@ import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
 import BulkActions from './BulkActions';
 import { AuthContext } from '../../../utils/context/authContext';
+import { AppDispatch } from 'src/app/store';
 
 interface RecentOrdersTableProps {
   assets: Asset[];
+  openDeleteModal: any;
 }
 
 interface Filters {
@@ -59,14 +62,18 @@ const applyPagination = (
   return assets.slice(page * limit, page * limit + limit);
 };
 
-const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ assets }) => {
+const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
+  assets,
+  openDeleteModal
+}) => {
   const { authUserData } = useContext(AuthContext);
+  const dispatch: AppDispatch = useDispatch();
 
   const [selectedAssets, setSelectedAssets] = useState<string[]>([]);
 
   const selectedBulkActions = selectedAssets.length > 0;
   const [page, setPage] = useState<number>(0);
-  const [limit, setLimit] = useState<number>(5);
+  const [limit, setLimit] = useState<number>(10);
   const [filters, setFilters] = useState<Filters>({
     category: null
   });
@@ -129,7 +136,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ assets }) => {
     <Card>
       {selectedBulkActions && (
         <Box flex={1} p={2}>
-          <BulkActions />
+          <BulkActions selectedIds={selectedAssets} />
         </Box>
       )}
       {!selectedBulkActions && (
@@ -156,7 +163,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ assets }) => {
               </FormControl>
             </Box>
           }
-          title="Recent Orders"
+          title="Recent Transactions"
         />
       )}
       <Divider />
@@ -172,7 +179,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ assets }) => {
                   onChange={handleSelectAllAssets}
                 />
               </TableCell>
-              <TableCell>Order Details</TableCell>
+              <TableCell>Transaction Details</TableCell>
               {/* <TableCell>Symbol</TableCell> */}
               <TableCell>Category</TableCell>
               <TableCell align="right">Quantity</TableCell>
@@ -207,8 +214,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ assets }) => {
                       {asset.symbol ? '(' + asset.symbol + ')' : ''}
                     </Typography>
                     <Typography variant="body2" color="text.secondary" noWrap>
-                      {/* {format(asset.date, 'MMMM dd yyyy')} */}
-                      {asset.date}
+                      {format(new Date(asset.date), 'MMMM dd yyyy')}
                     </Typography>
                   </TableCell>
                   {/* <TableCell>
@@ -222,7 +228,13 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ assets }) => {
                       {asset.name}
                     </Typography>
                   </TableCell> */}
-                  <TableCell>{asset.category}</TableCell>
+                  <TableCell>
+                    {
+                      categoryOptions.find(
+                        (category) => category.alias === asset.category
+                      ).name
+                    }
+                  </TableCell>
                   <TableCell align="right">
                     <Typography
                       variant="body1"
@@ -257,7 +269,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ assets }) => {
                   </TableCell>
 
                   <TableCell align="right">
-                    <Tooltip title="Edit Order" arrow>
+                    <Tooltip title="Edit Transaction" arrow>
                       <IconButton
                         sx={{
                           '&:hover': {
@@ -271,8 +283,9 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ assets }) => {
                         <EditTwoToneIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
-                    <Tooltip title="Delete Order" arrow>
+                    <Tooltip title="Delete Transaction" arrow>
                       <IconButton
+                        onClick={() => openDeleteModal(asset.id)}
                         sx={{
                           '&:hover': { background: theme.colors.error.lighter },
                           color: theme.palette.error.main

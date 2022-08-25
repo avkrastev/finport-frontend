@@ -4,7 +4,7 @@ import PageTitleWrapper from 'src/components/PageTitleWrapper';
 import { Grid, Container } from '@mui/material';
 import Footer from 'src/components/Footer';
 
-import RecentOrders from './RecentOrders';
+import RecentOrders from './RecentOrders.jsx';
 
 function ApplicationsTransactions() {
   return (

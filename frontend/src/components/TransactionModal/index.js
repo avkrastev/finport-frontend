@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { useDispatch } from 'react-redux';
 import {
   Button,
   TextField,
@@ -20,10 +21,12 @@ import { autocompleteStocks } from '../../utils/api/stocksApiFunction';
 import { autocompleteCrypto } from '../../utils/api/cryptoApiFunction';
 import { currencies } from '../../constants/currencies';
 import { transfers, p2pPlatforms } from '../../constants/common';
-import { addNewAsset } from '../../utils/api/assetsApiFunction';
+import { addNewTransaction } from '../../content/applications/Transactions/transactionSlice';
 
 function TransactionModal(props) {
   const autoC = useRef(null);
+  // const transaction = useSelector(state => state.transaction);
+  const dispatch = useDispatch();
 
   const [tab, setTab] = useState(0);
   const [transferDropdown, setTransferDropdown] = useState('in');
@@ -114,7 +117,8 @@ function TransactionModal(props) {
 
   const submitTransactionForm = async () => {
     try {
-      await addNewAsset(transactionForm);
+      //await addNewAsset(transactionForm);
+      dispatch(addNewTransaction(transactionForm));
       props.close();
     } catch (err) {
       // TODO catch error

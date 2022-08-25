@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-
+import { useDispatch } from 'react-redux';
 import {
   Box,
   Menu,
@@ -14,6 +14,9 @@ import { styled } from '@mui/material/styles';
 
 import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
 import MoreVertTwoToneIcon from '@mui/icons-material/MoreVertTwoTone';
+import ConfirmDialog from './ConfirmDialog';
+import { AppDispatch } from 'src/app/store';
+import { deleteTransaction } from './transactionSlice';
 
 const ButtonError = styled(Button)(
   ({ theme }) => `
@@ -26,9 +29,12 @@ const ButtonError = styled(Button)(
     `
 );
 
-function BulkActions() {
+function BulkActions({ selectedIds }) {
+  const dispatch: AppDispatch = useDispatch();
+
   const [onMenuOpen, menuOpen] = useState<boolean>(false);
   const moreRef = useRef<HTMLButtonElement | null>(null);
+  const [openConfirmModal, setOpenConfirmModal] = useState(false);
 
   const openMenu = (): void => {
     menuOpen(true);
@@ -36,6 +42,19 @@ function BulkActions() {
 
   const closeMenu = (): void => {
     menuOpen(false);
+  };
+
+  const handleClose = (): void => setOpenConfirmModal(false);
+
+  const handleBulkDeleteButton = () => {
+    try {
+      for (let id of selectedIds) {
+        if (id) dispatch(deleteTransaction(id)).unwrap();
+      }
+      setOpenConfirmModal(true);
+    } catch (err) {
+      console.error('Failed to delete the transaction', err);
+    }
   };
 
   return (
@@ -46,6 +65,7 @@ function BulkActions() {
             Bulk actions:
           </Typography>
           <ButtonError
+            onClick={handleBulkDeleteButton}
             sx={{ ml: 1 }}
             startIcon={<DeleteTwoToneIcon />}
             variant="contained"
@@ -61,6 +81,11 @@ function BulkActions() {
         >
           <MoreVertTwoToneIcon />
         </IconButton>
+        <ConfirmDialog
+          open={openConfirmModal}
+          close={handleClose}
+          title="Are you sure you want to delete these transactions?"
+        />
       </Box>
 
       <Menu
@@ -76,7 +101,6 @@ function BulkActions() {
           vertical: 'center',
           horizontal: 'center'
         }}
-
       >
         <List sx={{ p: 1 }} component="nav">
           <ListItem button>
