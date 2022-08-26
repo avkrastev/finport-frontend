@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import {
   Button,
@@ -12,35 +12,48 @@ import {
   Box,
   Tab,
   Tabs,
-  MenuItem
+  MenuItem,
+  Typography
 } from '@mui/material';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { autocompleteStocks } from '../../utils/api/stocksApiFunction';
 import { autocompleteCrypto } from '../../utils/api/cryptoApiFunction';
 import { currencies } from '../../constants/currencies';
-import { transfers, p2pPlatforms } from '../../constants/common';
-import { addNewTransaction } from '../../content/applications/Transactions/transactionSlice';
+import { p2pPlatforms, transactionTypes } from '../../constants/common';
+import {
+  addNewTransaction,
+  updateTransaction
+} from '../../content/applications/Transactions/transactionSlice';
 import { MobileDateTimePicker } from '@mui/x-date-pickers';
 
 function TransactionModal(props) {
   const autoC = useRef(null);
-  // const transaction = useSelector(state => state.transaction);
   const dispatch = useDispatch();
 
   const [tab, setTab] = useState(0);
-  const [transferDropdown, setTransferDropdown] = useState('in');
+  const [transferDropdown, setTransferDropdown] = useState(2);
   const [assetsDropdown, setAssetsDropdown] = useState([]);
+  const [isEditForm, setIsEditForm] = useState(false);
 
   const [transactionForm, setTransactionForm] = useState({
+    id: '',
     category: '',
     name: '',
     symbol: '',
     currency: 'USD',
     price: '',
     quantity: '',
-    date: new Date()
+    date: new Date(),
+    type: 0
   });
+
+  useEffect(() => {
+    if (props.transaction) {
+      setTransactionForm(props.transaction);
+      setIsEditForm(true);
+    }
+  }, [props.transaction]);
 
   const handleCategoryChange = (event, value) => {
     setTransactionForm({
@@ -108,6 +121,29 @@ function TransactionModal(props) {
     }
   };
 
+  const handleTransferDropdownChange = (value) => {
+    setTransferDropdown(value);
+    setTransactionForm({
+      ...transactionForm,
+      type: value
+    });
+  }
+
+  const setType = (value) => {
+    let type = value;
+    let price = transactionForm.price;
+    if (value === 2 || value === 3) {
+      type = transferDropdown;
+      price = 0;
+    }
+    setTransactionForm({
+      ...transactionForm,
+      type, 
+      price
+    });
+    setTab(value);
+  };
+
   function a11yProps(index) {
     return {
       id: `simple-tab-${index}`,
@@ -117,16 +153,24 @@ function TransactionModal(props) {
 
   const submitTransactionForm = async () => {
     try {
-      dispatch(addNewTransaction(transactionForm));
+      console.log(transactionForm);
+      if (isEditForm) {
+        dispatch(updateTransaction(transactionForm));
+      } else {
+        dispatch(addNewTransaction(transactionForm));
+      }
+
       props.close();
       setTransactionForm({
+        id: '',
         category: '',
         name: '',
         symbol: '',
         currency: 'USD',
         price: '',
         quantity: '',
-        date: new Date()
+        date: new Date(),
+        type: 0
       });
     } catch (err) {
       // TODO catch error
@@ -146,42 +190,57 @@ function TransactionModal(props) {
                 textColor="primary"
                 indicatorColor="primary"
                 value={tab}
-                onChange={(event, value) => setTab(value)}
+                onChange={(event, value) => setType(value)}
               >
                 <Tab label="Buy" {...a11yProps(0)} />
                 <Tab label="Sell" {...a11yProps(1)} />
                 <Tab label="Transfer" {...a11yProps(2)} />
               </Tabs>
             )}
-            <Autocomplete
-              id="category"
-              sx={{ mt: 2, mb: 1 }}
-              options={props.categories}
-              onChange={handleCategoryChange}
-              autoHighlight
-              getOptionLabel={(option) => option.name}
-              renderOption={(props, option) => {
-                if (option.show) {
+            {!isEditForm && (
+              <Autocomplete
+                id="category"
+                sx={{ mt: 2, mb: 1 }}
+                options={props.categories ?? []}
+                onChange={handleCategoryChange}
+                autoHighlight
+                getOptionLabel={(option) => option.name}
+                renderOption={(props, option) => {
+                  if (option.show) {
+                    return (
+                      <Box component="li" {...props}>
+                        {option.name}
+                      </Box>
+                    );
+                  }
+                }}
+                renderInput={(params) => {
                   return (
-                    <Box component="li" {...props}>
-                      {option.name}
-                    </Box>
+                    <TextField
+                      {...params}
+                      label="Choose a category"
+                      inputProps={{
+                        ...params.inputProps
+                      }}
+                    />
                   );
-                }
-              }}
-              renderInput={(params) => {
-                return (
-                  <TextField
-                    {...params}
-                    label="Choose a category"
-                    inputProps={{
-                      ...params.inputProps
-                    }}
-                  />
-                );
-              }}
-            />
-            {transactionForm.category === 'misc' ? (
+                }}
+              />
+            )}
+
+            {isEditForm ? (
+              <Typography
+                variant="h3"
+                component="h2"
+                align="center"
+                sx={{ m: 2 }}
+              >
+                {transactionForm.name}{' '}
+                {transactionForm.symbol
+                  ? '(' + transactionForm.symbol + ')'
+                  : ''}
+              </Typography>
+            ) : transactionForm.category === 'misc' ? (
               <TextField
                 sx={{ mt: 1, mb: 2 }}
                 margin="dense"
@@ -239,7 +298,7 @@ function TransactionModal(props) {
                   id="outlined-select-currency"
                   select
                   label="Currency"
-                  value={'USD'}
+                  value={transactionForm.currency}
                   onChange={(event) => {
                     return setTransactionForm({
                       ...transactionForm,
@@ -277,17 +336,20 @@ function TransactionModal(props) {
                 select
                 label="Transfer"
                 value={transferDropdown}
-                onChange={(event) => setTransferDropdown(event.target.value)}
+                onChange={(event) => handleTransferDropdownChange(event.target.value)}
               >
-                {transfers.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
+                {transactionTypes
+                  .filter((option) => option.value === 2 || option.value === 3)
+                  .map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
               </TextField>
             )}
             {transactionForm.category !== 'p2p' && (
               <TextField
+                value={transactionForm.quantity}
                 sx={{ input: { textAlign: 'right' } }}
                 margin="dense"
                 id="quantity"

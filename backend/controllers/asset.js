@@ -70,7 +70,7 @@ const addAsset = async (req, res, next) => {
     const error = new HttpError("Could not find user with provided id.", 404);
     return next(error);
   }
-
+console.log(addNewAsset)
   try {
     const sess = await mongoose.startSession();
     sess.startTransaction();
@@ -79,6 +79,7 @@ const addAsset = async (req, res, next) => {
     await user.save({ session: sess, validateModifiedOnly: true });
     sess.commitTransaction();
   } catch (err) {
+    console.log(err)
     const error = new HttpError(
       "Adding new asset asset failed, try again.",
       500
@@ -86,7 +87,7 @@ const addAsset = async (req, res, next) => {
     return next(error);
   }
 
-  res.status(201).json({ asset: addNewAsset });
+  res.json({ asset: addNewAsset.toObject({ getters: true }) });
 };
 
 const updateAsset = async (req, res, next) => {
@@ -95,7 +96,7 @@ const updateAsset = async (req, res, next) => {
     return next(new HttpError("Error!", 422));
   }
 
-  const { name, sign, icon, amount } = req.body;
+  const { price, currency, quantity, date } = req.body;
 
   let asset;
   try {
@@ -116,10 +117,10 @@ const updateAsset = async (req, res, next) => {
     return next(error);
   }
 
-  if (name) asset.name = name;
-  if (sign) asset.sign = sign;
-  if (icon) asset.icon = icon;
-  if (amount) asset.amount = amount;
+  if (price) asset.price = price;
+  if (currency) asset.currency = currency;
+  if (quantity) asset.quantity = quantity;
+  if (date) asset.date = new Date(date).toISOString();
 
   try {
     await asset.save();
@@ -131,7 +132,7 @@ const updateAsset = async (req, res, next) => {
     return next(error);
   }
 
-  res.status(200).json({ asset: asset.toObject({ getter: true }) });
+  res.status(200).json({ asset: asset.toObject({ getters: true }) });
 };
 
 const deleteAsset = async (req, res, next) => {

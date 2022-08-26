@@ -10,12 +10,16 @@ import {
   fetchTransactions,
   deleteTransaction
 } from './transactionSlice';
+import TransactionModal from 'src/components/TransactionModal';
 
 function RecentOrders() {
   const dispatch = useDispatch();
   const [openConfirmModal, setOpenConfirmModal] = useState(false);
+  const [openTransactionModal, setOpenTransactionModal] = useState(false);
   const [clickedTransactionId, setClickedTransactionId] = useState(null);
-  const handleClose = () => setOpenConfirmModal(false);
+  const [selectedTransaction, setSelectedTransaction] = useState({});
+
+  const handleCloseConfirmModal = () => setOpenConfirmModal(false);
 
   const transactions = useSelector(selectAllTransactions);
   const transactionsStatus = useSelector(getTransactionsStatus);
@@ -35,24 +39,40 @@ function RecentOrders() {
     try {
       if (clickedTransactionId)
         dispatch(deleteTransaction(clickedTransactionId)).unwrap();
-      handleClose();
+        handleCloseConfirmModal();
     } catch (err) {
       console.error('Failed to delete the transaction', err);
     }
   };
+
+  const handleCloseTransactionModal = () => {
+    setOpenTransactionModal(false);
+  };
+
+  const openEditModal = (id) => {
+    setSelectedTransaction(transactions.find((transaction) => transaction.id === id));
+    setOpenTransactionModal(true);
+  }
 
   return (
     <Card>
       <RecentOrdersTable
         assets={transactions}
         openDeleteModal={openDeleteModal}
+        openEditModal={openEditModal}
       />
       <ConfirmDialog
         click={handleDeleteTransaction}
         open={openConfirmModal}
-        close={handleClose}
+        close={handleCloseConfirmModal}
         title="Are you sure you want to delete this transaction?"
         transactionId={clickedTransactionId}
+      />
+      <TransactionModal
+        transaction={selectedTransaction}
+        open={openTransactionModal}
+        close={handleCloseTransactionModal}
+        tabs={true}
       />
     </Card>
   );

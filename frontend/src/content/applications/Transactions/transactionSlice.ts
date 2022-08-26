@@ -4,7 +4,8 @@ import {
   getAssets,
   addNewAsset,
   deleteAsset,
-  deleteAssets
+  deleteAssets,
+  updateAsset
 } from '../../../utils/api/assetsApiFunction';
 
 interface Transaction {
@@ -16,6 +17,7 @@ interface Transaction {
   price: number;
   quantity: number;
   date: Date;
+  type: number;
 }
 
 interface TransactionState {
@@ -42,6 +44,14 @@ export const addNewTransaction = createAsyncThunk(
   'transactions/addNewTransaction',
   async (transaction) => {
     const response = await addNewAsset(transaction);
+    return response.data.asset as Transaction;
+  }
+);
+
+export const updateTransaction = createAsyncThunk(
+  'transactions/updateTransaction',
+  async (transaction) => {
+    const response = await updateAsset(transaction);
     return response.data.asset as Transaction;
   }
 );
@@ -87,8 +97,15 @@ const transactionsSlice = createSlice({
       .addCase(addNewTransaction.fulfilled, (state, action) => {
         state.transactions.push(action.payload);
         state.transactions.sort(
-          (a, b) =>
-            new Date(b.date).getTime() - new Date(a.date).getTime()
+          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+        );
+      })
+      .addCase(updateTransaction.fulfilled, (state, action) => {
+        const { id } = action.payload;
+        const transactions = state.transactions.filter(transaction => transaction.id !== id);
+        state.transactions = [...transactions, action.payload];
+        state.transactions.sort(
+          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
         );
       })
       .addCase(

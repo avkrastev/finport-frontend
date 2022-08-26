@@ -1,12 +1,20 @@
-export const transfers = [
-    {
-      value: 'in',
-      label: 'Transfer in',
-    },
-    {
-      value: 'out',
-      label: 'Transfer out',
-    },
+export const transactionTypes = [
+  {
+    value: 0,
+    label: 'Buy'
+  },
+  {
+    value: 1,
+    label: 'Sell'
+  },
+  {
+    value: 2,
+    label: 'Transfer in'
+  },
+  {
+    value: 3,
+    label: 'Transfer out'
+  },
 ]; 
 
 export const p2pPlatforms = [

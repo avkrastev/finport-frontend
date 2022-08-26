@@ -10,6 +10,7 @@ const assetSchema = new Schema({
   currency: { type: String, required: true },
   quantity: { type: Number, required: false },
   date: { type: String, required: true },
+  type: { type: Number, required: true },
   creator: { type: mongoose.Types.ObjectId, required: true, ref: "User" },
 });
 

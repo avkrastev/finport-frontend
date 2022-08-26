@@ -47,6 +47,7 @@ app.use((error, req, res, next) => {
 mongoose
   .connect(
     "mongodb+srv://avkrastev:1q221q22@cluster0.e1w4v.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+    //"mongodb://localhost:27017/finport"
   )
   .then(() => {
     app.listen(3005);

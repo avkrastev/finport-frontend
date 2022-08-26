@@ -7,4 +7,5 @@ export interface Asset {
   price: number;
   quantity: number;
   category: string;
+  type: number;
 }

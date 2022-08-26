@@ -1,5 +1,4 @@
 import { FC, ChangeEvent, useState, useContext } from 'react';
-import { useDispatch } from 'react-redux';
 import { format } from 'date-fns';
 import numeral from 'numeral';
 import PropTypes from 'prop-types';
@@ -31,11 +30,12 @@ import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
 import BulkActions from './BulkActions';
 import { AuthContext } from '../../../utils/context/authContext';
-import { AppDispatch } from 'src/app/store';
+import { transactionTypes } from '../../../constants/common';
 
 interface RecentOrdersTableProps {
   assets: Asset[];
   openDeleteModal: any;
+  openEditModal: any;
 }
 
 interface Filters {
@@ -64,10 +64,10 @@ const applyPagination = (
 
 const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
   assets,
-  openDeleteModal
+  openDeleteModal,
+  openEditModal
 }) => {
   const { authUserData } = useContext(AuthContext);
-  const dispatch: AppDispatch = useDispatch();
 
   const [selectedAssets, setSelectedAssets] = useState<string[]>([]);
 
@@ -83,7 +83,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
     ...authUserData.categories.filter((category: any) => category.show === true)
   ];
 
-  const handleStatusChange = (e: ChangeEvent<HTMLInputElement>): void => {
+  const handleCategoryChange = (e: ChangeEvent<HTMLInputElement>): void => {
     let value = null;
 
     if (e.target.value !== 'all') {
@@ -149,10 +149,10 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
           action={
             <Box width={150}>
               <FormControl fullWidth variant="outlined">
-                <InputLabel>Status</InputLabel>
+                <InputLabel>Category</InputLabel>
                 <Select
                   value={filters.category || 'all'}
-                  onChange={handleStatusChange}
+                  onChange={handleCategoryChange}
                   label="Category"
                   autoWidth
                 >
@@ -185,7 +185,6 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
                 />
               </TableCell>
               <TableCell>Transaction Details</TableCell>
-              {/* <TableCell>Symbol</TableCell> */}
               <TableCell>Category</TableCell>
               <TableCell align="right">Quantity</TableCell>
               <TableCell align="right">Price</TableCell>
@@ -222,17 +221,6 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
                       {format(new Date(asset.date), 'MMMM dd yyyy')}
                     </Typography>
                   </TableCell>
-                  {/* <TableCell>
-                    <Typography
-                      variant="body1"
-                      fontWeight="bold"
-                      color="text.primary"
-                      gutterBottom
-                      noWrap
-                    >
-                      {asset.name}
-                    </Typography>
-                  </TableCell> */}
                   <TableCell>
                     {
                       categoryOptions.find(
@@ -250,9 +238,6 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
                     >
                       {asset.quantity}
                     </Typography>
-                    {/* <Typography variant="body2" color="text.secondary" noWrap>
-                      {asset.name}
-                    </Typography> */}
                   </TableCell>
                   <TableCell align="right">
                     <Typography
@@ -266,16 +251,28 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
                       &nbsp;
                       {asset.currency}
                     </Typography>
-                    {/* <Typography variant="body2" color="text.secondary" noWrap>
-                      {numeral(asset.price).format(
-                        `${asset.currency}0,0.00`
-                      )}
-                    </Typography> */}
+                    <Typography
+                      variant="body2"
+                      noWrap
+                      color={
+                        asset.type === 1 || asset.type === 3
+                          ? theme.palette.error.main
+                          : theme.palette.primary.main
+                      }
+                      gutterBottom
+                    >
+                      {
+                        transactionTypes.find(
+                          (type) => type.value === asset.type
+                        )?.label
+                      }
+                    </Typography>
                   </TableCell>
 
                   <TableCell align="right">
                     <Tooltip title="Edit Transaction" arrow>
                       <IconButton
+                        onClick={() => openEditModal(asset.id)}
                         sx={{
                           '&:hover': {
                             background: theme.colors.primary.lighter
