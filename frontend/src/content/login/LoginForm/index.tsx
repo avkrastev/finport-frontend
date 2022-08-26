@@ -15,6 +15,8 @@ import { userLogin, userSignUp } from "../../../utils/api/userApiFunction";
 import { VALIDATOR_REQUIRE, VALIDATOR_EMAIL, VALIDATOR_MINLENGTH } from '../../../utils/validators';
 import { useForm } from "../../../utils/hooks/form-hook";
 import { AuthContext } from '../../../utils/context/authContext';
+import { useDispatch } from 'react-redux';
+import { changeTransactionStatus } from 'src/content/applications/Transactions/transactionSlice';
   
 const TypographyH1 = experimentalStyled(Typography)(
     ({ theme }) => `
@@ -50,6 +52,7 @@ const LabelWrapper = experimentalStyled(Box)(
 
 function LoginForm() {
     const auth = useContext(AuthContext);
+    const dispatch = useDispatch();
     const [isLogin, setIsLogin] = useState(true);
 
     const [formState, inputHandler, setFormData] = useForm({
@@ -112,6 +115,8 @@ function LoginForm() {
                 // TODO catch error
             }
         }
+
+        dispatch(changeTransactionStatus('idle'));
     }
 
     return (

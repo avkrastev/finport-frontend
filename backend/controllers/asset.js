@@ -70,7 +70,7 @@ const addAsset = async (req, res, next) => {
     const error = new HttpError("Could not find user with provided id.", 404);
     return next(error);
   }
-console.log(addNewAsset)
+
   try {
     const sess = await mongoose.startSession();
     sess.startTransaction();

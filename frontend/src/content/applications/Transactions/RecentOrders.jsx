@@ -39,7 +39,7 @@ function RecentOrders() {
     try {
       if (clickedTransactionId)
         dispatch(deleteTransaction(clickedTransactionId)).unwrap();
-        handleCloseConfirmModal();
+      handleCloseConfirmModal();
     } catch (err) {
       console.error('Failed to delete the transaction', err);
     }
@@ -50,9 +50,11 @@ function RecentOrders() {
   };
 
   const openEditModal = (id) => {
-    setSelectedTransaction(transactions.find((transaction) => transaction.id === id));
+    setSelectedTransaction(
+      transactions.find((transaction) => transaction.id === id)
+    );
     setOpenTransactionModal(true);
-  }
+  };
 
   return (
     <Card>

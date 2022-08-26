@@ -77,7 +77,11 @@ export const deleteTransactions = createAsyncThunk(
 const transactionsSlice = createSlice({
   name: 'transactions',
   initialState,
-  reducers: {},
+  reducers: {
+    changeTransactionStatus(state, action) {
+      state.status = action.payload;
+    }
+  },
   extraReducers(builder) {
     builder
       .addCase(fetchTransactions.pending, (state) => {
@@ -134,6 +138,6 @@ export const getTransactionsStatus = (state: RootState) =>
 export const getTransactionsError = (state: RootState) =>
   state.transactions.error;
 
-//export const {  } = transactionsSlice.actions;
+export const { changeTransactionStatus } = transactionsSlice.actions;
 
 export default transactionsSlice.reducer;

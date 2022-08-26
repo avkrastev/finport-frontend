@@ -2,42 +2,42 @@ const CATEGORIES = [
     {
         name: "Crypto",
         alias: "crypto",
-        show: false,
+        show: true,
     },
     {
         name: "Stocks",
         alias: "stocks",
-        show: false,
+        show: true,
     },
     {
         name: "Bonds",
         alias: "bonds",
-        show: false,
+        show: true,
     },
     {
         name: "Commodities",
         alias: "commodities",
-        show: false,
+        show: true,
     },
     {
         name: "Real Estates",
         alias: "real",
-        show: false,
+        show: true,
     },
     {
         name: "P2P",
         alias: "p2p",
-        show: false,
+        show: true,
     },
     {
         name: "ETFs",
         alias: "etf",
-        show: false,
+        show: true,
     },
     {
         name: "Miscellaneous",
         alias: "misc",
-        show: false,
+        show: true,
     }
 ];
 
