@@ -3,7 +3,8 @@ import type { RootState } from '../../../app/store';
 import {
   getAssets,
   addNewAsset,
-  deleteAsset
+  deleteAsset,
+  deleteAssets
 } from '../../../utils/api/assetsApiFunction';
 
 interface Transaction {
@@ -14,7 +15,7 @@ interface Transaction {
   currency: string;
   price: number;
   quantity: number;
-  date: string;
+  date: Date;
 }
 
 interface TransactionState {
@@ -54,6 +55,15 @@ export const deleteTransaction = createAsyncThunk(
   }
 );
 
+export const deleteTransactions = createAsyncThunk(
+  'transactions/deleteTransactions',
+  async (ids: string[]) => {
+    const response = await deleteAssets(ids);
+    if (response?.status === 200) return ids;
+    return `${response?.status}: ${response?.statusText}`;
+  }
+);
+
 const transactionsSlice = createSlice({
   name: 'transactions',
   initialState,
@@ -76,16 +86,27 @@ const transactionsSlice = createSlice({
       })
       .addCase(addNewTransaction.fulfilled, (state, action) => {
         state.transactions.push(action.payload);
+        state.transactions.sort(
+          (a, b) =>
+            new Date(b.date).getTime() - new Date(a.date).getTime()
+        );
       })
       .addCase(
         deleteTransaction.fulfilled,
         (state, action: PayloadAction<string>) => {
           const transactions = state.transactions.filter(
-            (post) => post.id !== action.payload
+            (transaction) => transaction.id !== action.payload
           );
           state.transactions = transactions;
         }
-      );
+      )
+      .addCase(deleteTransactions.fulfilled, (state, action) => {
+        const transactions = state.transactions.filter(
+          (transaction) => !action.payload.includes(transaction.id)
+        );
+
+        state.transactions = transactions;
+      });
   }
 });
 

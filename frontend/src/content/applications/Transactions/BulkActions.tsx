@@ -1,22 +1,12 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import {
-  Box,
-  Menu,
-  IconButton,
-  Button,
-  ListItemText,
-  ListItem,
-  List,
-  Typography
-} from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
-import MoreVertTwoToneIcon from '@mui/icons-material/MoreVertTwoTone';
 import ConfirmDialog from './ConfirmDialog';
 import { AppDispatch } from 'src/app/store';
-import { deleteTransaction } from './transactionSlice';
+import { deleteTransactions } from './transactionSlice';
 
 const ButtonError = styled(Button)(
   ({ theme }) => `
@@ -29,32 +19,20 @@ const ButtonError = styled(Button)(
     `
 );
 
-function BulkActions({ selectedIds }) {
+function BulkActions({ selectedIds, cleanSelection }) {
   const dispatch: AppDispatch = useDispatch();
-
-  const [onMenuOpen, menuOpen] = useState<boolean>(false);
-  const moreRef = useRef<HTMLButtonElement | null>(null);
   const [openConfirmModal, setOpenConfirmModal] = useState(false);
-
-  const openMenu = (): void => {
-    menuOpen(true);
-  };
-
-  const closeMenu = (): void => {
-    menuOpen(false);
-  };
 
   const handleClose = (): void => setOpenConfirmModal(false);
 
   const handleBulkDeleteButton = () => {
     try {
-      for (let id of selectedIds) {
-        if (id) dispatch(deleteTransaction(id)).unwrap();
-      }
-      setOpenConfirmModal(true);
+      dispatch(deleteTransactions(selectedIds)).unwrap();
     } catch (err) {
       console.error('Failed to delete the transaction', err);
     }
+    setOpenConfirmModal(false);
+    cleanSelection();
   };
 
   return (
@@ -65,7 +43,9 @@ function BulkActions({ selectedIds }) {
             Bulk actions:
           </Typography>
           <ButtonError
-            onClick={handleBulkDeleteButton}
+            onClick={() => {
+              setOpenConfirmModal(true);
+            }}
             sx={{ ml: 1 }}
             startIcon={<DeleteTwoToneIcon />}
             variant="contained"
@@ -73,44 +53,13 @@ function BulkActions({ selectedIds }) {
             Delete
           </ButtonError>
         </Box>
-        <IconButton
-          color="primary"
-          onClick={openMenu}
-          ref={moreRef}
-          sx={{ ml: 2, p: 1 }}
-        >
-          <MoreVertTwoToneIcon />
-        </IconButton>
         <ConfirmDialog
+          click={handleBulkDeleteButton}
           open={openConfirmModal}
           close={handleClose}
           title="Are you sure you want to delete these transactions?"
         />
       </Box>
-
-      <Menu
-        keepMounted
-        anchorEl={moreRef.current}
-        open={onMenuOpen}
-        onClose={closeMenu}
-        anchorOrigin={{
-          vertical: 'center',
-          horizontal: 'center'
-        }}
-        transformOrigin={{
-          vertical: 'center',
-          horizontal: 'center'
-        }}
-      >
-        <List sx={{ p: 1 }} component="nav">
-          <ListItem button>
-            <ListItemText primary="Bulk delete selected" />
-          </ListItem>
-          <ListItem button>
-            <ListItemText primary="Bulk edit selected" />
-          </ListItem>
-        </List>
-      </Menu>
     </>
   );
 }

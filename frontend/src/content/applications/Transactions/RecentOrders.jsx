@@ -7,7 +7,8 @@ import ConfirmDialog from './ConfirmDialog';
 import {
   selectAllTransactions,
   getTransactionsStatus,
-  fetchTransactions
+  fetchTransactions,
+  deleteTransaction
 } from './transactionSlice';
 
 function RecentOrders() {
@@ -30,6 +31,16 @@ function RecentOrders() {
     setOpenConfirmModal(true);
   };
 
+  const handleDeleteTransaction = () => {
+    try {
+      if (clickedTransactionId)
+        dispatch(deleteTransaction(clickedTransactionId)).unwrap();
+      handleClose();
+    } catch (err) {
+      console.error('Failed to delete the transaction', err);
+    }
+  };
+
   return (
     <Card>
       <RecentOrdersTable
@@ -37,6 +48,7 @@ function RecentOrders() {
         openDeleteModal={openDeleteModal}
       />
       <ConfirmDialog
+        click={handleDeleteTransaction}
         open={openConfirmModal}
         close={handleClose}
         title="Are you sure you want to delete this transaction?"

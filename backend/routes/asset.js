@@ -5,6 +5,7 @@ const {
   addAsset,
   updateAsset,
   deleteAsset,
+  deleteAssets,
 } = require("../controllers/asset");
 const checkAuth = require("../middleware/auth");
 
@@ -30,6 +31,10 @@ router.patch("/:id", (req, res, next) => {
 
 router.delete("/:id", (req, res, next) => {
   deleteAsset(req, res, next);
+});
+
+router.post("/deleteMany", (req, res, next) => {
+  deleteAssets(req, res, next);
 });
 
 module.exports = router;

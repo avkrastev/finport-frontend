@@ -71,3 +71,24 @@ export async function deleteAsset(id) {
     console.log(error);
   }
 }
+
+export async function deleteAssets(ids) {
+  const token = JSON.parse(localStorage.getItem('userData')).token;
+  try {
+    const response = await axios.post(
+      'http://localhost:3005/api/assets/deleteMany',
+      {
+        ids
+      },
+      {
+        headers: {
+          Authorization: `Basic ${token}`
+        }
+      }
+    );
+
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+}

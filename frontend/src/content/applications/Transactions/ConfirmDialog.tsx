@@ -1,4 +1,3 @@
-import { useDispatch } from 'react-redux';
 import {
   Button,
   Dialog,
@@ -7,22 +6,8 @@ import {
   DialogContentText,
   DialogTitle
 } from '@mui/material';
-import { deleteTransaction } from './transactionSlice';
-import { AppDispatch } from 'src/app/store';
 
 const ConfirmDialog = (props: any) => {
-  const dispatch: AppDispatch = useDispatch();
-
-  const handleDeleteTransaction = () => {
-    try {
-      if (props.transactionId)
-        dispatch(deleteTransaction(props.transactionId)).unwrap();
-      props.close();
-    } catch (err) {
-      console.error('Failed to delete the transaction', err);
-    }
-  };
-
   return (
     <Dialog
       open={props.open}
@@ -39,7 +24,7 @@ const ConfirmDialog = (props: any) => {
       <DialogActions>
         <Button onClick={props.close}>No</Button>
         <Button
-          onClick={handleDeleteTransaction}
+          onClick={props.click}
           variant="contained"
           color="error"
           autoFocus

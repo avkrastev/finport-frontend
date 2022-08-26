@@ -16,12 +16,12 @@ import {
 } from '@mui/material';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { autocompleteStocks } from '../../utils/api/stocksApiFunction';
 import { autocompleteCrypto } from '../../utils/api/cryptoApiFunction';
 import { currencies } from '../../constants/currencies';
 import { transfers, p2pPlatforms } from '../../constants/common';
 import { addNewTransaction } from '../../content/applications/Transactions/transactionSlice';
+import { MobileDateTimePicker } from '@mui/x-date-pickers';
 
 function TransactionModal(props) {
   const autoC = useRef(null);
@@ -39,7 +39,7 @@ function TransactionModal(props) {
     currency: 'USD',
     price: '',
     quantity: '',
-    date: new Date().toDateString()
+    date: new Date()
   });
 
   const handleCategoryChange = (event, value) => {
@@ -117,9 +117,17 @@ function TransactionModal(props) {
 
   const submitTransactionForm = async () => {
     try {
-      //await addNewAsset(transactionForm);
       dispatch(addNewTransaction(transactionForm));
       props.close();
+      setTransactionForm({
+        category: '',
+        name: '',
+        symbol: '',
+        currency: 'USD',
+        price: '',
+        quantity: '',
+        date: new Date()
+      });
     } catch (err) {
       // TODO catch error
     }
@@ -295,14 +303,14 @@ function TransactionModal(props) {
               />
             )}
             <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <MobileDatePicker
+              <MobileDateTimePicker
                 label="Date"
-                inputFormat="dd.MM.yyyy"
+                inputFormat="dd.MM.yyyy HH:mm:ss"
                 value={transactionForm.date}
                 onChange={(event) => {
                   return setTransactionForm({
                     ...transactionForm,
-                    date: event.toDateString()
+                    date: event
                   });
                 }}
                 renderInput={(params) => (

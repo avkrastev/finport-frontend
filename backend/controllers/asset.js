@@ -9,7 +9,7 @@ const getAsset = async (req, res, next) => {
 
   try {
     const creator = req.userData.userId;
-    assets = await Asset.find({ creator }).sort({ date: 'desc' });
+    assets = await Asset.find({ creator }).sort({ date: "desc" });
   } catch (err) {
     const error = new HttpError("Something went wrong!", 500);
     return next(error);
@@ -76,7 +76,7 @@ const addAsset = async (req, res, next) => {
     sess.startTransaction();
     await addNewAsset.save({ session: sess });
     user.assets.push(addNewAsset);
-    await user.save({ session: sess });
+    await user.save({ session: sess, validateModifiedOnly: true });
     sess.commitTransaction();
   } catch (err) {
     const error = new HttpError(
@@ -135,36 +135,36 @@ const updateAsset = async (req, res, next) => {
 };
 
 const deleteAsset = async (req, res, next) => {
-  let asset;
   try {
-    asset = await Asset.findById(req.params.id).populate("creator");
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+    await deleteAssetCommon(req.params.id, req.userData.userId, sess);
+    sess.commitTransaction();
   } catch (err) {
     const error = new HttpError(
-      "Something went wrong, could not find asset by ID.",
+      "Something went wrong, could not update asset.",
       500
     );
     return next(error);
   }
 
-  if (!asset) {
-    const error = new HttpError("Could not find asset for this ID.", 404);
-    return next(error);
-  }
+  res.status(200).json({ message: "Deleted asset" });
+};
 
-  if (asset.creator.id !== req.userData.userId) {
-    const error = new HttpError(
-      "You are not allowed to delete this asset.",
-      401
-    );
-    return next(error);
-  }
-
+const deleteAssets = async (req, res, next) => {
   try {
     const sess = await mongoose.startSession();
     sess.startTransaction();
-    await asset.remove({ session: sess });
-    asset.creator.assets.pull(asset);
-    await asset.creator.save({ session: sess });
+    const deletedTransactions = req.body.ids.map(async (id) => {
+      const transaction = await deleteAssetCommon(
+        id,
+        req.userData.userId,
+        sess
+      );
+      return transaction;
+    });
+
+    await Promise.all(deletedTransactions);
     sess.commitTransaction();
   } catch (err) {
     const error = new HttpError(
@@ -174,7 +174,45 @@ const deleteAsset = async (req, res, next) => {
     return next(error);
   }
 
-  res.status(200).json({ message: "Deleted asset" });
+  res.status(200).json({ message: "Deleted assets" });
+};
+
+const deleteAssetCommon = async (id, userId, sess) => {
+  let asset;
+  try {
+    asset = await Asset.findById(id).populate("creator");
+  } catch (err) {
+    const error = new HttpError(
+      "Something went wrong, could not find asset by ID.",
+      500
+    );
+    return error;
+  }
+
+  if (!asset) {
+    const error = new HttpError("Could not find asset for this ID.", 404);
+    return error;
+  }
+
+  if (asset.creator.id !== userId) {
+    const error = new HttpError(
+      "You are not allowed to delete this asset.",
+      401
+    );
+    return error;
+  }
+
+  try {
+    await asset.remove({ session: sess });
+    asset.creator.assets.pull(asset);
+    await asset.creator.save({ session: sess });
+  } catch (err) {
+    const error = new HttpError(
+      "Something went wrong, could not delete asset.",
+      500
+    );
+    return error;
+  }
 };
 
 exports.getAsset = getAsset;
@@ -182,3 +220,4 @@ exports.getAssetById = getAssetById;
 exports.addAsset = addAsset;
 exports.updateAsset = updateAsset;
 exports.deleteAsset = deleteAsset;
+exports.deleteAssets = deleteAssets;

@@ -136,7 +136,12 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
     <Card>
       {selectedBulkActions && (
         <Box flex={1} p={2}>
-          <BulkActions selectedIds={selectedAssets} />
+          <BulkActions
+            selectedIds={selectedAssets}
+            cleanSelection={() => {
+              setSelectedAssets([]);
+            }}
+          />
         </Box>
       )}
       {!selectedBulkActions && (
