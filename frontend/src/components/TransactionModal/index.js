@@ -19,8 +19,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { autocompleteStocks } from '../../utils/api/stocksApiFunction';
 import { autocompleteCrypto } from '../../utils/api/cryptoApiFunction';
-import { currencies } from '../../constants/currencies';
-import { p2pPlatforms, transactionTypes } from '../../constants/common';
+import { p2pPlatforms, transactionTypes, currencies } from '../../constants/common';
 import {
   addNewTransaction,
   updateTransaction
@@ -43,13 +42,15 @@ function TransactionModal(props) {
     symbol: '',
     currency: 'USD',
     price: '',
-    quantity: '',
+    quantity: 0,
     date: new Date(),
     type: 0
   });
 
   useEffect(() => {
     if (props.transaction) {
+      setType(0);
+      if (props.transaction.type) setType(props.transaction.type);
       setTransactionForm(props.transaction);
       setIsEditForm(true);
     }
@@ -127,21 +128,25 @@ function TransactionModal(props) {
       ...transactionForm,
       type: value
     });
-  }
+  };
 
   const setType = (value) => {
+    const transactionType = transactionTypes.find(
+      (type) => type.value === value
+    );
     let type = value;
     let price = transactionForm.price;
-    if (value === 2 || value === 3) {
+    if (transactionType.parent === 2) {
       type = transferDropdown;
       price = 0;
+      setTransferDropdown(value);
     }
     setTransactionForm({
       ...transactionForm,
-      type, 
+      type,
       price
     });
-    setTab(value);
+    setTab(transactionType.parent);
   };
 
   function a11yProps(index) {
@@ -153,7 +158,6 @@ function TransactionModal(props) {
 
   const submitTransactionForm = async () => {
     try {
-      console.log(transactionForm);
       if (isEditForm) {
         dispatch(updateTransaction(transactionForm));
       } else {
@@ -168,7 +172,7 @@ function TransactionModal(props) {
         symbol: '',
         currency: 'USD',
         price: '',
-        quantity: '',
+        quantity: 0,
         date: new Date(),
         type: 0
       });
@@ -336,10 +340,12 @@ function TransactionModal(props) {
                 select
                 label="Transfer"
                 value={transferDropdown}
-                onChange={(event) => handleTransferDropdownChange(event.target.value)}
+                onChange={(event) =>
+                  handleTransferDropdownChange(event.target.value)
+                }
               >
                 {transactionTypes
-                  .filter((option) => option.value === 2 || option.value === 3)
+                  .filter((option) => option.parent === 2)
                   .map((option) => (
                     <MenuItem key={option.value} value={option.value}>
                       {option.label}
@@ -384,7 +390,14 @@ function TransactionModal(props) {
         </DialogContent>
         <DialogActions>
           <Button onClick={props.close}>Cancel</Button>
-          <Button onClick={submitTransactionForm}>Save</Button>
+          <Button
+            onClick={submitTransactionForm}
+            variant="contained"
+            color="primary"
+            autoFocus
+          >
+            Save
+          </Button>
         </DialogActions>
       </Dialog>
     </>

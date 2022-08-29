@@ -5,8 +5,13 @@ const mongoose = require("mongoose");
 const userRoutes = require("./routes/user");
 const assetRoutes = require("./routes/asset");
 const checkAuth = require("./middleware/auth");
+const cacheProvider = require("./utils/cache-provider");
 
 const app = express();
+
+cacheProvider.start(function (err) {
+  if (err) console.error(err);
+});
 
 app.use(bodyParser.json());
 

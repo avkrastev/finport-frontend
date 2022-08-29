@@ -3,13 +3,18 @@ const HttpError = require("../models/http-error");
 const Asset = require("../models/asset");
 const User = require("../models/user");
 const mongoose = require("mongoose");
+const url = require("url");
+const { exchangeRates, roundNumber } = require("../utils/functions");
 
 const getAsset = async (req, res, next) => {
   let assets;
+  const queryObject = url.parse(req.url, true).query;
 
   try {
     const creator = req.userData.userId;
-    assets = await Asset.find({ creator }).sort({ date: "desc" });
+    assets = await Asset.find({ creator, ...queryObject }).sort({
+      date: "desc",
+    });
   } catch (err) {
     const error = new HttpError("Something went wrong!", 500);
     return next(error);
@@ -48,8 +53,15 @@ const addAsset = async (req, res, next) => {
 
   const creator = req.userData.userId;
 
+  const priceInUsd = await exchangeRates(
+    req.body.transaction.price,
+    req.body.transaction.currency,
+    req.body.transaction.date
+  );
+
   const addNewAsset = new Asset({
     ...req.body.transaction,
+    price_usd: roundNumber(priceInUsd),
     date: new Date(req.body.transaction.date).toISOString(),
     creator,
   });
@@ -79,7 +91,7 @@ const addAsset = async (req, res, next) => {
     await user.save({ session: sess, validateModifiedOnly: true });
     sess.commitTransaction();
   } catch (err) {
-    console.log(err)
+    console.log(err);
     const error = new HttpError(
       "Adding new asset asset failed, try again.",
       500
@@ -96,7 +108,7 @@ const updateAsset = async (req, res, next) => {
     return next(new HttpError("Error!", 422));
   }
 
-  const { price, currency, quantity, date } = req.body;
+  const { price, currency, quantity, date, type } = req.body;
 
   let asset;
   try {
@@ -121,6 +133,7 @@ const updateAsset = async (req, res, next) => {
   if (currency) asset.currency = currency;
   if (quantity) asset.quantity = quantity;
   if (date) asset.date = new Date(date).toISOString();
+  if (type !== asset.type) asset.type = type;
 
   try {
     await asset.save();

@@ -1,6 +1,5 @@
 import { FC, ChangeEvent, useState, useContext } from 'react';
 import { format } from 'date-fns';
-import numeral from 'numeral';
 import PropTypes from 'prop-types';
 import {
   Tooltip,
@@ -31,6 +30,7 @@ import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
 import BulkActions from './BulkActions';
 import { AuthContext } from '../../../utils/context/authContext';
 import { transactionTypes } from '../../../constants/common';
+import { formatAmountAndCurrency } from '../../../utils/functions';
 
 interface RecentOrdersTableProps {
   assets: Asset[];
@@ -186,7 +186,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
               </TableCell>
               <TableCell>Transaction Details</TableCell>
               <TableCell>Category</TableCell>
-              <TableCell align="right">Quantity</TableCell>
+              <TableCell align="right">Quantity/Cost</TableCell>
               <TableCell align="right">Price</TableCell>
               <TableCell align="right">Actions</TableCell>
             </TableRow>
@@ -236,8 +236,13 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
                       gutterBottom
                       noWrap
                     >
-                      {asset.quantity}
+                      {asset.quantity > 0 ? asset.quantity : null}
                     </Typography>
+                    {asset.quantity > 0 && (
+                      <Typography variant="body2" color="text.secondary" noWrap>
+                        {formatAmountAndCurrency(asset.price, asset.currency, asset.quantity)}
+                      </Typography>
+                    )}
                   </TableCell>
                   <TableCell align="right">
                     <Typography
@@ -247,9 +252,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
                       gutterBottom
                       noWrap
                     >
-                      {numeral(asset.price).format(`${asset.currency}0,0.00`)}{' '}
-                      &nbsp;
-                      {asset.currency}
+                      {formatAmountAndCurrency(asset.price, asset.currency)}
                     </Typography>
                     <Typography
                       variant="body2"

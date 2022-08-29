@@ -1,18 +1,40 @@
+export const currencies = [
+  {
+    value: 'USD',
+    label: '$',
+    left: true
+  },
+  {
+    value: 'EUR',
+    label: '€',
+    left: true
+  },
+  {
+    value: 'BGN',
+    label: 'лв.',
+    left: false
+  },
+];
+
 export const transactionTypes = [
   {
     value: 0,
+    parent: 0,
     label: 'Buy'
   },
   {
     value: 1,
+    parent: 1,
     label: 'Sell'
   },
   {
     value: 2,
+    parent: 2,
     label: 'Transfer in'
   },
   {
     value: 3,
+    parent: 2,
     label: 'Transfer out'
   },
 ]; 
