@@ -11,6 +11,7 @@ import {
   deleteTransaction
 } from './transactionSlice';
 import TransactionModal from 'src/components/TransactionModal';
+import SuspenseLoader from 'src/components/SuspenseLoader';
 
 function RecentOrders() {
   const dispatch = useDispatch();
@@ -55,6 +56,10 @@ function RecentOrders() {
     );
     setOpenTransactionModal(true);
   };
+
+  if (transactionsStatus === 'loading') {
+    return <SuspenseLoader></SuspenseLoader>;
+  }
 
   return (
     <Card>

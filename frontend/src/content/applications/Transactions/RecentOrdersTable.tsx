@@ -73,7 +73,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
 
   const selectedBulkActions = selectedAssets.length > 0;
   const [page, setPage] = useState<number>(0);
-  const [limit, setLimit] = useState<number>(10);
+  const [limit, setLimit] = useState<number>(5);
   const [filters, setFilters] = useState<Filters>({
     category: null
   });
@@ -185,9 +185,9 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
                 />
               </TableCell>
               <TableCell>Transaction Details</TableCell>
-              <TableCell>Category</TableCell>
-              <TableCell align="right">Quantity/Cost</TableCell>
-              <TableCell align="right">Price</TableCell>
+              <TableCell align="right">Price per asset</TableCell>
+              <TableCell align="right">Quantity</TableCell>
+              <TableCell align="right">Amount</TableCell>
               <TableCell align="right">Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -212,47 +212,28 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
                       fontWeight="bold"
                       color="text.primary"
                       gutterBottom
-                      noWrap
                     >
-                      {asset.name}{' '}
-                      {asset.symbol ? '(' + asset.symbol + ')' : ''}
+                      <p
+                        title={
+                          asset.symbol
+                            ? asset.name + '(' + asset.symbol + ')'
+                            : asset.name
+                        }
+                        style={{
+                          padding: 0,
+                          margin: 0,
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          width: '25em'
+                        }}
+                      >
+                        {asset.name}{' '}
+                        {asset.symbol ? '(' + asset.symbol + ')' : ''}
+                      </p>
                     </Typography>
-                    <Typography variant="body2" color="text.secondary" noWrap>
+                    <Typography variant="body1" color="text.secondary" noWrap>
                       {format(new Date(asset.date), 'MMMM dd yyyy')}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    {
-                      categoryOptions.find(
-                        (category) => category.alias === asset.category
-                      )?.name
-                    }
-                  </TableCell>
-                  <TableCell align="right">
-                    <Typography
-                      variant="body1"
-                      fontWeight="bold"
-                      color="text.primary"
-                      gutterBottom
-                      noWrap
-                    >
-                      {asset.quantity > 0 ? asset.quantity : null}
-                    </Typography>
-                    {asset.quantity > 0 && (
-                      <Typography variant="body2" color="text.secondary" noWrap>
-                        {formatAmountAndCurrency(asset.price, asset.currency, asset.quantity)}
-                      </Typography>
-                    )}
-                  </TableCell>
-                  <TableCell align="right">
-                    <Typography
-                      variant="body1"
-                      fontWeight="bold"
-                      color="text.primary"
-                      gutterBottom
-                      noWrap
-                    >
-                      {formatAmountAndCurrency(asset.price, asset.currency)}
                     </Typography>
                     <Typography
                       variant="body2"
@@ -270,6 +251,68 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
                         )?.label
                       }
                     </Typography>
+                  </TableCell>
+                  <TableCell align="right">
+                    {asset.quantity !== 0 && asset.price !== 0 ? (
+                      <Typography variant="body1" color="text.secondary" noWrap>
+                        {formatAmountAndCurrency(
+                          asset.price_usd / Math.abs(asset.quantity),
+                          'USD'
+                        )}
+                      </Typography>
+                    ) : (
+                      <Typography variant="body1" color="text.secondary" noWrap>
+                        N/A
+                      </Typography>
+                    )}
+                  </TableCell>
+                  <TableCell align="right">
+                    <Typography
+                      variant="body1"
+                      fontWeight="bold"
+                      color="text.primary"
+                      gutterBottom
+                      noWrap
+                    >
+                      {asset.quantity !== 0 ? (
+                        asset.quantity
+                      ) : (
+                        <Typography
+                          variant="body1"
+                          color="text.secondary"
+                          noWrap
+                        >
+                          N/A
+                        </Typography>
+                      )}
+                    </Typography>
+                  </TableCell>
+                  <TableCell align="right">
+                    {asset.price === 0 ? (
+                      <Typography variant="body1" color="text.secondary" noWrap>
+                        N/A
+                      </Typography>
+                    ) : (
+                      <>
+                        <Typography
+                          variant="body1"
+                          fontWeight="bold"
+                          color="text.primary"
+                          gutterBottom
+                          noWrap
+                        >
+                          {formatAmountAndCurrency(asset.price, asset.currency)}
+                        </Typography>
+
+                        <Typography
+                          variant="body1"
+                          color="text.secondary"
+                          noWrap
+                        >
+                          {formatAmountAndCurrency(asset.price_usd, 'USD')}
+                        </Typography>
+                      </>
+                    )}
                   </TableCell>
 
                   <TableCell align="right">

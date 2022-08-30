@@ -19,7 +19,12 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { autocompleteStocks } from '../../utils/api/stocksApiFunction';
 import { autocompleteCrypto } from '../../utils/api/cryptoApiFunction';
-import { p2pPlatforms, transactionTypes, currencies } from '../../constants/common';
+import {
+  p2pPlatforms,
+  transactionTypes,
+  currencies,
+  commodities
+} from '../../constants/common';
 import {
   addNewTransaction,
   updateTransaction
@@ -63,9 +68,11 @@ function TransactionModal(props) {
       name: '',
       symbol: ''
     });
+    setAssetsDropdown([]);
 
     if (value.alias === 'p2p') setAssetsDropdown(p2pPlatforms);
-    else setAssetsDropdown([]);
+
+    if (value.alias === 'commodities') setAssetsDropdown(commodities);
 
     const ele = autoC.current?.getElementsByClassName(
       'MuiAutocomplete-clearIndicator'
@@ -149,6 +156,13 @@ function TransactionModal(props) {
     setTab(transactionType.parent);
   };
 
+  const handleDateChange = async (event) => {
+    return setTransactionForm({
+      ...transactionForm,
+      date: event
+    });
+  };
+
   function a11yProps(index) {
     return {
       id: `simple-tab-${index}`,
@@ -176,6 +190,7 @@ function TransactionModal(props) {
         date: new Date(),
         type: 0
       });
+      setTab(0);
     } catch (err) {
       // TODO catch error
     }
@@ -320,7 +335,7 @@ function TransactionModal(props) {
                   sx={{ gridColumn: '2', input: { textAlign: 'right' } }}
                   margin="dense"
                   id="price"
-                  label="Price"
+                  label="Amount"
                   type="number"
                   onChange={(event) => {
                     return setTransactionForm({
@@ -361,6 +376,7 @@ function TransactionModal(props) {
                 id="quantity"
                 label="Quantity"
                 type="number"
+                onFocus={(event) => event.target.select()}
                 onChange={(event) => {
                   return setTransactionForm({
                     ...transactionForm,
@@ -375,12 +391,7 @@ function TransactionModal(props) {
                 label="Date"
                 inputFormat="dd.MM.yyyy HH:mm:ss"
                 value={transactionForm.date}
-                onChange={(event) => {
-                  return setTransactionForm({
-                    ...transactionForm,
-                    date: event
-                  });
-                }}
+                onChange={(event) => handleDateChange(event)}
                 renderInput={(params) => (
                   <TextField sx={{ mt: 2, width: 1 }} {...params} />
                 )}

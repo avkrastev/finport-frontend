@@ -1,20 +1,25 @@
 const axios = require("axios");
 const cacheProvider = require("./cache-provider");
+const fns = require("date-fns");
 
 const exchangeRates = async (amount, from, date = "", base = "USD") => {
   let currencyRates;
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = fns.format(new Date(), "yyyy-MM-dd");
 
+  if (from === base) {
+    return amount;
+  }
   if (
     cacheProvider.instance().has("currency_rates") &&
-    (date !== "" || date === today)
+    date !== "" &&
+    date === today
   ) {
     currencyRates = cacheProvider.instance().get("currency_rates");
   } else {
     let historyDate = "latest";
     if (date < today) {
-      historyDate = new Date(date).toISOString().slice(0, 10);
+      historyDate = date;
     }
     const options = {
       method: "GET",

@@ -5,6 +5,7 @@ const User = require("../models/user");
 const mongoose = require("mongoose");
 const url = require("url");
 const { exchangeRates, roundNumber } = require("../utils/functions");
+const fns = require("date-fns");
 
 const getAsset = async (req, res, next) => {
   let assets;
@@ -56,11 +57,18 @@ const addAsset = async (req, res, next) => {
   const priceInUsd = await exchangeRates(
     req.body.transaction.price,
     req.body.transaction.currency,
-    req.body.transaction.date
+    fns.format(new Date(req.body.transaction.date), "yyyy-MM-dd")
   );
+  console.log(priceInUsd);
+  let quantity = req.body.transaction.quantity;
+  // TODO create global constants for types
+  if (req.body.transaction.type === 1 || req.body.transaction.type === 3) {
+    quantity = -Math.abs(quantity);
+  }
 
   const addNewAsset = new Asset({
     ...req.body.transaction,
+    quantity,
     price_usd: roundNumber(priceInUsd),
     date: new Date(req.body.transaction.date).toISOString(),
     creator,
@@ -130,9 +138,32 @@ const updateAsset = async (req, res, next) => {
   }
 
   if (price) asset.price = price;
-  if (currency) asset.currency = currency;
-  if (quantity) asset.quantity = quantity;
-  if (date) asset.date = new Date(date).toISOString();
+  if (currency) {
+    asset.currency = currency;
+    const priceInUsd = await exchangeRates(
+      asset.price,
+      asset.currency,
+      fns.format(new Date(asset.date), "yyyy-MM-dd")
+    );
+    asset.price_usd = priceInUsd;
+  }
+  if (quantity) {
+    // TODO create global constants for types
+    if (asset.type === 1 || asset.type === 3) {
+      asset.quantity = -Math.abs(quantity);
+    } else {
+      asset.quantity = quantity;
+    }
+  }
+  if (date) {
+    const priceInUsd = await exchangeRates(
+      asset.price,
+      asset.currency,
+      fns.format(new Date(date), "yyyy-MM-dd")
+    );
+    asset.price_usd = priceInUsd;
+    asset.date = new Date(date).toISOString();
+  }
   if (type !== asset.type) asset.type = type;
 
   try {

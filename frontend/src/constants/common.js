@@ -39,6 +39,19 @@ export const transactionTypes = [
   },
 ]; 
 
+export const commodities = [
+  {
+    name: 'Silver',
+    logo: 'silver.png',
+    description: ''
+  },
+  {
+    name: 'Gold',
+    logo: 'silver.png',
+    description: ''
+  },
+]
+
 export const p2pPlatforms = [
   {
     name: 'PeerBerry',
@@ -69,5 +82,15 @@ export const p2pPlatforms = [
     name: 'LenderMarket',
     logo: 'lendermarket.png',
     website: 'https://lendermarket.com/'
+  },
+  {
+    name: 'Bondora',
+    logo: 'bondora.png',
+    website: 'https://www.bondora.com/'
+  },
+  {
+    name: 'Rendity',
+    logo: 'rendity.png',
+    website: 'https://rendity.com/'
   },
 ]
