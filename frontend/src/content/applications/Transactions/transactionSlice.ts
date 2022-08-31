@@ -22,13 +22,21 @@ interface Transaction {
 
 interface TransactionState {
   transactions: Transaction[];
+  crypto: Transaction[];
   status: string;
+  addStatus: string;
+  updateStatus: string;
+  deleteStatus: string;
   error: string;
 }
 
 const initialState: TransactionState = {
   transactions: [],
-  status: 'idle', //'idle' | 'loading' | 'succeeded' | 'failed'
+  crypto: [],
+  status: 'idle', //'idle' | 'loading' | 'succeeded' | 'failed',
+  addStatus: 'idle', //'idle' | 'loading' | 'succeeded' | 'failed',
+  updateStatus: 'idle', //'idle' | 'loading' | 'succeeded' | 'failed',
+  deleteStatus: 'idle', //'idle' | 'loading' | 'succeeded' | 'failed',
   error: null
 };
 
@@ -80,6 +88,11 @@ const transactionsSlice = createSlice({
   reducers: {
     changeTransactionStatus(state, action) {
       state.status = action.payload;
+    },
+    resetStatuses(state) {
+      state.addStatus = 'idle';
+      state.updateStatus = 'idle';
+      state.deleteStatus = 'idle';
     }
   },
   extraReducers(builder) {
@@ -98,36 +111,70 @@ const transactionsSlice = createSlice({
         state.status = 'failed';
         state.error = action.error.message;
       })
+      .addCase(addNewTransaction.pending, (state) => {
+        state.addStatus = 'loading';
+      })
       .addCase(addNewTransaction.fulfilled, (state, action) => {
+        state.addStatus = 'succeeded';
         state.transactions.push(action.payload);
         state.transactions.sort(
           (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
         );
       })
+      .addCase(addNewTransaction.rejected, (state, action) => {
+        state.addStatus = 'failed';
+        state.error = action.error.message;
+      })
+      .addCase(updateTransaction.pending, (state) => {
+        state.updateStatus = 'loading';
+      })
       .addCase(updateTransaction.fulfilled, (state, action) => {
+        state.updateStatus = 'succeeded';
         const { id } = action.payload;
-        const transactions = state.transactions.filter(transaction => transaction.id !== id);
+        const transactions = state.transactions.filter(
+          (transaction) => transaction.id !== id
+        );
         state.transactions = [...transactions, action.payload];
         state.transactions.sort(
           (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
         );
       })
+      .addCase(updateTransaction.rejected, (state, action) => {
+        state.updateStatus = 'failed';
+        console.log(action);
+        state.error = action.error.message;
+      })
+      .addCase(deleteTransaction.pending, (state) => {
+        state.deleteStatus = 'loading';
+      })
       .addCase(
         deleteTransaction.fulfilled,
         (state, action: PayloadAction<string>) => {
+          state.deleteStatus = 'succeeded';
           const transactions = state.transactions.filter(
             (transaction) => transaction.id !== action.payload
           );
           state.transactions = transactions;
         }
       )
+      .addCase(deleteTransaction.rejected, (state, action) => {
+        state.deleteStatus = 'failed';
+        state.error = action.error.message;
+      })
+      .addCase(deleteTransactions.pending, (state) => {
+        state.deleteStatus = 'loading';
+      })
       .addCase(deleteTransactions.fulfilled, (state, action) => {
         const transactions = state.transactions.filter(
           (transaction) => !action.payload.includes(transaction.id)
         );
 
         state.transactions = transactions;
-      });
+      })
+      .addCase(deleteTransactions.rejected, (state, action) => {
+        state.deleteStatus = 'failed';
+        state.error = action.error.message;
+      })
   }
 });
 
@@ -135,9 +182,16 @@ export const selectAllTransactions = (state: RootState) =>
   state.transactions.transactions;
 export const getTransactionsStatus = (state: RootState) =>
   state.transactions.status;
+export const getTransactionAddStatus = (state: RootState) =>
+  state.transactions.addStatus;
+export const getTransactionUpdateStatus = (state: RootState) =>
+  state.transactions.updateStatus;
+export const getTransactionDeleteStatus = (state: RootState) =>
+  state.transactions.deleteStatus;
 export const getTransactionsError = (state: RootState) =>
   state.transactions.error;
 
-export const { changeTransactionStatus } = transactionsSlice.actions;
+export const { changeTransactionStatus, resetStatuses } =
+  transactionsSlice.actions;
 
 export default transactionsSlice.reducer;

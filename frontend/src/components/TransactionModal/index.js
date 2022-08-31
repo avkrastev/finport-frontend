@@ -44,6 +44,7 @@ function TransactionModal(props) {
     id: '',
     category: '',
     name: '',
+    asset_id: '',
     symbol: '',
     currency: 'USD',
     price: '',
@@ -87,6 +88,7 @@ function TransactionModal(props) {
       setTransactionForm({
         ...transactionForm,
         name: value.name,
+        asset_id: value.id,
         symbol: value.symbol
       });
     }
@@ -183,6 +185,7 @@ function TransactionModal(props) {
         id: '',
         category: '',
         name: '',
+        asset_id: '',
         symbol: '',
         currency: 'USD',
         price: '',

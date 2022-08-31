@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import {
   Box,
   Typography,
@@ -32,18 +31,6 @@ const MainContent = styled(Box)(
 `
 );
 
-const TypographyH1 = styled(Typography)(
-  ({ theme }) => `
-  font-size: ${theme.typography.pxToRem(75)};
-`
-);
-
-const TypographyH3 = styled(Typography)(
-  ({ theme }) => `
-  color: ${theme.colors.alpha.black[50]};
-`
-);
-
 const OutlinedInputWrapper = styled(OutlinedInput)(
   ({ theme }) => `
     background-color: ${theme.colors.alpha.white[100]};
@@ -57,46 +44,6 @@ const ButtonNotify = styled(Button)(
 );
 
 function StatusComingSoon() {
-
-  const calculateTimeLeft = () => {
-    const difference = +new Date(`2022`) - +new Date();
-    let timeLeft = {};
-
-    if (difference > 0) {
-      timeLeft = {
-        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-        minutes: Math.floor((difference / 1000 / 60) % 60),
-        seconds: Math.floor((difference / 1000) % 60)
-      };
-    }
-
-    return timeLeft;
-  };
-
-  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
-
-  useEffect(() => {
-    setTimeout(() => {
-      setTimeLeft(calculateTimeLeft());
-    }, 1000);
-  });
-
-  const timerComponents = [];
-
-  Object.keys(timeLeft).forEach((interval) => {
-    if (!timeLeft[interval]) {
-      return;
-    }
-
-    timerComponents.push(
-      <Box textAlign="center" px={3}>
-        <TypographyH1 variant="h1">{timeLeft[interval]}</TypographyH1>
-        <TypographyH3 variant="h3">{interval}</TypographyH3>
-      </Box>
-    );
-  });
-
   return (
     <>
       <Helmet>
@@ -116,7 +63,8 @@ function StatusComingSoon() {
                 fontWeight="normal"
                 sx={{ mb: 4 }}
               >
-                We're working on implementing the last features before our launch!
+                We're working on implementing the last features before our
+                launch!
               </Typography>
             </Container>
             <img
@@ -124,10 +72,6 @@ function StatusComingSoon() {
               height={200}
               src="/static/images/status/coming-soon.svg"
             />
-          </Box>
-
-          <Box display="flex" justifyContent="center">
-            {timerComponents.length ? timerComponents : <>Time's up!</>}
           </Box>
 
           <Container maxWidth="sm">

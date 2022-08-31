@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import transactionReducer from 'src/content/applications/Transactions/transactionSlice';
+import cryptoSlice from 'src/content/dashboards/Crypto/cryptoSlice';
 
 export const store = configureStore({
   reducer: {
-    transactions: transactionReducer
+    transactions: transactionReducer,
+    crypto: cryptoSlice
   }
 });
 

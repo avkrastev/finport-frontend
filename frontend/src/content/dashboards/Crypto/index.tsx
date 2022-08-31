@@ -6,17 +6,32 @@ import Footer from 'src/components/Footer';
 
 import AccountBalance from '../AccountBalance';
 import Wallets from '../Wallets';
-import AccountSecurity from '../AccountSecurity';
 import WatchList from '../WatchList';
+import { useDispatch, useSelector } from 'react-redux';
+import {} from 'src/content/applications/Transactions/transactionSlice';
+import { useEffect } from 'react';
+import { AppDispatch } from 'src/app/store';
+import { fetchCrypto, getCryptoStatus, selectAllCrypto } from './cryptoSlice';
+import BasicTable from '../BasicTable';
 
 function DashboardCrypto() {
+  const dispatch: AppDispatch = useDispatch();
+  const crypto = useSelector(selectAllCrypto);
+  const cryptoStatus = useSelector(getCryptoStatus);
+  console.log(crypto);
+  useEffect(() => {
+    if (cryptoStatus === 'idle') {
+      dispatch(fetchCrypto());
+    }
+  }, [cryptoStatus, dispatch]);
+
   return (
     <>
       <Helmet>
         <title>Crypto Dashboard</title>
       </Helmet>
       <PageTitleWrapper>
-        <PageHeader title="Crypto Portfolio"/>
+        <PageHeader title="Crypto Portfolio" />
       </PageTitleWrapper>
       <Container maxWidth="lg">
         <Grid
@@ -29,11 +44,11 @@ function DashboardCrypto() {
           <Grid item xs={12}>
             <AccountBalance />
           </Grid>
-          <Grid item lg={8} xs={12}>
-            <Wallets />
+          <Grid item xs={12}>
+            <BasicTable crypto={crypto} />
           </Grid>
-          <Grid item lg={4} xs={12}>
-            <AccountSecurity />
+          <Grid item lg={12} xs={12}>
+            <Wallets />
           </Grid>
           <Grid item xs={12}>
             <WatchList />

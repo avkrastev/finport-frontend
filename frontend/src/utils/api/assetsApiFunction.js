@@ -2,8 +2,25 @@ import axios from 'axios';
 
 export async function getAssets() {
   const token = JSON.parse(localStorage.getItem('userData')).token;
+
   try {
     const response = await axios.get('http://localhost:3005/api/assets', {
+      headers: {
+        Authorization: `Basic ${token}`
+      }
+    });
+
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getCryptoAssets() {
+  const token = JSON.parse(localStorage.getItem('userData')).token;
+
+  try {
+    const response = await axios.get('http://localhost:3005/api/assets/crypto', {
       headers: {
         Authorization: `Basic ${token}`
       }
@@ -37,25 +54,25 @@ export async function addNewAsset(transaction) {
 }
 
 export async function updateAsset(transaction) {
-    const token = JSON.parse(localStorage.getItem('userData')).token;
-    try {
-      const response = await axios.patch(
-        `http://localhost:3005/api/assets/${transaction.id}`,
-        {
-          ...transaction
-        },
-        {
-          headers: {
-            Authorization: `Basic ${token}`
-          }
+  const token = JSON.parse(localStorage.getItem('userData')).token;
+  try {
+    const response = await axios.patch(
+      `http://localhost:3005/api/assets/${transaction.id}`,
+      {
+        ...transaction
+      },
+      {
+        headers: {
+          Authorization: `Basic ${token}`
         }
-      );
-  
-      return response;
-    } catch (error) {
-      console.log(error);
-    }
+      }
+    );
+
+    return response;
+  } catch (error) {
+    console.log(error);
   }
+}
 
 export async function deleteAsset(id) {
   const token = JSON.parse(localStorage.getItem('userData')).token;
@@ -99,14 +116,11 @@ export async function deleteAssets(ids) {
 export async function getAssetById(id) {
   const token = JSON.parse(localStorage.getItem('userData')).token;
   try {
-    const response = await axios.get(
-      `http://localhost:3005/api/assets/${id}`,
-      {
-        headers: {
-          Authorization: `Basic ${token}`
-        }
+    const response = await axios.get(`http://localhost:3005/api/assets/${id}`, {
+      headers: {
+        Authorization: `Basic ${token}`
       }
-    );
+    });
 
     return response;
   } catch (error) {

@@ -184,7 +184,7 @@ function LoginForm() {
                     <Button
                         sx={{ marginTop: 2 }}
                         component={RouterLink}
-                        to="/dashboards/crypto"
+                        to="/"
                         size="large"
                         variant="contained"
                         disabled={!formState.isValid}

@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const url = require("url");
 const { exchangeRates, roundNumber } = require("../utils/functions");
 const fns = require("date-fns");
+const { ObjectId } = require("mongodb");
 
 const getAsset = async (req, res, next) => {
   let assets;
@@ -16,6 +17,7 @@ const getAsset = async (req, res, next) => {
     assets = await Asset.find({ creator, ...queryObject }).sort({
       date: "desc",
     });
+
   } catch (err) {
     const error = new HttpError("Something went wrong!", 500);
     return next(error);
@@ -27,6 +29,53 @@ const getAsset = async (req, res, next) => {
   }
 
   res.json({ assets });
+};
+
+const getCryptoAsset = async (req, res, next) => {
+  const creator = req.userData.userId;
+
+  await Asset.aggregate(
+    [
+      {
+        $match: {
+          category: "crypto",
+          creator: ObjectId(creator),
+        },
+      },
+      {
+        $group: {
+          _id: {
+            name: "$name",
+            symbol: "$symbol",
+          },
+          totalSum: {
+            $sum: "$price_usd",
+          },
+          totalQuantity: {
+            $sum: "$quantity",
+          },
+        },
+      },
+      {
+        $sort: {
+          totalSum: -1,
+        },
+      },
+    ],
+    function (err, data) {
+      if (err) {
+        console.log(err);
+        const error = new HttpError("Something went wrong!", 500);
+        return next(error);
+      }
+      if (!data) {
+        const error = new HttpError("Could not find any assets!", 404);
+        return next(error);
+      }
+
+      res.json({ assets: data });
+    }
+  );
 };
 
 const getAssetById = async (req, res, next) => {
@@ -59,17 +108,22 @@ const addAsset = async (req, res, next) => {
     req.body.transaction.currency,
     fns.format(new Date(req.body.transaction.date), "yyyy-MM-dd")
   );
-  console.log(priceInUsd);
+
   let quantity = req.body.transaction.quantity;
+  let price = req.body.transaction.price;
+  let price_usd = roundNumber(priceInUsd);
   // TODO create global constants for types
   if (req.body.transaction.type === 1 || req.body.transaction.type === 3) {
     quantity = -Math.abs(quantity);
+    price = -Math.abs(price);
+    price_usd = -Math.abs(price_usd);
   }
 
   const addNewAsset = new Asset({
     ...req.body.transaction,
     quantity,
-    price_usd: roundNumber(priceInUsd),
+    price,
+    price_usd,
     date: new Date(req.body.transaction.date).toISOString(),
     creator,
   });
@@ -147,14 +201,7 @@ const updateAsset = async (req, res, next) => {
     );
     asset.price_usd = priceInUsd;
   }
-  if (quantity) {
-    // TODO create global constants for types
-    if (asset.type === 1 || asset.type === 3) {
-      asset.quantity = -Math.abs(quantity);
-    } else {
-      asset.quantity = quantity;
-    }
-  }
+  if (quantity) asset.quantity = quantity;
   if (date) {
     const priceInUsd = await exchangeRates(
       asset.price,
@@ -164,7 +211,23 @@ const updateAsset = async (req, res, next) => {
     asset.price_usd = priceInUsd;
     asset.date = new Date(date).toISOString();
   }
-  if (type !== asset.type) asset.type = type;
+  if (type !== asset.type) {
+    const priceInUsd = await exchangeRates(
+      asset.price,
+      asset.currency,
+      fns.format(new Date(asset.date), "yyyy-MM-dd")
+    );
+    if (type === 1 || type === 3) {
+      asset.quantity = -Math.abs(quantity);
+      asset.price = -Math.abs(price);
+      asset.price_usd = -Math.abs(priceInUsd);
+    } else {
+      asset.quantity = Math.abs(quantity);
+      asset.price = Math.abs(price);
+      asset.price_usd = Math.abs(priceInUsd);
+    }
+    asset.type = type;
+  }
 
   try {
     await asset.save();
@@ -266,3 +329,4 @@ exports.addAsset = addAsset;
 exports.updateAsset = updateAsset;
 exports.deleteAsset = deleteAsset;
 exports.deleteAssets = deleteAssets;
+exports.getCryptoAsset = getCryptoAsset;
