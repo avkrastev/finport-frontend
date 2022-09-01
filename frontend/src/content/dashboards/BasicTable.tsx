@@ -8,6 +8,7 @@ import Paper from '@mui/material/Paper';
 import { formatAmountAndCurrency, roundNumber } from 'src/utils/functions';
 import Icon from 'react-crypto-icons';
 import { Typography } from '@mui/material';
+import Text from 'src/components/Text';
 
 export default function BasicTable({ crypto }) {
   return (
@@ -16,15 +17,16 @@ export default function BasicTable({ crypto }) {
         <TableHead>
           <TableRow>
             <TableCell>Coin</TableCell>
-            <TableCell align="right">Price</TableCell>
+            <TableCell align="right">Current Price</TableCell>
+            <TableCell align="right">Average Net Cost</TableCell>
             <TableCell align="right">Holdings</TableCell>
             <TableCell align="right">P&amp;L</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {crypto.map((row) => (
+          {crypto?.map((row) => (
             <TableRow
-              key={row._id.name}
+              key={row.name}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
               <TableCell component="th" scope="row">
@@ -35,7 +37,7 @@ export default function BasicTable({ crypto }) {
                     flexWrap: 'wrap'
                   }}
                 >
-                  <Icon name={row._id.symbol.toLowerCase()} size={20} /> &nbsp;
+                  <Icon name={row.symbol.toLowerCase()} size={20} /> &nbsp;
                   &nbsp;
                   <Typography
                     variant="body1"
@@ -43,21 +45,58 @@ export default function BasicTable({ crypto }) {
                     color="text.primary"
                     noWrap
                   >
-                    {row._id.name}
+                    {row.name}
                   </Typography>
                   &nbsp;&nbsp;
                   <Typography variant="body1" color="text.secondary" noWrap>
-                    {row._id.symbol}
+                    {row.symbol}
                   </Typography>
                 </div>
               </TableCell>
               <TableCell align="right">
-                {formatAmountAndCurrency(row.totalSum, 'USD')}
+                <Typography variant="body1" color="text.primary" noWrap>
+                  {formatAmountAndCurrency(row.currentPrice, 'USD')}
+                </Typography>
               </TableCell>
               <TableCell align="right">
-                {roundNumber(row.totalQuantity).toFixed(2)}
+                <Typography variant="body1" color="text.primary" noWrap>
+                  {formatAmountAndCurrency(row.averageNetCost, 'USD')}
+                </Typography>
               </TableCell>
-              <TableCell align="right">Soon</TableCell>
+              <TableCell align="right">
+                <Typography
+                  variant="body1"
+                  fontWeight="bold"
+                  color="text.primary"
+                  noWrap
+                >
+                  {formatAmountAndCurrency(row.holdingValue, 'USD')}
+                </Typography>
+                <Typography variant="body2" noWrap gutterBottom>
+                  {row.holdingQuantity} {row.symbol}
+                </Typography>
+              </TableCell>
+              <TableCell align="right">
+                <Typography
+                  variant="body1"
+                  fontWeight="bold"
+                  color="text.primary"
+                  noWrap
+                >
+                  {formatAmountAndCurrency(row.difference, 'USD')}
+                </Typography>
+                <Typography variant="body2" noWrap gutterBottom>
+                  {row.differenceInPercents >= 0 ? (
+                    <Text color="success">
+                      {roundNumber(row.differenceInPercents)}%
+                    </Text>
+                  ) : (
+                    <Text color="error">
+                      {roundNumber(row.differenceInPercents)}%
+                    </Text>
+                  )}
+                </Typography>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

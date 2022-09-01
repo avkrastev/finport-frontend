@@ -22,7 +22,6 @@ interface Transaction {
 
 interface TransactionState {
   transactions: Transaction[];
-  crypto: Transaction[];
   status: string;
   addStatus: string;
   updateStatus: string;
@@ -32,7 +31,6 @@ interface TransactionState {
 
 const initialState: TransactionState = {
   transactions: [],
-  crypto: [],
   status: 'idle', //'idle' | 'loading' | 'succeeded' | 'failed',
   addStatus: 'idle', //'idle' | 'loading' | 'succeeded' | 'failed',
   updateStatus: 'idle', //'idle' | 'loading' | 'succeeded' | 'failed',

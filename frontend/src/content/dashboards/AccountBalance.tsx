@@ -1,5 +1,4 @@
 import {
-  Button,
   Card,
   Box,
   Grid,
@@ -15,8 +14,15 @@ import {
 
 import { styled } from '@mui/material/styles';
 import TrendingUp from '@mui/icons-material/TrendingUp';
+import TrendingDown from '@mui/icons-material/TrendingDown';
 import AccountBalanceChart from './AccountBalanceChart';
 import Text from 'src/components/Text';
+import {
+  formatAmountAndCurrency,
+  roundNumber,
+  stringToColour
+} from 'src/utils/functions';
+import Icon from 'react-crypto-icons';
 
 const AccountBalanceChartWrapper = styled(AccountBalanceChart)(
   () => `
@@ -34,61 +40,89 @@ const AvatarSuccess = styled(Avatar)(
 `
 );
 
-function AccountBalance() {
-  
+const AvatarFail = styled(Avatar)(
+  ({ theme }) => `
+      background-color: ${theme.colors.error.main};
+      color: ${theme.palette.error.contrastText};
+      width: ${theme.spacing(8)};
+      height: ${theme.spacing(8)};
+      box-shadow: ${theme.colors.shadows.error};
+`
+);
+
+function AccountBalance({ crypto }) {
+  let percentages = [];
+  let names = [];
+  let colors = [
+    '#f9c74f',
+    '#52796f',
+    '#f3722c',
+    '#001219',
+    '#84a98c',
+    '#90be6d',
+    '#354f52'
+  ];
+  for (let coin of crypto.stats) {
+    const percent = (coin.holdingValue / crypto.sums.holdingValue) * 100;
+    percentages.push(parseFloat(percent.toFixed(2)));
+    names.push(coin.name);
+    //colors.push(stringToColour(coin.assetId));
+  }
+
   const cryptoBalance = {
     datasets: [
       {
-        data: [20, 10, 40, 30],
-        backgroundColor: ['#ff9900', '#1c81c2', '#333', '#5c6ac0']
+        data: percentages,
+        backgroundColor: colors
       }
     ],
-    labels: ['Bitcoin', 'Ripple', 'Cardano', 'Ethereum']
+    labels: names
   };
 
   return (
     <Card>
       <Grid spacing={0} container>
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={5}>
           <Box p={4}>
             <Typography sx={{ pb: 3 }} variant="h4">
-              Account Balance
+              Account Balance / Total Invested
             </Typography>
             <Box>
               <Typography variant="h1" gutterBottom>
-                $54,584.23
+                {formatAmountAndCurrency(crypto?.sums?.holdingValue, 'USD')}
+                &nbsp;/&nbsp;
+                {formatAmountAndCurrency(crypto?.sums?.sums, 'USD')}
               </Typography>
               <Typography
                 variant="h4"
                 fontWeight="normal"
                 color="text.secondary"
               >
-                1.0045983485234 BTC
+                {crypto?.sums?.inBitcoin} BTC
               </Typography>
               <Box display="flex" sx={{ py: 4 }} alignItems="center">
-                <AvatarSuccess sx={{ mr: 2 }} variant="rounded">
-                  <TrendingUp fontSize="large" />
-                </AvatarSuccess>
+                {crypto?.sums?.difference > 0 ? (
+                  <AvatarSuccess sx={{ mr: 2 }} variant="rounded">
+                    <TrendingUp fontSize="large" />
+                  </AvatarSuccess>
+                ) : (
+                  <AvatarFail sx={{ mr: 2 }} variant="rounded">
+                    <TrendingDown fontSize="large" />
+                  </AvatarFail>
+                )}
                 <Box>
-                  <Typography variant="h4">+ $3,594.00</Typography>
-                  <Typography variant="subtitle2" noWrap>
-                    this month
+                  <Typography variant="h4">
+                    {formatAmountAndCurrency(
+                      crypto?.sums?.difference,
+                      'USD'
+                    )}
+                  </Typography>
+                  <Typography variant="subtitle2" noWrap align="right">
+                    {roundNumber(crypto?.sums?.differenceInPercents)} %
                   </Typography>
                 </Box>
               </Box>
             </Box>
-            <Grid container spacing={3}>
-              <Grid sm item>
-                <Button fullWidth variant="outlined">
-                  Send
-                </Button>
-              </Grid>
-              <Grid sm item>
-                <Button fullWidth variant="contained">
-                  Receive
-                </Button>
-              </Grid>
-            </Grid>
           </Box>
         </Grid>
         <Grid
@@ -97,7 +131,7 @@ function AccountBalance() {
           alignItems="center"
           item
           xs={12}
-          md={6}
+          md={7}
         >
           <Hidden mdDown>
             <Divider absolute orientation="vertical" />
@@ -112,128 +146,56 @@ function AccountBalance() {
                 justifyContent="center"
                 alignItems="center"
               >
-                <Box style={{ height: '160px' }}>
+                <Box>
                   <AccountBalanceChartWrapper data={cryptoBalance} />
                 </Box>
               </Grid>
               <Grid xs={12} sm={7} item display="flex" alignItems="center">
                 <List disablePadding sx={{ width: '100%' }}>
-                  <ListItem disableGutters>
-                    <ListItemAvatar
-                      sx={{
-                        minWidth: '46px',
-                        display: 'flex',
-                        alignItems: 'center'
-                      }}
-                    >
-                      <img
-                        alt="BTC"
-                        src="/static/images/placeholders/logo/bitcoin.png"
-                      />
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary="BTC"
-                      primaryTypographyProps={{ variant: 'h5', noWrap: true }}
-                      secondary="Bitcoin"
-                      secondaryTypographyProps={{
-                        variant: 'subtitle2',
-                        noWrap: true
-                      }}
-                    />
-                    <Box>
-                      <Typography align="right" variant="h4" noWrap>
-                        20%
-                      </Typography>
-                      <Text color="success">+2.54%</Text>
-                    </Box>
-                  </ListItem>
-                  <ListItem disableGutters>
-                    <ListItemAvatar
-                      sx={{
-                        minWidth: '46px',
-                        display: 'flex',
-                        alignItems: 'center'
-                      }}
-                    >
-                      <img
-                        alt="XRP"
-                        src="/static/images/placeholders/logo/ripple.png"
-                      />
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary="XRP"
-                      primaryTypographyProps={{ variant: 'h5', noWrap: true }}
-                      secondary="Ripple"
-                      secondaryTypographyProps={{
-                        variant: 'subtitle2',
-                        noWrap: true
-                      }}
-                    />
-                    <Box>
-                      <Typography align="right" variant="h4" noWrap>
-                        10%
-                      </Typography>
-                      <Text color="error">-1.22%</Text>
-                    </Box>
-                  </ListItem>
-                  <ListItem disableGutters>
-                    <ListItemAvatar
-                      sx={{
-                        minWidth: '46px',
-                        display: 'flex',
-                        alignItems: 'center'
-                      }}
-                    >
-                      <img
-                        alt="ADA"
-                        src="/static/images/placeholders/logo/cardano.png"
-                      />
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary="ADA"
-                      primaryTypographyProps={{ variant: 'h5', noWrap: true }}
-                      secondary="Cardano"
-                      secondaryTypographyProps={{
-                        variant: 'subtitle2',
-                        noWrap: true
-                      }}
-                    />
-                    <Box>
-                      <Typography align="right" variant="h4" noWrap>
-                        40%
-                      </Typography>
-                      <Text color="success">+10.50%</Text>
-                    </Box>
-                  </ListItem>
-                  <ListItem disableGutters>
-                    <ListItemAvatar
-                      sx={{
-                        minWidth: '46px',
-                        display: 'flex',
-                        alignItems: 'center'
-                      }}
-                    >
-                      <img
-                        alt="ETH"
-                        src="/static/images/placeholders/logo/ethereum.png"
-                      />
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary="ETH"
-                      primaryTypographyProps={{ variant: 'h5', noWrap: true }}
-                      secondary="Ethereum"
-                      secondaryTypographyProps={{
-                        variant: 'subtitle2',
-                        noWrap: true
-                      }}
-                    />
-                    <Box>
-                      <Typography align="right" variant="h4" noWrap>
-                        30%
-                      </Typography>
-                      <Text color="error">-12.38%</Text>
-                    </Box>
-                  </ListItem>
+                  {crypto.stats.slice(0, 4).map((coin, i) => {
+                    return (
+                      <ListItem disableGutters key={i}>
+                        <ListItemAvatar
+                          sx={{
+                            minWidth: '46px',
+                            display: 'flex',
+                            alignItems: 'center'
+                          }}
+                        >
+                          <Icon name={coin.symbol.toLowerCase()} size={25} />{' '}
+                          &nbsp;
+                        </ListItemAvatar>
+                        <ListItemText
+                          primary={coin.symbol}
+                          primaryTypographyProps={{
+                            variant: 'h5',
+                            noWrap: true
+                          }}
+                          secondary={coin.name}
+                          secondaryTypographyProps={{
+                            variant: 'subtitle2',
+                            noWrap: true
+                          }}
+                        />
+                        <Box>
+                          <Typography align="right" variant="h4" noWrap>
+                            {percentages[i]}%
+                          </Typography>
+                          <Typography align="right" variant="subtitle2" noWrap>
+                            {coin.differenceInPercents >= 0 ? (
+                              <Text color="success">
+                                {roundNumber(coin.differenceInPercents)}%
+                              </Text>
+                            ) : (
+                              <Text color="error">
+                                {roundNumber(coin.differenceInPercents)}%
+                              </Text>
+                            )}
+                          </Typography>
+                        </Box>
+                      </ListItem>
+                    );
+                  })}
                 </List>
               </Grid>
             </Grid>

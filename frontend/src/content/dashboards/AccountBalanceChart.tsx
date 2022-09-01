@@ -13,7 +13,8 @@ const AccountBalanceChart: FC<ChartProps> = ({ data: dataProp, ...rest }) => {
   const data = {
     datasets: dataProp.datasets.map((dataset) => ({
       ...dataset,
-      borderWidth: 10,
+
+      borderWidth: 2,
       borderColor: theme.colors.alpha.white[100],
       hoverBorderColor: theme.colors.alpha.white[30]
     })),

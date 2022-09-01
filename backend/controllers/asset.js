@@ -7,6 +7,7 @@ const url = require("url");
 const { exchangeRates, roundNumber } = require("../utils/functions");
 const fns = require("date-fns");
 const { ObjectId } = require("mongodb");
+const CoinGecko = require("coingecko-api");
 
 const getAsset = async (req, res, next) => {
   let assets;
@@ -17,7 +18,6 @@ const getAsset = async (req, res, next) => {
     assets = await Asset.find({ creator, ...queryObject }).sort({
       date: "desc",
     });
-
   } catch (err) {
     const error = new HttpError("Something went wrong!", 500);
     return next(error);
@@ -34,8 +34,25 @@ const getAsset = async (req, res, next) => {
 const getCryptoAsset = async (req, res, next) => {
   const creator = req.userData.userId;
 
-  await Asset.aggregate(
-    [
+  try {
+    const totalSumQuery = await Asset.aggregate([
+      {
+        $match: {
+          category: "crypto",
+          creator: ObjectId(creator),
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalSum: {
+            $sum: "$price_usd",
+          },
+        },
+      },
+    ]).exec();
+
+    const statsByCoinQuery = await Asset.aggregate([
       {
         $match: {
           category: "crypto",
@@ -46,6 +63,7 @@ const getCryptoAsset = async (req, res, next) => {
         $group: {
           _id: {
             name: "$name",
+            assetId: "$asset_id",
             symbol: "$symbol",
           },
           totalSum: {
@@ -56,26 +74,64 @@ const getCryptoAsset = async (req, res, next) => {
           },
         },
       },
-      {
-        $sort: {
-          totalSum: -1,
-        },
-      },
-    ],
-    function (err, data) {
-      if (err) {
-        console.log(err);
-        const error = new HttpError("Something went wrong!", 500);
-        return next(error);
-      }
-      if (!data) {
-        const error = new HttpError("Could not find any assets!", 404);
-        return next(error);
-      }
+    ]).exec();
 
-      res.json({ assets: data });
+    const sumsResult = totalSumQuery[0];
+    const statsResults = statsByCoinQuery;
+
+    const CoinGeckoClient = new CoinGecko();
+
+    const coinIds = statsResults.map((coin) => coin._id.assetId);
+
+    let currentPrices = await CoinGeckoClient.simple.price({
+      ids: coinIds,
+      vs_currencies: "usd",
+    });
+
+    if (currentPrices.code === 200) {
+      currentPrices = currentPrices.data;
+    } else {
+      const error = new HttpError("Something went wrong!", 500);
+      return next(error);
     }
-  );
+
+    let actualSum = 0;
+    const stats = statsResults
+      .map((coin) => {
+        let newData = {};
+        newData.name = coin._id.name;
+        newData.symbol = coin._id.symbol;
+        newData.assetId = coin._id.assetId;
+        newData.totalSum = coin.totalSum;
+        newData.currentPrice = currentPrices[coin._id.assetId].usd;
+        newData.holdingValue =
+          currentPrices[coin._id.assetId].usd * coin.totalQuantity;
+        newData.difference = (coin.totalSum - newData.holdingValue) * -1;
+        newData.holdingQuantity = coin.totalQuantity;
+        newData.averageNetCost =
+          coin.totalQuantity > 0 ? coin.totalSum / coin.totalQuantity : 0;
+        newData.differenceInPercents =
+          newData.averageNetCost > 0
+            ? (newData.currentPrice / newData.averageNetCost - 1) * 100
+            : 0;
+
+        actualSum += newData.holdingValue;
+        return newData;
+      })
+      .sort((a, b) => b["holdingValue"] - a["holdingValue"]);
+
+    let sums = {};
+    sums.totalSum = sumsResult.totalSum;
+    sums.holdingValue = actualSum;
+    sums.difference = (sums.totalSum - sums.holdingValue) * -1;
+    sums.differenceInPercents = (actualSum / sums.totalSum - 1) * 100;
+    sums.inBitcoin = actualSum / currentPrices["bitcoin"].usd;
+
+    res.json({ assets: { sums, stats } });
+  } catch (err) {
+    const error = new HttpError("Something went wrong!", 500);
+    return next(error);
+  }
 };
 
 const getAssetById = async (req, res, next) => {

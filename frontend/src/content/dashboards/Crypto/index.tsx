@@ -13,12 +13,13 @@ import { useEffect } from 'react';
 import { AppDispatch } from 'src/app/store';
 import { fetchCrypto, getCryptoStatus, selectAllCrypto } from './cryptoSlice';
 import BasicTable from '../BasicTable';
+import CollapsibleTable from '../CollapsibleTable';
 
 function DashboardCrypto() {
   const dispatch: AppDispatch = useDispatch();
   const crypto = useSelector(selectAllCrypto);
   const cryptoStatus = useSelector(getCryptoStatus);
-  console.log(crypto);
+
   useEffect(() => {
     if (cryptoStatus === 'idle') {
       dispatch(fetchCrypto());
@@ -42,17 +43,20 @@ function DashboardCrypto() {
           spacing={3}
         >
           <Grid item xs={12}>
-            <AccountBalance />
+            <AccountBalance crypto={crypto} />
           </Grid>
+          {/* <Grid item xs={12}>
+            <BasicTable crypto={crypto?.stats} />
+          </Grid> */}
           <Grid item xs={12}>
-            <BasicTable crypto={crypto} />
+            <CollapsibleTable crypto={crypto?.stats} />
           </Grid>
-          <Grid item lg={12} xs={12}>
+          {/* <Grid item lg={12} xs={12}>
             <Wallets />
           </Grid>
           <Grid item xs={12}>
             <WatchList />
-          </Grid>
+          </Grid> */}
         </Grid>
       </Container>
       <Footer />

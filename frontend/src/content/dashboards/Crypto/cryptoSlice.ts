@@ -2,27 +2,32 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '../../../app/store';
 import { getCryptoAssets } from '../../../utils/api/assetsApiFunction';
 
-interface Crypto {
+interface Stats {
   _id: object;
   totalSum: string;
   totalQuantity: number;
 }
 
-interface TransactionState {
-  crypto: Crypto[];
+interface Crypto {
+  stats: Stats[];
+  sums: {};
+}
+
+interface CryptoState {
+  crypto: Crypto;
   status: string;
   error: string;
 }
 
-const initialState: TransactionState = {
-  crypto: [],
+const initialState: CryptoState = {
+  crypto: { sums: {}, stats: [] },
   status: 'idle', //'idle' | 'loading' | 'succeeded' | 'failed',
   error: null
 };
 
 export const fetchCrypto = createAsyncThunk('crypto/fetchCrypto', async () => {
   const response = await getCryptoAssets();
-  return response.data.assets as Crypto[];
+  return response.data.assets as Crypto;
 });
 
 const cryptoSlice = createSlice({
@@ -36,7 +41,7 @@ const cryptoSlice = createSlice({
       })
       .addCase(
         fetchCrypto.fulfilled,
-        (state, action: PayloadAction<Crypto[]>) => {
+        (state, action: PayloadAction<Crypto>) => {
           state.status = 'succeeded';
           state.crypto = action.payload;
         }

@@ -4,7 +4,7 @@ import PageTitleWrapper from 'src/components/PageTitleWrapper';
 import { Grid, Container } from '@mui/material';
 import Footer from 'src/components/Footer';
 
-import AccountBalance from '../dashboards/AccountBalance';
+import Wallets from '../dashboards/Wallets';
 
 function Overview() {
   return (
@@ -24,7 +24,7 @@ function Overview() {
           spacing={3}
         >
           <Grid item xs={12}>
-            <AccountBalance />
+          <Wallets />
           </Grid>
         </Grid>
       </Container>

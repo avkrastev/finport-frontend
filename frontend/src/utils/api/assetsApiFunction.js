@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-export async function getAssets() {
+export async function getAssets(query) {
   const token = JSON.parse(localStorage.getItem('userData')).token;
 
   try {
-    const response = await axios.get('http://localhost:3005/api/assets', {
+    const response = await axios.get('http://localhost:3005/api/assets?'+query, {
       headers: {
         Authorization: `Basic ${token}`
       }
