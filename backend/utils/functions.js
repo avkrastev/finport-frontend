@@ -1,13 +1,19 @@
 const axios = require("axios");
 const cacheProvider = require("./cache-provider");
 const fns = require("date-fns");
+const { CURRENCIES } = require("./currencies");
 
-const exchangeRates = async (amount, from, date = "", base = "USD") => {
+const exchangeRatesBaseUSD = async (
+  amount,
+  from,
+  date = "",
+  returnList = false
+) => {
   let currencyRates;
 
   const today = fns.format(new Date(), "yyyy-MM-dd");
 
-  if (from === base) {
+  if (from === "USD") {
     return amount;
   }
   if (
@@ -18,12 +24,12 @@ const exchangeRates = async (amount, from, date = "", base = "USD") => {
     currencyRates = cacheProvider.instance().get("currency_rates");
   } else {
     let historyDate = "latest";
-    if (date < today) {
+    if (date && date < today) {
       historyDate = date;
     }
     const options = {
       method: "GET",
-      url: "https://api.exchangerate.host/" + historyDate + "?base=" + base,
+      url: "https://api.exchangerate.host/" + historyDate + "?base=USD",
     };
 
     await axios
@@ -39,6 +45,9 @@ const exchangeRates = async (amount, from, date = "", base = "USD") => {
       .catch(function (error) {
         console.error(error);
       });
+  }
+  if (returnList) {
+    return currencyRates;
   }
   if (currencyRates.hasOwnProperty(from.toUpperCase())) {
     return amount / currencyRates[from.toUpperCase()];
@@ -63,5 +72,20 @@ const roundNumber = (num, scale = 2) => {
   }
 };
 
-exports.exchangeRates = exchangeRates;
+const sumsInSupportedCurrencies = async(holdingValue, totalValue) => {
+  const rates = await this.exchangeRatesBaseUSD(0, "", "", true);
+
+  return CURRENCIES.filter(
+    (currency) => currency.value !== "USD"
+  ).map((currency) => {
+    let exchanged = {};
+    exchanged.currency = currency.value;
+    exchanged.holdingAmount = rates[currency.value] * holdingValue;
+    exchanged.totalAmount = rates[currency.value] * totalValue;
+    return exchanged;
+  });
+}
+
+exports.exchangeRatesBaseUSD = exchangeRatesBaseUSD;
 exports.roundNumber = roundNumber;
+exports.sumsInSupportedCurrencies = sumsInSupportedCurrencies;

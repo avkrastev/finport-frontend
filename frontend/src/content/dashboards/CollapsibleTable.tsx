@@ -20,19 +20,32 @@ import { format } from 'date-fns';
 import { transactionTypes } from 'src/constants/common';
 import { useTheme } from '@mui/material';
 
-function Row(props: { row: any }) {
-  const { row } = props;
+function Row(props: { row: any; asset: string }) {
+  const { row, asset } = props;
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [historyData, setHistoryData] = React.useState([]);
 
-  const handleShowHistory = async (assetId) => {
+  const handleShowHistory = async (row) => {
     setOpen(!open);
     if (!open) {
-      const params = new URLSearchParams({
-        category: 'crypto',
-        asset_id: assetId
-      });
+      let params;
+      switch (asset) {
+        case 'crypto':
+          params = new URLSearchParams({
+            category: asset,
+            asset_id: row.assetId
+          });
+          break;
+        case 'stocks':
+          params = new URLSearchParams({
+            category: asset,
+            symbol: row.symbol
+          });
+          break;
+        default:
+          params = '';
+      }
 
       const response = await getAssets(params.toString());
       if (response.status === 200) {
@@ -55,7 +68,11 @@ function Row(props: { row: any }) {
               flexWrap: 'wrap'
             }}
           >
-            <Icon name={row.symbol.toLowerCase()} size={20} /> &nbsp; &nbsp;
+            {asset === 'crypto' && (
+              <Box sx={{ mr: 1, lineHeight: 'normal' }}>
+                <Icon name={row.symbol.toLowerCase()} size={20} />
+              </Box>
+            )}
             <Typography
               variant="body1"
               fontWeight="bold"
@@ -118,7 +135,7 @@ function Row(props: { row: any }) {
           <IconButton
             aria-label="expand row"
             size="small"
-            onClick={() => handleShowHistory(row.assetId)}
+            onClick={() => handleShowHistory(row)}
           >
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
@@ -204,13 +221,13 @@ function Row(props: { row: any }) {
   );
 }
 
-export default function CollapsibleTable({ crypto }) {
+export default function CollapsibleTable({ crypto, asset }) {
   return (
     <TableContainer component={Paper}>
       <Table aria-label="collapsible table">
         <TableHead>
           <TableRow>
-            <TableCell>Coin</TableCell>
+            <TableCell>Asset</TableCell>
             <TableCell align="right">Current Price</TableCell>
             <TableCell align="right">Average Net Cost</TableCell>
             <TableCell align="right">Holdings</TableCell>
@@ -220,7 +237,7 @@ export default function CollapsibleTable({ crypto }) {
         </TableHead>
         <TableBody>
           {crypto.map((row) => (
-            <Row key={row.name} row={row} />
+            <Row key={row.name} row={row} asset={asset} />
           ))}
         </TableBody>
       </Table>

@@ -5,34 +5,31 @@ import { Grid, Container } from '@mui/material';
 import Footer from 'src/components/Footer';
 
 import AccountBalance from '../AccountBalance';
-import Wallets from '../Wallets';
-import WatchList from '../WatchList';
 import { useDispatch, useSelector } from 'react-redux';
 import {} from 'src/content/applications/Transactions/transactionSlice';
 import { useEffect } from 'react';
 import { AppDispatch } from 'src/app/store';
-import { fetchCrypto, getCryptoStatus, selectAllCrypto } from './cryptoSlice';
-import BasicTable from '../BasicTable';
+import { fetchStocks, getStocksStatus, selectAllStocks } from './stocksSlice';
 import CollapsibleTable from '../CollapsibleTable';
 
 function DashboardCrypto() {
   const dispatch: AppDispatch = useDispatch();
-  const crypto = useSelector(selectAllCrypto);
-  const cryptoStatus = useSelector(getCryptoStatus);
+  const crypto = useSelector(selectAllStocks);
+  const stocksStatus = useSelector(getStocksStatus);
 
   useEffect(() => {
-    if (cryptoStatus === 'idle') {
-      dispatch(fetchCrypto());
+    if (stocksStatus === 'idle') {
+      dispatch(fetchStocks());
     }
-  }, [cryptoStatus, dispatch]);
+  }, [stocksStatus, dispatch]);
 
   return (
     <>
       <Helmet>
-        <title>Crypto Dashboard</title>
+        <title>Stocks Dashboard</title>
       </Helmet>
       <PageTitleWrapper>
-        <PageHeader title="Crypto Portfolio" />
+        <PageHeader title="Stocks Portfolio" />
       </PageTitleWrapper>
       <Container maxWidth="lg">
         <Grid
@@ -43,20 +40,11 @@ function DashboardCrypto() {
           spacing={3}
         >
           <Grid item xs={12}>
-            <AccountBalance crypto={crypto} asset="crypto" />
-          </Grid>
-          {/* <Grid item xs={12}>
-            <BasicTable crypto={crypto?.stats} />
-          </Grid> */}
-          <Grid item xs={12}>
-            <CollapsibleTable crypto={crypto?.stats} asset="crypto" />
-          </Grid>
-          {/* <Grid item lg={12} xs={12}>
-            <Wallets />
+            <AccountBalance crypto={crypto} asset="stocks" />
           </Grid>
           <Grid item xs={12}>
-            <WatchList />
-          </Grid> */}
+            <CollapsibleTable crypto={crypto?.stats} asset="stocks" />
+          </Grid>
         </Grid>
       </Container>
       <Footer />

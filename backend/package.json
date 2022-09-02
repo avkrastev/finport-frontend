@@ -29,7 +29,8 @@
     "mongodb": "^4.5.0",
     "mongoose": ">=6.4.6",
     "mongoose-unique-validator": "^3.0.0",
-    "node-cache": "^5.1.2"
+    "node-cache": "^5.1.2",
+    "yahoo-stock-prices": "^1.1.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.15"

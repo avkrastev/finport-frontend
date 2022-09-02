@@ -17,11 +17,7 @@ import TrendingUp from '@mui/icons-material/TrendingUp';
 import TrendingDown from '@mui/icons-material/TrendingDown';
 import AccountBalanceChart from './AccountBalanceChart';
 import Text from 'src/components/Text';
-import {
-  formatAmountAndCurrency,
-  roundNumber,
-  stringToColour
-} from 'src/utils/functions';
+import { formatAmountAndCurrency, roundNumber } from 'src/utils/functions';
 import Icon from 'react-crypto-icons';
 
 const AccountBalanceChartWrapper = styled(AccountBalanceChart)(
@@ -50,23 +46,25 @@ const AvatarFail = styled(Avatar)(
 `
 );
 
-function AccountBalance({ crypto }) {
+function AccountBalance({ crypto, asset }) {
   let percentages = [];
   let names = [];
   let colors = [
-    '#f9c74f',
-    '#52796f',
-    '#f3722c',
+    '#ee9b00',
+    '#005f73',
+    '#e9d8a6',
+    '#94d2bd',
+    '#9b2226',
+    '#0a9396',
+    '#bb3e03',
     '#001219',
-    '#84a98c',
-    '#90be6d',
-    '#354f52'
+    '#9b2226',
+    '#ca6702'
   ];
   for (let coin of crypto.stats) {
     const percent = (coin.holdingValue / crypto.sums.holdingValue) * 100;
     percentages.push(parseFloat(percent.toFixed(2)));
     names.push(coin.name);
-    //colors.push(stringToColour(coin.assetId));
   }
 
   const cryptoBalance = {
@@ -78,7 +76,7 @@ function AccountBalance({ crypto }) {
     ],
     labels: names
   };
-
+  console.log(crypto);
   return (
     <Card>
       <Grid spacing={0} container>
@@ -91,15 +89,33 @@ function AccountBalance({ crypto }) {
               <Typography variant="h1" gutterBottom>
                 {formatAmountAndCurrency(crypto?.sums?.holdingValue, 'USD')}
                 &nbsp;/&nbsp;
-                {formatAmountAndCurrency(crypto?.sums?.sums, 'USD')}
+                {formatAmountAndCurrency(crypto?.sums?.totalSum, 'USD')}
               </Typography>
-              <Typography
-                variant="h4"
-                fontWeight="normal"
-                color="text.secondary"
-              >
-                {crypto?.sums?.inBitcoin} BTC
-              </Typography>
+              {crypto?.sums?.sumsInDifferentCurrencies?.map((item) => {
+                return (
+                  <Typography
+                    sx={{mb: 1}}
+                    key={item.currency}
+                    variant="h4"
+                    fontWeight="normal"
+                    color="text.secondary"
+                  >
+                    {formatAmountAndCurrency(item.holdingAmount, item.currency)}
+                    &nbsp;/&nbsp;
+                    {formatAmountAndCurrency(item.totalAmount, item.currency)}
+                  </Typography>
+                );
+              })}
+
+              {asset === 'crypto' && (
+                <Typography
+                  variant="h4"
+                  fontWeight="normal"
+                  color="text.secondary"
+                >
+                  {crypto?.sums?.inBitcoin} BTC
+                </Typography>
+              )}
               <Box display="flex" sx={{ py: 4 }} alignItems="center">
                 {crypto?.sums?.difference > 0 ? (
                   <AvatarSuccess sx={{ mr: 2 }} variant="rounded">
@@ -112,10 +128,7 @@ function AccountBalance({ crypto }) {
                 )}
                 <Box>
                   <Typography variant="h4">
-                    {formatAmountAndCurrency(
-                      crypto?.sums?.difference,
-                      'USD'
-                    )}
+                    {formatAmountAndCurrency(crypto?.sums?.difference, 'USD')}
                   </Typography>
                   <Typography variant="subtitle2" noWrap align="right">
                     {roundNumber(crypto?.sums?.differenceInPercents)} %
@@ -152,19 +165,20 @@ function AccountBalance({ crypto }) {
               </Grid>
               <Grid xs={12} sm={7} item display="flex" alignItems="center">
                 <List disablePadding sx={{ width: '100%' }}>
-                  {crypto.stats.slice(0, 4).map((coin, i) => {
+                  {crypto.stats.slice(0, 5).map((coin, i) => {
                     return (
                       <ListItem disableGutters key={i}>
-                        <ListItemAvatar
-                          sx={{
-                            minWidth: '46px',
-                            display: 'flex',
-                            alignItems: 'center'
-                          }}
-                        >
-                          <Icon name={coin.symbol.toLowerCase()} size={25} />{' '}
-                          &nbsp;
-                        </ListItemAvatar>
+                        {asset === 'crypto' && (
+                          <ListItemAvatar
+                            sx={{
+                              minWidth: '46px',
+                              display: 'flex',
+                              alignItems: 'center'
+                            }}
+                          >
+                            <Icon name={coin.symbol.toLowerCase()} size={25} />
+                          </ListItemAvatar>
+                        )}
                         <ListItemText
                           primary={coin.symbol}
                           primaryTypographyProps={{

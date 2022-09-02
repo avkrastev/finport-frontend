@@ -20,6 +20,7 @@ const Overview = Loader(lazy(() => import('src/content/overview')));
 
 // Dashboards
 const Crypto = Loader(lazy(() => import('src/content/dashboards/Crypto')));
+const Stocks = Loader(lazy(() => import('src/content/dashboards/Stocks')));
 
 // Applications
 const Transactions = Loader(
@@ -104,7 +105,7 @@ const routes = (isLoggedIn: any) => [
           },
           {
             path: 'stocks',
-            element: <StatusComingSoon />
+            element: <Stocks />
           },
           {
             path: 'p2p',

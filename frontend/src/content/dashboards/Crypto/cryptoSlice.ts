@@ -57,6 +57,6 @@ export const selectAllCrypto = (state: RootState) => state.crypto.crypto;
 export const getCryptoStatus = (state: RootState) => state.crypto.status;
 export const getCryptoError = (state: RootState) => state.crypto.error;
 
-export const {} = cryptoSlice.actions;
+//export const {} = cryptoSlice.actions;
 
 export default cryptoSlice.reducer;

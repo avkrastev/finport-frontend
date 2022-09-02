@@ -7,6 +7,7 @@ const {
   deleteAsset,
   deleteAssets,
   getCryptoAsset,
+  getStockAsset,
 } = require("../controllers/asset");
 const checkAuth = require("../middleware/auth");
 
@@ -20,6 +21,10 @@ router.get("/", (req, res, next) => {
 
 router.get("/crypto", (req, res, next) => {
   getCryptoAsset(req, res, next);
+});
+
+router.get("/stock", (req, res, next) => {
+  getStockAsset(req, res, next);
 });
 
 router.get("/:id", (req, res, next) => {
@@ -40,10 +45,6 @@ router.delete("/:id", (req, res, next) => {
 
 router.post("/deleteMany", (req, res, next) => {
   deleteAssets(req, res, next);
-});
-
-router.get("/crypto", (req, res, next) => {
-  getCryptoAsset(req, res, next);
 });
 
 module.exports = router;

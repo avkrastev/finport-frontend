@@ -36,16 +36,16 @@ export const roundNumber = (num, scale = 2) => {
   }
 };
 
-export const stringToColour = (str) => {
-  var hash = 0;
-  for (var i = 0; i < str.length; i++) {
+export const stringToColor = (str) => {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
       hash = str.charCodeAt(i) + ((hash << 5) - hash);
   }
-  var colour = '#';
-  for (var i = 0; i < 3; i++) {
-      var value = (hash >> (i * 8)) & 0xFF;
-      colour += ('00' + value.toString(16)).substr(-2);
+  let color = '#';
+  for (let j = 0; j < 3; j++) {
+      let value = (hash >> (j * 8)) & 0xFF;
+      color += ('00' + value.toString(16)).substr(-2);
   }
-  return colour;
+  return color;
 }
 
