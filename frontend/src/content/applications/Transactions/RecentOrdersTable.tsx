@@ -185,6 +185,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
                 />
               </TableCell>
               <TableCell>Transaction Details</TableCell>
+              <TableCell>Category</TableCell>
               <TableCell align="right">Price per asset</TableCell>
               <TableCell align="right">Quantity</TableCell>
               <TableCell align="right">Amount</TableCell>
@@ -250,6 +251,11 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
                           (type) => type.value === asset.type
                         )?.label
                       }
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="body1" color="text.secondary" noWrap>
+                      {authUserData.categories.find(category => category.alias === asset.category)?.name}
                     </Typography>
                   </TableCell>
                   <TableCell align="right">

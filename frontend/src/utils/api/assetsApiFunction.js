@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export async function getAssets(query) {
+export async function getAssets(query = '') {
   const token = JSON.parse(localStorage.getItem('userData')).token;
 
   try {
