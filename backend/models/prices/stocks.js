@@ -9,7 +9,7 @@ class StockPrices extends Prices {
     super();
     this.assets = assets;
     this.currency = currency;
-    this.category = "crypto"
+    this.category = "stocks";
   }
 
   async getPricesPerAssets() {

@@ -12,8 +12,8 @@ class StocksAssetStats extends AssetStats {
   async getPrices() {
     const ids = this.data.map((item) => item._id.symbol);
 
-    const cryptoPrices = new StocksPrices(ids, "USD");
-    this.currentPrices = await cryptoPrices.getPricesPerAssets();
+    const stocksPrices = new StocksPrices(ids, "USD");
+    this.currentPrices = await stocksPrices.getPricesPerAssets();
   }
 
   getStats() {
