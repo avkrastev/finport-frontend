@@ -14,6 +14,8 @@ const DataBuilder = require("../models/data-builder");
 const CryptoAssetStats = require("../models/stats/crypto");
 const StocksAssetStats = require("../models/stats/stocks");
 const ETFAssetStats = require("../models/stats/etf");
+const CommoditiesAssetStats = require("../models/stats/commodities");
+const MiscAssetStats = require("../models/stats/misc");
 
 const getAsset = async (req, res, next) => {
   let assets;
@@ -109,6 +111,64 @@ const getETFAsset = async (req, res, next) => {
 
     const ETFsAssetStats = new ETFAssetStats(statsResults, sumsResult);
     const assets = await ETFsAssetStats.getAllData();
+
+    assets.sums.sumsInDifferentCurrencies = await sumsInSupportedCurrencies(
+      assets.sums.holdingValue,
+      assets.sums.totalSum
+    );
+
+    res.json({ assets });
+  } catch (err) {
+    console.log(err);
+    const error = new HttpError("Something went wrong!", 500);
+    return next(error);
+  }
+};
+
+const getCommodityAsset = async (req, res, next) => {
+  const creator = req.userData.userId;
+
+  try {
+    const dataBuilder = new DataBuilder("commodities", creator);
+    const sumsResult = await Asset.aggregate(
+      dataBuilder.getTotalSumByCategoryPipeline()
+    ).exec();
+
+    const statsResults = await Asset.aggregate(
+      dataBuilder.getTotalSumsByCategoryAndAssetPipeline()
+    ).exec();
+
+    const commoditiesAssetStats = new CommoditiesAssetStats(statsResults, sumsResult);
+    const assets = await commoditiesAssetStats.getAllData();
+
+    assets.sums.sumsInDifferentCurrencies = await sumsInSupportedCurrencies(
+      assets.sums.holdingValue,
+      assets.sums.totalSum
+    );
+
+    res.json({ assets });
+  } catch (err) {
+    console.log(err);
+    const error = new HttpError("Something went wrong!", 500);
+    return next(error);
+  }
+};
+
+const getMiscAsset = async (req, res, next) => {
+  const creator = req.userData.userId;
+
+  try {
+    const dataBuilder = new DataBuilder("misc", creator);
+    const sumsResult = await Asset.aggregate(
+      dataBuilder.getTotalSumByCategoryPipeline()
+    ).exec();
+
+    const statsResults = await Asset.aggregate(
+      dataBuilder.getTotalSumsByCategoryAndAssetPipeline()
+    ).exec();
+
+    const miscAssetStats = new MiscAssetStats(statsResults, sumsResult);
+    const assets = await miscAssetStats.getAllData();
 
     assets.sums.sumsInDifferentCurrencies = await sumsInSupportedCurrencies(
       assets.sums.holdingValue,
@@ -377,3 +437,5 @@ exports.deleteAssets = deleteAssets;
 exports.getCryptoAsset = getCryptoAsset;
 exports.getStockAsset = getStockAsset;
 exports.getETFAsset = getETFAsset;
+exports.getCommodityAsset = getCommodityAsset;
+exports.getMiscAsset = getMiscAsset;

@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '../../../app/store';
-import { getStockAssets } from '../../../utils/api/assetsApiFunction';
+import { getAssetsByCategory } from '../../../utils/api/assetsApiFunction';
 
 interface Stats {
   _id: object;
@@ -26,7 +26,7 @@ const initialState: StocksState = {
 };
 
 export const fetchStocks = createAsyncThunk('stocks/fetchStocks', async () => {
-  const response = await getStockAssets();
+  const response = await getAssetsByCategory('stocks');
   return response.data.assets as Stocks;
 });
 

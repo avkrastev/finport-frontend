@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '../../../app/store';
-import { getCryptoAssets } from '../../../utils/api/assetsApiFunction';
+import { getAssetsByCategory } from '../../../utils/api/assetsApiFunction';
 
 interface Stats {
   _id: object;
@@ -26,7 +26,7 @@ const initialState: CryptoState = {
 };
 
 export const fetchCrypto = createAsyncThunk('crypto/fetchCrypto', async () => {
-  const response = await getCryptoAssets();
+  const response = await getAssetsByCategory('crypto');
   return response.data.assets as Crypto;
 });
 

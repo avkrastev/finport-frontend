@@ -44,6 +44,13 @@ function Row(props: { row: any; asset: string }) {
             symbol: row.symbol
           });
           break;
+        case 'commodities':
+        case 'misc':
+          params = new URLSearchParams({
+            category: asset,
+            name: row.name
+          });
+          break;
         default:
           params = '';
       }

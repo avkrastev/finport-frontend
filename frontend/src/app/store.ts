@@ -1,7 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit';
 import transactionReducer from 'src/content/applications/Transactions/transactionSlice';
+import commoditiesSlice from 'src/content/dashboards/Commodities/commoditiesSlice';
 import cryptoSlice from 'src/content/dashboards/Crypto/cryptoSlice';
 import ETFsSlice from 'src/content/dashboards/Etf/ETFsSlice';
+import miscSlice from 'src/content/dashboards/Misc/miscSlice';
 import stocksSlice from 'src/content/dashboards/Stocks/stocksSlice';
 
 export const store = configureStore({
@@ -10,6 +12,8 @@ export const store = configureStore({
     crypto: cryptoSlice,
     stocks: stocksSlice,
     ETFs: ETFsSlice,
+    commodities: commoditiesSlice,
+    misc: miscSlice
   }
 });
 

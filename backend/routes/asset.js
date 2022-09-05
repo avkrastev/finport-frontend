@@ -8,7 +8,9 @@ const {
   deleteAssets,
   getCryptoAsset,
   getStockAsset,
-  getETFAsset
+  getETFAsset,
+  getCommodityAsset,
+  getMiscAsset
 } = require("../controllers/asset");
 const checkAuth = require("../middleware/auth");
 
@@ -30,6 +32,14 @@ router.get("/stock", (req, res, next) => {
 
 router.get("/etf", (req, res, next) => {
   getETFAsset(req, res, next);
+});
+
+router.get("/commodities", (req, res, next) => {
+  getCommodityAsset(req, res, next);
+});
+
+router.get("/misc", (req, res, next) => {
+  getMiscAsset(req, res, next);
 });
 
 router.get("/:id", (req, res, next) => {

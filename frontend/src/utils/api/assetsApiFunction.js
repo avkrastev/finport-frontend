@@ -4,11 +4,14 @@ export async function getAssets(query = '') {
   const token = JSON.parse(localStorage.getItem('userData')).token;
 
   try {
-    const response = await axios.get('http://localhost:3005/api/assets?'+query, {
-      headers: {
-        Authorization: `Basic ${token}`
+    const response = await axios.get(
+      'http://localhost:3005/api/assets?' + query,
+      {
+        headers: {
+          Authorization: `Basic ${token}`
+        }
       }
-    });
+    );
 
     return response;
   } catch (error) {
@@ -16,47 +19,18 @@ export async function getAssets(query = '') {
   }
 }
 
-export async function getCryptoAssets() {
+export async function getAssetsByCategory(category) {
   const token = JSON.parse(localStorage.getItem('userData')).token;
 
   try {
-    const response = await axios.get('http://localhost:3005/api/assets/crypto', {
-      headers: {
-        Authorization: `Basic ${token}`
+    const response = await axios.get(
+      'http://localhost:3005/api/assets/' + category,
+      {
+        headers: {
+          Authorization: `Basic ${token}`
+        }
       }
-    });
-
-    return response;
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-export async function getStockAssets() {
-  const token = JSON.parse(localStorage.getItem('userData')).token;
-
-  try {
-    const response = await axios.get('http://localhost:3005/api/assets/stock', {
-      headers: {
-        Authorization: `Basic ${token}`
-      }
-    });
-
-    return response;
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-export async function getETFsAssets() {
-  const token = JSON.parse(localStorage.getItem('userData')).token;
-
-  try {
-    const response = await axios.get('http://localhost:3005/api/assets/etf', {
-      headers: {
-        Authorization: `Basic ${token}`
-      }
-    });
+    );
 
     return response;
   } catch (error) {

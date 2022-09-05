@@ -22,6 +22,8 @@ const Overview = Loader(lazy(() => import('src/content/overview')));
 const Crypto = Loader(lazy(() => import('src/content/dashboards/Crypto')));
 const Stocks = Loader(lazy(() => import('src/content/dashboards/Stocks')));
 const Etf = Loader(lazy(() => import('src/content/dashboards/Etf')));
+const Commodities = Loader(lazy(() => import('src/content/dashboards/Commodities')));
+const Misc = Loader(lazy(() => import('src/content/dashboards/Misc')));
 
 // Applications
 const Transactions = Loader(
@@ -118,12 +120,16 @@ const routes = (isLoggedIn: any) => [
           },
           {
             path: 'misc',
-            element: <StatusComingSoon />
+            element: <Misc />
           },
           {
             path: 'commodities',
+            element: <Commodities />
+          },
+          {
+            path: 'bonds',
             element: <StatusComingSoon />
-          }
+          },
         ]
       },
       {

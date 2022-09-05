@@ -5,31 +5,33 @@ import { Grid, Container } from '@mui/material';
 import Footer from 'src/components/Footer';
 
 import AccountBalance from '../AccountBalance';
+import Wallets from '../Wallets';
+import WatchList from '../WatchList';
 import { useDispatch, useSelector } from 'react-redux';
 import {} from 'src/content/applications/Transactions/transactionSlice';
 import { useEffect } from 'react';
 import { AppDispatch } from 'src/app/store';
-import { fetchCrypto, getCryptoStatus, selectAllCrypto } from './cryptoSlice';
+import { fetchMisc, getMiscStatus, selectAllMisc } from './miscSlice';
 import CollapsibleTable from '../CollapsibleTable';
 
 function DashboardCrypto() {
   const dispatch: AppDispatch = useDispatch();
-  const crypto = useSelector(selectAllCrypto);
-  const cryptoStatus = useSelector(getCryptoStatus);
+  const misc = useSelector(selectAllMisc);
+  const miscStatus = useSelector(getMiscStatus);
 
   useEffect(() => {
-    if (cryptoStatus === 'idle') {
-      dispatch(fetchCrypto());
+    if (miscStatus === 'idle') {
+      dispatch(fetchMisc());
     }
-  }, [cryptoStatus, dispatch]);
+  }, [miscStatus, dispatch]);
 
   return (
     <>
       <Helmet>
-        <title>Crypto Dashboard</title>
+        <title>Miscellaneous Dashboard</title>
       </Helmet>
       <PageTitleWrapper>
-        <PageHeader title="Crypto Portfolio" />
+        <PageHeader title="Miscellaneous Portfolio" />
       </PageTitleWrapper>
       <Container maxWidth="lg">
         <Grid
@@ -40,11 +42,17 @@ function DashboardCrypto() {
           spacing={3}
         >
           <Grid item xs={12}>
-            <AccountBalance assets={crypto} asset="crypto" />
+            <AccountBalance assets={misc} asset="misc" />
+          </Grid> 
+          <Grid item xs={12}>
+            <CollapsibleTable assets={misc?.stats} asset="misc" />
+          </Grid>
+          {/* <Grid item lg={12} xs={12}>
+            <Wallets />
           </Grid>
           <Grid item xs={12}>
-            <CollapsibleTable assets={crypto?.stats} asset="crypto" />
-          </Grid>
+            <WatchList />
+          </Grid> */}
         </Grid>
       </Container>
       <Footer />
