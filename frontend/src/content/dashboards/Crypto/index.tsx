@@ -43,13 +43,13 @@ function DashboardCrypto() {
           spacing={3}
         >
           <Grid item xs={12}>
-            <AccountBalance crypto={crypto} asset="crypto" />
+            <AccountBalance assets={crypto} asset="crypto" />
           </Grid>
           {/* <Grid item xs={12}>
             <BasicTable crypto={crypto?.stats} />
           </Grid> */}
           <Grid item xs={12}>
-            <CollapsibleTable crypto={crypto?.stats} asset="crypto" />
+            <CollapsibleTable assets={crypto?.stats} asset="crypto" />
           </Grid>
           {/* <Grid item lg={12} xs={12}>
             <Wallets />

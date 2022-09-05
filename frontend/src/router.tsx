@@ -21,6 +21,7 @@ const Overview = Loader(lazy(() => import('src/content/overview')));
 // Dashboards
 const Crypto = Loader(lazy(() => import('src/content/dashboards/Crypto')));
 const Stocks = Loader(lazy(() => import('src/content/dashboards/Stocks')));
+const Etf = Loader(lazy(() => import('src/content/dashboards/Etf')));
 
 // Applications
 const Transactions = Loader(
@@ -113,7 +114,7 @@ const routes = (isLoggedIn: any) => [
           },
           {
             path: 'etf',
-            element: <StatusComingSoon />
+            element: <Etf />
           },
           {
             path: 'misc',

@@ -38,6 +38,7 @@ function Row(props: { row: any; asset: string }) {
           });
           break;
         case 'stocks':
+        case 'etf':
           params = new URLSearchParams({
             category: asset,
             symbol: row.symbol
@@ -221,7 +222,7 @@ function Row(props: { row: any; asset: string }) {
   );
 }
 
-export default function CollapsibleTable({ crypto, asset }) {
+export default function CollapsibleTable({ assets, asset }) {
   return (
     <TableContainer component={Paper}>
       <Table aria-label="collapsible table">
@@ -236,7 +237,7 @@ export default function CollapsibleTable({ crypto, asset }) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {crypto.map((row) => (
+          {assets.map((row) => (
             <Row key={row.name} row={row} asset={asset} />
           ))}
         </TableBody>

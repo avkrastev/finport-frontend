@@ -48,6 +48,22 @@ export async function getStockAssets() {
   }
 }
 
+export async function getETFsAssets() {
+  const token = JSON.parse(localStorage.getItem('userData')).token;
+
+  try {
+    const response = await axios.get('http://localhost:3005/api/assets/etf', {
+      headers: {
+        Authorization: `Basic ${token}`
+      }
+    });
+
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 export async function addNewAsset(transaction) {
   const token = JSON.parse(localStorage.getItem('userData')).token;
   try {

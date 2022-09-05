@@ -13,12 +13,11 @@ class AssetStats {
       let stats = {};
       stats.name = item._id.name;
       stats.symbol = item._id.symbol;
-      stats.assetId = item._id.assetId;
       stats.totalSum = item.totalSum;
       stats.holdingQuantity = item.totalQuantity;
-      stats.currentPrice = this.currentPrices[stats.assetId].usd;
+      stats.currentPrice = this.currentPrices[stats.symbol].price;
       stats.holdingValue =
-        this.currentPrices[stats.assetId].usd * stats.holdingQuantity;
+        this.currentPrices[stats.symbol].price * stats.holdingQuantity;
       stats.averageNetCost =
         stats.holdingQuantity > 0 ? item.totalSum / stats.holdingQuantity : 0;
       stats.difference = (item.totalSum - stats.holdingValue) * -1;

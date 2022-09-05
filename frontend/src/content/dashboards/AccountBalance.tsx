@@ -46,7 +46,7 @@ const AvatarFail = styled(Avatar)(
 `
 );
 
-function AccountBalance({ crypto, asset }) {
+function AccountBalance({ assets, asset }) {
   let percentages = [];
   let names = [];
   let colors = [
@@ -61,13 +61,13 @@ function AccountBalance({ crypto, asset }) {
     '#9b2226',
     '#ca6702'
   ];
-  for (let coin of crypto.stats) {
-    const percent = (coin.holdingValue / crypto.sums.holdingValue) * 100;
+  for (let coin of assets.stats) {
+    const percent = (coin.holdingValue / assets.sums.holdingValue) * 100;
     percentages.push(parseFloat(percent.toFixed(2)));
     names.push(coin.name);
   }
 
-  const cryptoBalance = {
+  const assetsBalance = {
     datasets: [
       {
         data: percentages,
@@ -76,22 +76,22 @@ function AccountBalance({ crypto, asset }) {
     ],
     labels: names
   };
-  console.log(crypto);
+
   return (
     <Card>
       <Grid spacing={0} container>
-        <Grid item xs={12} md={5}>
+        <Grid item xs={12} md={6}>
           <Box p={4}>
             <Typography sx={{ pb: 3 }} variant="h4">
               Account Balance / Total Invested
             </Typography>
             <Box>
               <Typography variant="h1" gutterBottom>
-                {formatAmountAndCurrency(crypto?.sums?.holdingValue, 'USD')}
+                {formatAmountAndCurrency(assets?.sums?.holdingValue, 'USD')}
                 &nbsp;/&nbsp;
-                {formatAmountAndCurrency(crypto?.sums?.totalSum, 'USD')}
+                {formatAmountAndCurrency(assets?.sums?.totalSum, 'USD')}
               </Typography>
-              {crypto?.sums?.sumsInDifferentCurrencies?.map((item) => {
+              {assets?.sums?.sumsInDifferentCurrencies?.map((item) => {
                 return (
                   <Typography
                     sx={{mb: 1}}
@@ -113,11 +113,11 @@ function AccountBalance({ crypto, asset }) {
                   fontWeight="normal"
                   color="text.secondary"
                 >
-                  {crypto?.sums?.inBitcoin} BTC
+                  {assets?.sums?.inBitcoin} BTC
                 </Typography>
               )}
               <Box display="flex" sx={{ py: 4 }} alignItems="center">
-                {crypto?.sums?.difference > 0 ? (
+                {assets?.sums?.difference > 0 ? (
                   <AvatarSuccess sx={{ mr: 2 }} variant="rounded">
                     <TrendingUp fontSize="large" />
                   </AvatarSuccess>
@@ -128,10 +128,10 @@ function AccountBalance({ crypto, asset }) {
                 )}
                 <Box>
                   <Typography variant="h4">
-                    {formatAmountAndCurrency(crypto?.sums?.difference, 'USD')}
+                    {formatAmountAndCurrency(assets?.sums?.difference, 'USD')}
                   </Typography>
                   <Typography variant="subtitle2" noWrap align="right">
-                    {roundNumber(crypto?.sums?.differenceInPercents)} %
+                    {roundNumber(assets?.sums?.differenceInPercents)} %
                   </Typography>
                 </Box>
               </Box>
@@ -144,7 +144,7 @@ function AccountBalance({ crypto, asset }) {
           alignItems="center"
           item
           xs={12}
-          md={7}
+          md={6}
         >
           <Hidden mdDown>
             <Divider absolute orientation="vertical" />
@@ -160,12 +160,12 @@ function AccountBalance({ crypto, asset }) {
                 alignItems="center"
               >
                 <Box>
-                  <AccountBalanceChartWrapper data={cryptoBalance} />
+                  <AccountBalanceChartWrapper data={assetsBalance} />
                 </Box>
               </Grid>
               <Grid xs={12} sm={7} item display="flex" alignItems="center">
                 <List disablePadding sx={{ width: '100%' }}>
-                  {crypto.stats.slice(0, 5).map((coin, i) => {
+                  {assets.stats.slice(0, 5).map((coin, i) => {
                     return (
                       <ListItem disableGutters key={i}>
                         {asset === 'crypto' && (

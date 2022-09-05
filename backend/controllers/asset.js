@@ -13,6 +13,7 @@ const fns = require("date-fns");
 const DataBuilder = require("../models/data-builder");
 const CryptoAssetStats = require("../models/stats/crypto");
 const StocksAssetStats = require("../models/stats/stocks");
+const ETFAssetStats = require("../models/stats/etf");
 
 const getAsset = async (req, res, next) => {
   let assets;
@@ -79,6 +80,35 @@ const getStockAsset = async (req, res, next) => {
 
     const stocksAssetStats = new StocksAssetStats(statsResults, sumsResult);
     const assets = await stocksAssetStats.getAllData();
+
+    assets.sums.sumsInDifferentCurrencies = await sumsInSupportedCurrencies(
+      assets.sums.holdingValue,
+      assets.sums.totalSum
+    );
+
+    res.json({ assets });
+  } catch (err) {
+    console.log(err);
+    const error = new HttpError("Something went wrong!", 500);
+    return next(error);
+  }
+};
+
+const getETFAsset = async (req, res, next) => {
+  const creator = req.userData.userId;
+
+  try {
+    const dataBuilder = new DataBuilder("etf", creator);
+    const sumsResult = await Asset.aggregate(
+      dataBuilder.getTotalSumByCategoryPipeline()
+    ).exec();
+
+    const statsResults = await Asset.aggregate(
+      dataBuilder.getTotalSumsByCategoryAndAssetPipeline()
+    ).exec();
+
+    const ETFsAssetStats = new ETFAssetStats(statsResults, sumsResult);
+    const assets = await ETFsAssetStats.getAllData();
 
     assets.sums.sumsInDifferentCurrencies = await sumsInSupportedCurrencies(
       assets.sums.holdingValue,
@@ -346,3 +376,4 @@ exports.deleteAsset = deleteAsset;
 exports.deleteAssets = deleteAssets;
 exports.getCryptoAsset = getCryptoAsset;
 exports.getStockAsset = getStockAsset;
+exports.getETFAsset = getETFAsset;

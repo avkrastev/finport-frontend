@@ -1,5 +1,6 @@
 const StocksPrices = require("../prices/stocks");
 const AssetStats = require("./asset");
+const { exchangeRatesBaseUSD } = require("../../utils/functions");
 
 class StocksAssetStats extends AssetStats {
   constructor(data, totals) {
@@ -14,6 +15,7 @@ class StocksAssetStats extends AssetStats {
 
     const stocksPrices = new StocksPrices(ids, "USD");
     this.currentPrices = await stocksPrices.getPricesPerAssets();
+    this.exchangeRatesList = await exchangeRatesBaseUSD(0, "", "", true);
   }
 
   getStats() {
@@ -23,7 +25,13 @@ class StocksAssetStats extends AssetStats {
       stats.symbol = item._id.symbol;
       stats.totalSum = item.totalSum;
       stats.holdingQuantity = item.totalQuantity;
-      stats.currentPrice = this.currentPrices[stats.symbol].price;
+      if (this.currentPrices[stats.symbol].currency !== "USD") {
+        stats.currentPrice =
+          this.exchangeRatesList[this.currentPrices[stats.symbol].currency] *
+          this.currentPrices[stats.symbol].price;
+      } else {
+        stats.currentPrice = this.currentPrices[stats.symbol].price;
+      }
       stats.holdingValue =
         this.currentPrices[stats.symbol].price * stats.holdingQuantity;
       stats.averageNetCost =

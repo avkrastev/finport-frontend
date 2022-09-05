@@ -9,27 +9,27 @@ import { useDispatch, useSelector } from 'react-redux';
 import {} from 'src/content/applications/Transactions/transactionSlice';
 import { useEffect } from 'react';
 import { AppDispatch } from 'src/app/store';
-import { fetchStocks, getStocksStatus, selectAllStocks } from './stocksSlice';
+import { fetchETFs, getETFsStatus, selectAllETFs } from './ETFsSlice';
 import CollapsibleTable from '../CollapsibleTable';
 
 function DashboardCrypto() {
   const dispatch: AppDispatch = useDispatch();
-  const stocks = useSelector(selectAllStocks);
-  const stocksStatus = useSelector(getStocksStatus);
+  const ETFs = useSelector(selectAllETFs);
+  const stocksStatus = useSelector(getETFsStatus);
 
   useEffect(() => {
     if (stocksStatus === 'idle') {
-      dispatch(fetchStocks());
+      dispatch(fetchETFs());
     }
   }, [stocksStatus, dispatch]);
 
   return (
     <>
       <Helmet>
-        <title>Stocks Dashboard</title>
+        <title>ETFs Dashboard</title>
       </Helmet>
       <PageTitleWrapper>
-        <PageHeader title="Stocks Portfolio" />
+        <PageHeader title="ETFs Portfolio" />
       </PageTitleWrapper>
       <Container maxWidth="lg">
         <Grid
@@ -40,10 +40,10 @@ function DashboardCrypto() {
           spacing={3}
         >
           <Grid item xs={12}>
-            <AccountBalance assets={stocks} asset="stocks" />
+            <AccountBalance assets={ETFs} asset="etf" />
           </Grid>
           <Grid item xs={12}>
-            <CollapsibleTable assets={stocks?.stats} asset="stocks" />
+            <CollapsibleTable assets={ETFs?.stats} asset="etf" />
           </Grid>
         </Grid>
       </Container>
