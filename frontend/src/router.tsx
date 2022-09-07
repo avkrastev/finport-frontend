@@ -131,6 +131,10 @@ const routes = (isLoggedIn: any) => [
             path: 'bonds',
             element: <StatusComingSoon />
           },
+          {
+            path: 'realestate',
+            element: <StatusComingSoon />
+          },
         ]
       },
       {
