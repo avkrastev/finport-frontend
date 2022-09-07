@@ -19,9 +19,10 @@ import { getAssets } from 'src/utils/api/assetsApiFunction';
 import { format } from 'date-fns';
 import { transactionTypes } from 'src/constants/common';
 import { useTheme } from '@mui/material';
+import CollapsibleTableSkeleton from './CollapsibleTableSkeleton';
 
-function Row(props: { row: any; asset: string }) {
-  const { row, asset } = props;
+function Row(props: { row: any; category: string }) {
+  const { row, category } = props;
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [historyData, setHistoryData] = React.useState([]);
@@ -30,17 +31,17 @@ function Row(props: { row: any; asset: string }) {
     setOpen(!open);
     if (!open) {
       let params;
-      switch (asset) {
+      switch (category) {
         case 'crypto':
           params = new URLSearchParams({
-            category: asset,
+            category,
             asset_id: row.assetId
           });
           break;
         case 'stocks':
         case 'etf':
           params = new URLSearchParams({
-            category: asset,
+            category,
             symbol: row.symbol
           });
           break;
@@ -48,7 +49,7 @@ function Row(props: { row: any; asset: string }) {
         case 'misc':
         case 'p2p':
           params = new URLSearchParams({
-            category: asset,
+            category,
             name: row.name
           });
           break;
@@ -77,7 +78,7 @@ function Row(props: { row: any; asset: string }) {
               flexWrap: 'wrap'
             }}
           >
-            {asset === 'crypto' && (
+            {category === 'crypto' && (
               <Box sx={{ mr: 1, lineHeight: 'normal' }}>
                 <Icon name={row.symbol.toLowerCase()} size={20} />
               </Box>
@@ -96,16 +97,20 @@ function Row(props: { row: any; asset: string }) {
             </Typography>
           </div>
         </TableCell>
-        <TableCell align="right">
-          <Typography variant="body1" color="text.primary" noWrap>
-            {formatAmountAndCurrency(row.currentPrice, 'USD')}
-          </Typography>
-        </TableCell>
-        <TableCell align="right">
-          <Typography variant="body1" color="text.primary" noWrap>
-            {formatAmountAndCurrency(row.averageNetCost, 'USD')}
-          </Typography>
-        </TableCell>
+        {category !== 'p2p' && (
+          <TableCell align="right">
+            <Typography variant="body1" color="text.primary" noWrap>
+              {formatAmountAndCurrency(row.currentPrice, 'USD')}
+            </Typography>
+          </TableCell>
+        )}
+        {category !== 'p2p' && (
+          <TableCell align="right">
+            <Typography variant="body1" color="text.primary" noWrap>
+              {formatAmountAndCurrency(row.averageNetCost, 'USD')}
+            </Typography>
+          </TableCell>
+        )}
         <TableCell align="right">
           <Typography
             variant="body1"
@@ -115,9 +120,11 @@ function Row(props: { row: any; asset: string }) {
           >
             {formatAmountAndCurrency(row.holdingValue, 'USD')}
           </Typography>
-          <Typography variant="body2" noWrap gutterBottom>
-            {row.holdingQuantity} {row.symbol}
-          </Typography>
+          {category !== 'p2p' && (
+            <Typography variant="body2" noWrap gutterBottom>
+              {row.holdingQuantity} {row.symbol}
+            </Typography>
+          )}
         </TableCell>
         <TableCell align="right">
           <Typography
@@ -140,7 +147,7 @@ function Row(props: { row: any; asset: string }) {
             )}
           </Typography>
         </TableCell>
-        <TableCell>
+        <TableCell align="right">
           <IconButton
             aria-label="expand row"
             size="small"
@@ -162,8 +169,12 @@ function Row(props: { row: any; asset: string }) {
                   <TableRow>
                     <TableCell>Date</TableCell>
                     <TableCell>Type</TableCell>
-                    <TableCell align="right">Price per asset</TableCell>
-                    <TableCell align="right">Quantity</TableCell>
+                    {category !== 'p2p' && (
+                      <TableCell align="right">Price per asset</TableCell>
+                    )}
+                    {category !== 'p2p' && (
+                      <TableCell align="right">Quantity</TableCell>
+                    )}
                     <TableCell align="right">Total cost ($)</TableCell>
                   </TableRow>
                 </TableHead>
@@ -191,30 +202,37 @@ function Row(props: { row: any; asset: string }) {
                           }
                         </Typography>
                       </TableCell>
-                      <TableCell align="right">
-                        {historyRow.quantity !== 0 && historyRow.price !== 0 ? (
-                          <Typography
-                            variant="body1"
-                            color="text.secondary"
-                            noWrap
-                          >
-                            {formatAmountAndCurrency(
-                              historyRow.price_usd /
-                                Math.abs(historyRow.quantity),
-                              'USD'
-                            )}
-                          </Typography>
-                        ) : (
-                          <Typography
-                            variant="body1"
-                            color="text.secondary"
-                            noWrap
-                          >
-                            N/A
-                          </Typography>
-                        )}
-                      </TableCell>
-                      <TableCell align="right">{historyRow.quantity}</TableCell>
+                      {category !== 'p2p' && (
+                        <TableCell align="right">
+                          {historyRow.quantity !== 0 &&
+                          historyRow.price !== 0 ? (
+                            <Typography
+                              variant="body1"
+                              color="text.secondary"
+                              noWrap
+                            >
+                              {formatAmountAndCurrency(
+                                historyRow.price_usd /
+                                  Math.abs(historyRow.quantity),
+                                'USD'
+                              )}
+                            </Typography>
+                          ) : (
+                            <Typography
+                              variant="body1"
+                              color="text.secondary"
+                              noWrap
+                            >
+                              N/A
+                            </Typography>
+                          )}
+                        </TableCell>
+                      )}
+                      {category !== 'p2p' && (
+                        <TableCell align="right">
+                          {historyRow.quantity}
+                        </TableCell>
+                      )}
                       <TableCell align="right">
                         {formatAmountAndCurrency(historyRow.price_usd, 'USD')}
                       </TableCell>
@@ -230,15 +248,23 @@ function Row(props: { row: any; asset: string }) {
   );
 }
 
-export default function CollapsibleTable({ assets, asset }) {
+export default function CollapsibleTable({ assets, category, loading }) {
+  if (loading !== 'succeeded') {
+    return <CollapsibleTableSkeleton />;
+  }
+  
   return (
     <TableContainer component={Paper}>
       <Table aria-label="collapsible table">
         <TableHead>
           <TableRow>
             <TableCell>Asset</TableCell>
-            <TableCell align="right">Current Price</TableCell>
-            <TableCell align="right">Average Net Cost</TableCell>
+            {category !== 'p2p' && (
+              <TableCell align="right">Current Price</TableCell>
+            )}
+            {category !== 'p2p' && (
+              <TableCell align="right">Average Net Cost</TableCell>
+            )}
             <TableCell align="right">Holdings</TableCell>
             <TableCell align="right">P&amp;L</TableCell>
             <TableCell />
@@ -246,7 +272,7 @@ export default function CollapsibleTable({ assets, asset }) {
         </TableHead>
         <TableBody>
           {assets.map((row) => (
-            <Row key={row.name} row={row} asset={asset} />
+            <Row key={row.name} row={row} category={category} />
           ))}
         </TableBody>
       </Table>

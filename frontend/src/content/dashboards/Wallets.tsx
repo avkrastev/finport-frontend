@@ -8,7 +8,8 @@ import {
   Avatar,
   Tooltip,
   CardActionArea,
-  Icon
+  Icon,
+  Link
 } from '@mui/material';
 
 import { styled } from '@mui/material/styles';
@@ -85,21 +86,34 @@ function Wallets({ assets }) {
               <Card sx={{ px: 1 }}>
                 <CardContent>
                   <Icon sx={{ width: '100%', height: 50, textAlign: 'left' }}>
-                    <img style={{ width: '100%', height: 50 }} alt="BTC" src={p2pPlatform.logo} />
+                    <img
+                      style={{ width: '100%', height: 50 }}
+                      alt="BTC"
+                      src={p2pPlatform.logo}
+                    />
                   </Icon>
-                  <Typography variant="h5" noWrap>
-                    {asset.name}
-                  </Typography>
+                  {!p2pPlatform.logo && (
+                    <Typography variant="h5" noWrap>
+                      {asset.name}
+                    </Typography>
+                  )}
                   <Typography variant="subtitle1" noWrap>
-                    {p2pPlatform.website}
+                    <Link
+                      color="inherit"
+                      underline="none"
+                      href={p2pPlatform.website}
+                      target="_blank"
+                    >
+                      {p2pPlatform.website}
+                    </Link>
                   </Typography>
                   <Box sx={{ pt: 3 }}>
                     <Typography variant="h3" gutterBottom noWrap>
-                     {formatAmountAndCurrency(asset.totalSum, 'USD')}
+                      {formatAmountAndCurrency(asset.totalSum, 'USD')}
                     </Typography>
-                    <Typography variant="subtitle2" noWrap>
+                    {/* <Typography variant="subtitle2" noWrap>
                       1.25843 BTC
-                    </Typography>
+                    </Typography> */}
                   </Box>
                 </CardContent>
               </Card>

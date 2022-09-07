@@ -40,10 +40,18 @@ function DashboardCrypto() {
           spacing={3}
         >
           <Grid item xs={12}>
-            <AccountBalance assets={stocks} category="stocks" />
+            <AccountBalance
+              assets={stocks}
+              category="stocks"
+              loading={stocksStatus}
+            />
           </Grid>
           <Grid item xs={12}>
-            <CollapsibleTable assets={stocks?.stats} asset="stocks" />
+            <CollapsibleTable
+              assets={stocks?.stats}
+              category="stocks"
+              loading={stocksStatus}
+            />
           </Grid>
         </Grid>
       </Container>

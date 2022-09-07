@@ -11,7 +11,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import {} from 'src/content/applications/Transactions/transactionSlice';
 import { useEffect } from 'react';
 import { AppDispatch } from 'src/app/store';
-import { fetchCommodities, getCommoditiesStatus, selectAllCommodities } from './commoditiesSlice';
+import {
+  fetchCommodities,
+  getCommoditiesStatus,
+  selectAllCommodities
+} from './commoditiesSlice';
 import CollapsibleTable from '../CollapsibleTable';
 
 function DashboardCrypto() {
@@ -42,10 +46,18 @@ function DashboardCrypto() {
           spacing={3}
         >
           <Grid item xs={12}>
-            <AccountBalance assets={commodities} category="commodities" />
-          </Grid> 
+            <AccountBalance
+              assets={commodities}
+              category="commodities"
+              loading={commoditiesStatus}
+            />
+          </Grid>
           <Grid item xs={12}>
-            <CollapsibleTable assets={commodities?.stats} asset="commodities" />
+            <CollapsibleTable
+              assets={commodities?.stats}
+              category="commodities"
+              loading={commoditiesStatus}
+            />
           </Grid>
           {/* <Grid item lg={12} xs={12}>
             <Wallets />

@@ -15,13 +15,13 @@ import CollapsibleTable from '../CollapsibleTable';
 function DashboardCrypto() {
   const dispatch: AppDispatch = useDispatch();
   const ETFs = useSelector(selectAllETFs);
-  const stocksStatus = useSelector(getETFsStatus);
+  const etfStatus = useSelector(getETFsStatus);
 
   useEffect(() => {
-    if (stocksStatus === 'idle') {
+    if (etfStatus === 'idle') {
       dispatch(fetchETFs());
     }
-  }, [stocksStatus, dispatch]);
+  }, [etfStatus, dispatch]);
 
   return (
     <>
@@ -40,10 +40,14 @@ function DashboardCrypto() {
           spacing={3}
         >
           <Grid item xs={12}>
-            <AccountBalance assets={ETFs} category="etf" />
+            <AccountBalance assets={ETFs} category="etf" loading={etfStatus} />
           </Grid>
           <Grid item xs={12}>
-            <CollapsibleTable assets={ETFs?.stats} asset="etf" />
+            <CollapsibleTable
+              assets={ETFs?.stats}
+              category="etf"
+              loading={etfStatus}
+            />
           </Grid>
         </Grid>
       </Container>

@@ -11,6 +11,7 @@ import { useEffect } from 'react';
 import { AppDispatch } from 'src/app/store';
 import { fetchCrypto, getCryptoStatus, selectAllCrypto } from './cryptoSlice';
 import CollapsibleTable from '../CollapsibleTable';
+import AccountBalanceSkeleton from '../AccountBalanceSkeleton';
 
 function DashboardCrypto() {
   const dispatch: AppDispatch = useDispatch();
@@ -40,10 +41,18 @@ function DashboardCrypto() {
           spacing={3}
         >
           <Grid item xs={12}>
-            <AccountBalance assets={crypto} category="crypto" />
+            <AccountBalance
+              assets={crypto}
+              category="crypto"
+              loading={cryptoStatus}
+            />
           </Grid>
           <Grid item xs={12}>
-            <CollapsibleTable assets={crypto?.stats} asset="crypto" />
+            <CollapsibleTable
+              assets={crypto?.stats}
+              category="crypto"
+              loading={cryptoStatus}
+            />
           </Grid>
         </Grid>
       </Container>

@@ -20,6 +20,7 @@ import AccountBalanceChart from './AccountBalanceChart';
 import Text from 'src/components/Text';
 import { formatAmountAndCurrency, roundNumber } from 'src/utils/functions';
 import Icon from 'react-crypto-icons';
+import AccountBalanceSkeleton from './AccountBalanceSkeleton';
 
 const AccountBalanceChartWrapper = styled(AccountBalanceChart)(
   () => `
@@ -55,7 +56,7 @@ const AvatarEqual = styled(Avatar)(
 `
 );
 
-function AccountBalance({ assets, category }) {
+function AccountBalance({ assets, category, loading }) {
   let percentages = [];
   let names = [];
   let colors = [
@@ -86,6 +87,10 @@ function AccountBalance({ assets, category }) {
     ],
     labels: names
   };
+
+  if (loading !== 'succeeded') {
+    return <AccountBalanceSkeleton />;
+  }
 
   return (
     <Card>
