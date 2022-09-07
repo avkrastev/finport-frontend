@@ -27,7 +27,7 @@ router.get("/crypto", (req, res, next) => {
   getCryptoAsset(req, res, next);
 });
 
-router.get("/stock", (req, res, next) => {
+router.get("/stocks", (req, res, next) => {
   getStockAsset(req, res, next);
 });
 
