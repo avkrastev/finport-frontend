@@ -104,7 +104,7 @@ export default function AccountBalanceSkeleton() {
                                 <Skeleton
                                   variant="text"
                                   width={40}
-                                  sx={{ fontSize: '1rem' }}
+                                  sx={{ fontSize: '1rem', marginTop: '10px' }}
                                 />
                               }
                               primaryTypographyProps={{

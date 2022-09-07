@@ -1,6 +1,5 @@
 import * as React from 'react';
 import Skeleton from '@mui/material/Skeleton';
-import Stack from '@mui/material/Stack';
 import {
   Paper,
   Table,
@@ -35,7 +34,14 @@ export default function CollapsibleTableSkeleton() {
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                 >
                   <TableCell component="th" scope="row">
-                    <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+                    <Skeleton
+                      variant="text"
+                      sx={{
+                        fontSize: '1rem',
+                        paddingTop: '11px',
+                        paddingBottom: '11px'
+                      }}
+                    />
                   </TableCell>
                   <TableCell align="right">
                     <Skeleton
