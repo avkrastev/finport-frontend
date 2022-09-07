@@ -7,11 +7,14 @@ import {
   Typography,
   Avatar,
   Tooltip,
-  CardActionArea
+  CardActionArea,
+  Icon
 } from '@mui/material';
 
 import { styled } from '@mui/material/styles';
 import AddTwoToneIcon from '@mui/icons-material/AddTwoTone';
+import { p2pPlatforms } from '../../constants/common';
+import { formatAmountAndCurrency } from 'src/utils/functions';
 
 const AvatarWrapper = styled(Avatar)(
   ({ theme }) => `
@@ -54,11 +57,10 @@ const CardAddAction = styled(Card)(
 `
 );
 
-function Wallets() {
-
+function Wallets({ assets }) {
   return (
     <>
-      <Box
+      {/* <Box
         display="flex"
         alignItems="center"
         justifyContent="space-between"
@@ -72,87 +74,39 @@ function Wallets() {
         >
           Add new wallet
         </Button>
-      </Box>
+      </Box> */}
       <Grid container spacing={3}>
-        <Grid xs={12} sm={6} md={3} item>
-          <Card sx={{ px: 1 }}>
-            <CardContent>
-              <AvatarWrapper>
-                <img
-                  alt="BTC"
-                  src="/static/images/placeholders/logo/bitcoin.png"
-                />
-              </AvatarWrapper>
-              <Typography variant="h5" noWrap>
-                Bitcoin
-              </Typography>
-              <Typography variant="subtitle1" noWrap>
-                BTC
-              </Typography>
-              <Box sx={{ pt: 3 }}>
-                <Typography variant="h3" gutterBottom noWrap>
-                  $3,586.22
-                </Typography>
-                <Typography variant="subtitle2" noWrap>
-                  1.25843 BTC
-                </Typography>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid xs={12} sm={6} md={3} item>
-          <Card sx={{ px: 1 }}>
-            <CardContent>
-              <AvatarWrapper>
-                <img
-                  alt="Ripple"
-                  src="/static/images/placeholders/logo/ripple.png"
-                />
-              </AvatarWrapper>
-              <Typography variant="h5" noWrap>
-                Ripple
-              </Typography>
-              <Typography variant="subtitle1" noWrap>
-                XRP
-              </Typography>
-              <Box sx={{ pt: 3 }}>
-                <Typography variant="h3" gutterBottom noWrap>
-                  $586.83
-                </Typography>
-                <Typography variant="subtitle2" noWrap>
-                  5,783 XRP
-                </Typography>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid xs={12} sm={6} md={3} item>
-          <Card sx={{ px: 1 }}>
-            <CardContent>
-              <AvatarWrapper>
-                <img
-                  alt="Cardano"
-                  src="/static/images/placeholders/logo/cardano.png"
-                />
-              </AvatarWrapper>
-              <Typography variant="h5" noWrap>
-                Cardano
-              </Typography>
-              <Typography variant="subtitle1" noWrap>
-                ADA
-              </Typography>
-              <Box sx={{ pt: 3 }}>
-                <Typography variant="h3" gutterBottom noWrap>
-                  $54,985.00
-                </Typography>
-                <Typography variant="subtitle2" noWrap>
-                  34,985 ADA
-                </Typography>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid xs={12} sm={6} md={3} item>
+        {assets?.stats?.map((asset) => {
+          const p2pPlatform = p2pPlatforms.find(
+            (platform) => platform.name === asset.name
+          );
+          return (
+            <Grid xs={12} sm={6} md={3} item key={asset.name}>
+              <Card sx={{ px: 1 }}>
+                <CardContent>
+                  <Icon sx={{ width: '100%', height: 50, textAlign: 'left' }}>
+                    <img style={{ width: '100%', height: 50 }} alt="BTC" src={p2pPlatform.logo} />
+                  </Icon>
+                  <Typography variant="h5" noWrap>
+                    {asset.name}
+                  </Typography>
+                  <Typography variant="subtitle1" noWrap>
+                    {p2pPlatform.website}
+                  </Typography>
+                  <Box sx={{ pt: 3 }}>
+                    <Typography variant="h3" gutterBottom noWrap>
+                     {formatAmountAndCurrency(asset.totalSum, 'USD')}
+                    </Typography>
+                    <Typography variant="subtitle2" noWrap>
+                      1.25843 BTC
+                    </Typography>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+          );
+        })}
+        {/* <Grid xs={12} sm={6} md={3} item>
           <Tooltip arrow title="Click to add a new wallet">
             <CardAddAction>
               <CardActionArea sx={{ px: 1 }}>
@@ -164,7 +118,7 @@ function Wallets() {
               </CardActionArea>
             </CardAddAction>
           </Tooltip>
-        </Grid>
+        </Grid> */}
       </Grid>
     </>
   );

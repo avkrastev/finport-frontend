@@ -55,42 +55,42 @@ export const commodities = [
 export const p2pPlatforms = [
   {
     name: 'PeerBerry',
-    logo: 'peerberry.png',
+    logo: '/static/images/logo/p2p/peerberry.svg',
     website: 'https://peerberry.com/'
   },
   {
     name: 'Reinvest24',
-    logo: 'reinvest24.png',
+    logo: '/static/images/logo/p2p/reinvest24.svg',
     website: 'https://www.reinvest24.com/'
   },
   {
     name: 'EstateGuru',
-    logo: 'estateguru.png',
+    logo: '/static/images/logo/p2p/estateguru.svg',
     website: 'https://estateguru.co/'
   },
   {
     name: 'Mintos',
-    logo: 'mintos.png',
+    logo: '/static/images/logo/p2p/mintos.svg',
     website: 'https://www.mintos.com/'
   },
   {
     name: 'Debitum',
-    logo: 'debitum.png',
+    logo: '/static/images/logo/p2p/debitum.svg',
     website: 'https://debitum.network/'
   },
   {
     name: 'LenderMarket',
-    logo: 'lendermarket.png',
+    logo: '/static/images/logo/p2p/lendermarket.svg',
     website: 'https://lendermarket.com/'
   },
   {
     name: 'Bondora',
-    logo: 'bondora.png',
+    logo: '/static/images/logo/p2p/bondora.svg',
     website: 'https://www.bondora.com/'
   },
   {
     name: 'Rendity',
-    logo: 'rendity.png',
+    logo: '/static/images/logo/p2p/rendity.svg',
     website: 'https://rendity.com/'
   },
 ]

@@ -46,6 +46,7 @@ function Row(props: { row: any; asset: string }) {
           break;
         case 'commodities':
         case 'misc':
+        case 'p2p':
           params = new URLSearchParams({
             category: asset,
             name: row.name

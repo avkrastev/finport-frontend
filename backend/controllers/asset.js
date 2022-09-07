@@ -183,6 +183,35 @@ const getMiscAsset = async (req, res, next) => {
   }
 };
 
+const getP2PAsset = async (req, res, next) => {
+  const creator = req.userData.userId;
+
+  try {
+    const dataBuilder = new DataBuilder("p2p", creator);
+    const sumsResult = await Asset.aggregate(
+      dataBuilder.getTotalSumByCategoryPipeline()
+    ).exec();
+
+    const statsResults = await Asset.aggregate(
+      dataBuilder.getTotalSumsByCategoryAndAssetPipeline()
+    ).exec();
+
+    const miscAssetStats = new MiscAssetStats(statsResults, sumsResult);
+    const assets = await miscAssetStats.getAllData();
+
+    assets.sums.sumsInDifferentCurrencies = await sumsInSupportedCurrencies(
+      assets.sums.holdingValue,
+      assets.sums.totalSum
+    );
+
+    res.json({ assets });
+  } catch (err) {
+    console.log(err);
+    const error = new HttpError("Something went wrong!", 500);
+    return next(error);
+  }
+};
+
 const getAssetById = async (req, res, next) => {
   let asset;
   try {
@@ -439,3 +468,4 @@ exports.getStockAsset = getStockAsset;
 exports.getETFAsset = getETFAsset;
 exports.getCommodityAsset = getCommodityAsset;
 exports.getMiscAsset = getMiscAsset;
+exports.getP2PAsset = getP2PAsset;

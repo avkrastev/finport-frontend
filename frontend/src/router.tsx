@@ -24,6 +24,7 @@ const Stocks = Loader(lazy(() => import('src/content/dashboards/Stocks')));
 const Etf = Loader(lazy(() => import('src/content/dashboards/Etf')));
 const Commodities = Loader(lazy(() => import('src/content/dashboards/Commodities')));
 const Misc = Loader(lazy(() => import('src/content/dashboards/Misc')));
+const P2P = Loader(lazy(() => import('src/content/dashboards/P2P')));
 
 // Applications
 const Transactions = Loader(
@@ -112,7 +113,7 @@ const routes = (isLoggedIn: any) => [
           },
           {
             path: 'p2p',
-            element: <StatusComingSoon />
+            element: <P2P />
           },
           {
             path: 'etf',

@@ -5,31 +5,32 @@ import { Grid, Container } from '@mui/material';
 import Footer from 'src/components/Footer';
 
 import AccountBalance from '../AccountBalance';
+import Wallets from '../Wallets';
 import { useDispatch, useSelector } from 'react-redux';
 import {} from 'src/content/applications/Transactions/transactionSlice';
 import { useEffect } from 'react';
 import { AppDispatch } from 'src/app/store';
-import { fetchCrypto, getCryptoStatus, selectAllCrypto } from './cryptoSlice';
+import { fetchP2P, getP2PStatus, selectAllP2P } from './p2pSlice';
 import CollapsibleTable from '../CollapsibleTable';
 
 function DashboardCrypto() {
   const dispatch: AppDispatch = useDispatch();
-  const crypto = useSelector(selectAllCrypto);
-  const cryptoStatus = useSelector(getCryptoStatus);
+  const p2p = useSelector(selectAllP2P);
+  const p2pStatus = useSelector(getP2PStatus);
 
   useEffect(() => {
-    if (cryptoStatus === 'idle') {
-      dispatch(fetchCrypto());
+    if (p2pStatus === 'idle') {
+      dispatch(fetchP2P());
     }
-  }, [cryptoStatus, dispatch]);
+  }, [p2pStatus, dispatch]);
 
   return (
     <>
       <Helmet>
-        <title>Crypto Dashboard</title>
+        <title>P2P Dashboard</title>
       </Helmet>
       <PageTitleWrapper>
-        <PageHeader title="Crypto Portfolio" />
+        <PageHeader title="P2P Portfolio" />
       </PageTitleWrapper>
       <Container maxWidth="lg">
         <Grid
@@ -40,10 +41,13 @@ function DashboardCrypto() {
           spacing={3}
         >
           <Grid item xs={12}>
-            <AccountBalance assets={crypto} category="crypto" />
+            <AccountBalance assets={p2p} category="p2p" />
+          </Grid>
+          <Grid item lg={12} xs={12}>
+            <Wallets assets={p2p}/>
           </Grid>
           <Grid item xs={12}>
-            <CollapsibleTable assets={crypto?.stats} asset="crypto" />
+            <CollapsibleTable assets={p2p?.stats} asset="p2p" />
           </Grid>
         </Grid>
       </Container>

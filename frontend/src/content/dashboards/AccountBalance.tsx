@@ -55,7 +55,7 @@ const AvatarEqual = styled(Avatar)(
 `
 );
 
-function AccountBalance({ assets, asset }) {
+function AccountBalance({ assets, category }) {
   let percentages = [];
   let names = [];
   let colors = [
@@ -117,7 +117,7 @@ function AccountBalance({ assets, asset }) {
                 );
               })}
 
-              {asset === 'crypto' && (
+              {category === 'crypto' && (
                 <Typography
                   variant="h4"
                   fontWeight="normal"
@@ -190,7 +190,7 @@ function AccountBalance({ assets, asset }) {
                       {assets.stats.slice(0, 5).map((asset, i) => {
                         return (
                           <ListItem disableGutters key={i}>
-                            {asset === 'crypto' && (
+                            {category === 'crypto' && (
                               <ListItemAvatar
                                 sx={{
                                   minWidth: '46px',
