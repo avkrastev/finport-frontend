@@ -38,6 +38,25 @@ export async function getAssetsByCategory(category) {
   }
 }
 
+export async function getAssetsSummary() {
+  const token = JSON.parse(localStorage.getItem('userData')).token;
+
+  try {
+    const response = await axios.get(
+      'http://localhost:3005/api/assets/summary',
+      {
+        headers: {
+          Authorization: `Basic ${token}`
+        }
+      }
+    );
+
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 export async function addNewAsset(transaction) {
   const token = JSON.parse(localStorage.getItem('userData')).token;
   try {

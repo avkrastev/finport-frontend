@@ -6,11 +6,13 @@ import { alpha, useTheme } from '@mui/material';
 interface WatchListColumn1ChartProps {
   data: any[];
   labels: string[];
+  skeleton?: boolean;
 }
 
 const WatchListColumn1Chart: FC<WatchListColumn1ChartProps> = ({
   data: dataProp,
   labels,
+  skeleton,
   ...rest
 }) => {
   const theme = useTheme();
@@ -19,7 +21,9 @@ const WatchListColumn1Chart: FC<WatchListColumn1ChartProps> = ({
     const ctx = canvas.getContext('2d');
     const primaryGradient = ctx.createLinearGradient(6, 6, 6, 150);
 
-    primaryGradient.addColorStop(0, alpha(theme.colors.primary.light, 0.8));
+    const gradientMainColor = !skeleton ? '#e3e3e3' : theme.colors.primary.light;
+
+    primaryGradient.addColorStop(0, alpha(gradientMainColor, 0.8));
     primaryGradient.addColorStop(0.8, theme.colors.alpha.white[10]);
     primaryGradient.addColorStop(1, theme.colors.alpha.white[100]);
 
@@ -29,7 +33,7 @@ const WatchListColumn1Chart: FC<WatchListColumn1ChartProps> = ({
           data: dataProp,
           borderWidth: 1,
           backgroundColor: primaryGradient,
-          borderColor: theme.colors.primary.main,
+          borderColor: !skeleton ? '#c0c0c0' : theme.colors.primary.main,
           pointBorderWidth: 0,
           pointRadius: 0,
           pointHoverRadius: 0

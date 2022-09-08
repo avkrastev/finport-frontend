@@ -8,9 +8,15 @@ interface Stats {
   totalQuantity: number;
 }
 
+interface Sums {
+  holdingValue: number;
+  difference: number;
+  differenceInPercents: number;
+}
+
 interface Misc {
   stats: Stats[];
-  sums: {};
+  sums: Sums;
 }
 
 interface MiscState {
@@ -20,7 +26,10 @@ interface MiscState {
 }
 
 const initialState: MiscState = {
-  misc: { sums: {}, stats: [] },
+  misc: {
+    sums: { holdingValue: 0, difference: 0, differenceInPercents: 0 },
+    stats: []
+  },
   status: 'idle', //'idle' | 'loading' | 'succeeded' | 'failed',
   error: null
 };
@@ -39,13 +48,10 @@ const miscSlice = createSlice({
       .addCase(fetchMisc.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(
-        fetchMisc.fulfilled,
-        (state, action: PayloadAction<Misc>) => {
-          state.status = 'succeeded';
-          state.misc = action.payload;
-        }
-      )
+      .addCase(fetchMisc.fulfilled, (state, action: PayloadAction<Misc>) => {
+        state.status = 'succeeded';
+        state.misc = action.payload;
+      })
       .addCase(fetchMisc.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;

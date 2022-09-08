@@ -6,6 +6,53 @@ class DataBuilder {
     this.userId = userId;
   }
 
+  setCategory(category) {
+    this.category = category;
+  }
+
+  getTotalSumsByCategorySortedPipeline() {
+    return [
+      {
+        $match: {
+          creator: ObjectId(this.userId),
+        },
+      },
+      {
+        $group: {
+          _id: {
+            category: "$category",
+          },
+          totalSum: {
+            $sum: "$price_usd",
+          },
+        },
+      },
+      {
+        $sort: {
+          totalSum: -1,
+        },
+      },
+    ];
+  }
+
+  getTotalSumPipeline() {
+    return [
+      {
+        $match: {
+          creator: ObjectId(this.userId),
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalSum: {
+            $sum: "$price_usd",
+          },
+        },
+      },
+    ];
+  }
+
   getTotalSumByCategoryPipeline() {
     return [
       {

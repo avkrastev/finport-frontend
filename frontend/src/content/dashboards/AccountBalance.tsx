@@ -56,7 +56,7 @@ const AvatarEqual = styled(Avatar)(
 `
 );
 
-function AccountBalance({ assets, category, loading }) {
+function AccountBalance({ assets, category, loading, ...rest }) {
   let percentages = [];
   let names = [];
   let colors = [
@@ -71,6 +71,7 @@ function AccountBalance({ assets, category, loading }) {
     '#9b2226',
     '#ca6702'
   ];
+
   for (let asset of assets.stats) {
     const percent = (asset.holdingValue / assets.sums.holdingValue) * 100;
     if (!isNaN(percent)) {
@@ -88,6 +89,14 @@ function AccountBalance({ assets, category, loading }) {
     labels: names
   };
 
+  const assetsSlice = category === '' ? assets.stats : assets.stats.slice(0, 5);
+
+  const difference = rest.totalDifference
+    ? rest.totalDifference
+    : assets?.sums?.difference;
+  const differenceInPercents = rest.totalDifferenceInPercents
+    ? rest.totalDifferenceInPercents
+    : assets?.sums?.differenceInPercents;
   if (loading !== 'succeeded') {
     return <AccountBalanceSkeleton />;
   }
@@ -102,7 +111,9 @@ function AccountBalance({ assets, category, loading }) {
             </Typography>
             <Box>
               <Typography variant="h1" gutterBottom>
-                {formatAmountAndCurrency(assets?.sums?.holdingValue, 'USD')}
+                {rest.totalBalance
+                  ? formatAmountAndCurrency(rest.totalBalance, 'USD')
+                  : formatAmountAndCurrency(assets?.sums?.holdingValue, 'USD')}
                 &nbsp;/&nbsp;
                 {formatAmountAndCurrency(assets?.sums?.totalSum, 'USD')}
               </Typography>
@@ -132,29 +143,28 @@ function AccountBalance({ assets, category, loading }) {
                 </Typography>
               )}
               <Box display="flex" sx={{ py: 4 }} alignItems="center">
-                {assets?.sums?.difference > 0 && (
+                {difference > 0 && (
                   <AvatarSuccess sx={{ mr: 2 }} variant="rounded">
                     <TrendingUp fontSize="large" />
                   </AvatarSuccess>
                 )}
-                {assets?.sums?.difference < 0 && (
+                {difference < 0 && (
                   <AvatarFail sx={{ mr: 2 }} variant="rounded">
                     <TrendingDown fontSize="large" />
                   </AvatarFail>
                 )}
-                {assets?.sums?.difference === 0 && (
+                {difference === 0 && (
                   <AvatarEqual sx={{ mr: 2 }} variant="rounded">
                     <TrendingFlat fontSize="large" />
                   </AvatarEqual>
                 )}
-
                 <Box>
                   <Typography variant="h4">
-                    {formatAmountAndCurrency(assets?.sums?.difference, 'USD')}
+                    {formatAmountAndCurrency(difference, 'USD')}
                   </Typography>
                   <Typography variant="subtitle2" noWrap align="right">
-                    {assets?.sums?.differenceInPercents !== null
-                      ? roundNumber(assets?.sums?.differenceInPercents)
+                    {differenceInPercents !== null
+                      ? roundNumber(differenceInPercents)
                       : 0}{' '}
                     %
                   </Typography>
@@ -192,7 +202,7 @@ function AccountBalance({ assets, category, loading }) {
                   </Grid>
                   <Grid xs={12} sm={7} item display="flex" alignItems="center">
                     <List disablePadding sx={{ width: '100%' }}>
-                      {assets.stats.slice(0, 5).map((asset, i) => {
+                      {assetsSlice.map((asset, i) => {
                         return (
                           <ListItem disableGutters key={i}>
                             {category === 'crypto' && (
@@ -225,21 +235,23 @@ function AccountBalance({ assets, category, loading }) {
                               <Typography align="right" variant="h4" noWrap>
                                 {percentages[i]}%
                               </Typography>
-                              <Typography
-                                align="right"
-                                variant="subtitle2"
-                                noWrap
-                              >
-                                {asset.differenceInPercents >= 0 ? (
-                                  <Text color="success">
-                                    {roundNumber(asset.differenceInPercents)}%
-                                  </Text>
-                                ) : (
-                                  <Text color="error">
-                                    {roundNumber(asset.differenceInPercents)}%
-                                  </Text>
-                                )}
-                              </Typography>
+                              {category !== '' && (
+                                <Typography
+                                  align="right"
+                                  variant="subtitle2"
+                                  noWrap
+                                >
+                                  {asset.differenceInPercents >= 0 ? (
+                                    <Text color="success">
+                                      {roundNumber(asset.differenceInPercents)}%
+                                    </Text>
+                                  ) : (
+                                    <Text color="error">
+                                      {roundNumber(asset.differenceInPercents)}%
+                                    </Text>
+                                  )}
+                                </Typography>
+                              )}
                             </Box>
                           </ListItem>
                         );

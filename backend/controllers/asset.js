@@ -16,6 +16,7 @@ const StocksAssetStats = require("../models/stats/stocks");
 const ETFAssetStats = require("../models/stats/etf");
 const CommoditiesAssetStats = require("../models/stats/commodities");
 const MiscAssetStats = require("../models/stats/misc");
+const {CATEGORIES} = require('../utils/categories'); 
 
 const getAsset = async (req, res, next) => {
   let assets;
@@ -138,7 +139,10 @@ const getCommodityAsset = async (req, res, next) => {
       dataBuilder.getTotalSumsByCategoryAndAssetPipeline()
     ).exec();
 
-    const commoditiesAssetStats = new CommoditiesAssetStats(statsResults, sumsResult);
+    const commoditiesAssetStats = new CommoditiesAssetStats(
+      statsResults,
+      sumsResult
+    );
     const assets = await commoditiesAssetStats.getAllData();
 
     assets.sums.sumsInDifferentCurrencies = await sumsInSupportedCurrencies(
@@ -205,6 +209,55 @@ const getP2PAsset = async (req, res, next) => {
     );
 
     res.json({ assets });
+  } catch (err) {
+    console.log(err);
+    const error = new HttpError("Something went wrong!", 500);
+    return next(error);
+  }
+};
+
+const getAssetsSummary = async (req, res, next) => {
+  const creator = req.userData.userId;
+
+  try {
+    const dataBuilder = new DataBuilder("", creator);
+    const sumsResult = await Asset.aggregate(
+      dataBuilder.getTotalSumPipeline()
+    ).exec();
+
+    const statsResults = await Asset.aggregate(
+      dataBuilder.getTotalSumsByCategorySortedPipeline()
+    ).exec();
+
+    let sumsSummary = [];
+    for (let asset of statsResults) {
+      let formattedSummary = {};
+      const category = CATEGORIES.find(category => category.alias === asset._id.category);
+      formattedSummary.name = category.name;
+      formattedSummary.alias = category.alias;
+      formattedSummary.holdingValue = asset.totalSum;
+      sumsSummary.push(formattedSummary);
+    }
+
+    //console.log(statsResults)
+    // const miscAssetStats = new MiscAssetStats(statsResults, sumsResult);
+    // const assets = await miscAssetStats.getAllData();
+
+    const sumsInDifferentCurrencies = await sumsInSupportedCurrencies(
+      sumsResult[0].totalSum,
+      sumsResult[0].totalSum,
+    );
+
+    res.json({
+      assets: {
+        sums: {
+          totalSum: sumsResult[0].totalSum,
+          holdingValue: sumsResult[0].totalSum,
+          sumsInDifferentCurrencies
+        },
+        stats: sumsSummary,
+      },
+    });
   } catch (err) {
     console.log(err);
     const error = new HttpError("Something went wrong!", 500);
@@ -469,3 +522,4 @@ exports.getETFAsset = getETFAsset;
 exports.getCommodityAsset = getCommodityAsset;
 exports.getMiscAsset = getMiscAsset;
 exports.getP2PAsset = getP2PAsset;
+exports.getAssetsSummary = getAssetsSummary;

@@ -87,7 +87,7 @@ const routes = (isLoggedIn: any) => [
       },
       {
         path: 'overview',
-        element: <SidebarLayout />,
+        element: isLoggedIn ? <SidebarLayout /> : <Login />,
         children: [
           {
             path: '/',

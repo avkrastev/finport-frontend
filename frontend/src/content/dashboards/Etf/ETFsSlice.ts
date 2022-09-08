@@ -8,9 +8,15 @@ interface Stats {
   totalQuantity: number;
 }
 
+interface Sums {
+  holdingValue: number;
+  difference: number;
+  differenceInPercents: number;
+}
+
 interface Etf {
   stats: Stats[];
-  sums: {};
+  sums: Sums;
 }
 
 interface StocksState {
@@ -20,7 +26,10 @@ interface StocksState {
 }
 
 const initialState: StocksState = {
-  ETFs: { sums: {}, stats: [] },
+  ETFs: {
+    sums: { holdingValue: 0, difference: 0, differenceInPercents: 0 },
+    stats: []
+  },
   status: 'idle', //'idle' | 'loading' | 'succeeded' | 'failed',
   error: null
 };
@@ -39,13 +48,10 @@ const ETFsSlice = createSlice({
       .addCase(fetchETFs.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(
-        fetchETFs.fulfilled,
-        (state, action: PayloadAction<Etf>) => {
-          state.status = 'succeeded';
-          state.ETFs = action.payload;
-        }
-      )
+      .addCase(fetchETFs.fulfilled, (state, action: PayloadAction<Etf>) => {
+        state.status = 'succeeded';
+        state.ETFs = action.payload;
+      })
       .addCase(fetchETFs.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;

@@ -8,9 +8,15 @@ interface Stats {
   totalQuantity: number;
 }
 
+interface Sums {
+  holdingValue: number;
+  difference: number;
+  differenceInPercents: number;
+}
+
 interface P2P {
   stats: Stats[];
-  sums: {};
+  sums: Sums;
 }
 
 interface P2PState {
@@ -20,7 +26,10 @@ interface P2PState {
 }
 
 const initialState: P2PState = {
-  p2p: { sums: {}, stats: [] },
+  p2p: {
+    sums: { holdingValue: 0, difference: 0, differenceInPercents: 0 },
+    stats: []
+  },
   status: 'idle', //'idle' | 'loading' | 'succeeded' | 'failed',
   error: null
 };
@@ -39,13 +48,10 @@ const p2pSlice = createSlice({
       .addCase(fetchP2P.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(
-        fetchP2P.fulfilled,
-        (state, action: PayloadAction<P2P>) => {
-          state.status = 'succeeded';
-          state.p2p = action.payload;
-        }
-      )
+      .addCase(fetchP2P.fulfilled, (state, action: PayloadAction<P2P>) => {
+        state.status = 'succeeded';
+        state.p2p = action.payload;
+      })
       .addCase(fetchP2P.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;

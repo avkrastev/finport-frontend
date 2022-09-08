@@ -8,9 +8,15 @@ interface Stats {
   totalQuantity: number;
 }
 
+interface Sums {
+  holdingValue: number;
+  difference: number;
+  differenceInPercents: number;
+}
+
 interface Crypto {
   stats: Stats[];
-  sums: {};
+  sums: Sums;
 }
 
 interface CryptoState {
@@ -20,7 +26,10 @@ interface CryptoState {
 }
 
 const initialState: CryptoState = {
-  crypto: { sums: {}, stats: [] },
+  crypto: {
+    sums: { holdingValue: 0, difference: 0, differenceInPercents: 0 },
+    stats: []
+  },
   status: 'idle', //'idle' | 'loading' | 'succeeded' | 'failed',
   error: null
 };

@@ -5,8 +5,6 @@ import { Grid, Container } from '@mui/material';
 import Footer from 'src/components/Footer';
 
 import AccountBalance from '../AccountBalance';
-import Wallets from '../Wallets';
-import WatchList from '../WatchList';
 import { useDispatch, useSelector } from 'react-redux';
 import {} from 'src/content/applications/Transactions/transactionSlice';
 import { useEffect } from 'react';
@@ -59,12 +57,6 @@ function DashboardCrypto() {
               loading={commoditiesStatus}
             />
           </Grid>
-          {/* <Grid item lg={12} xs={12}>
-            <Wallets />
-          </Grid>
-          <Grid item xs={12}>
-            <WatchList />
-          </Grid> */}
         </Grid>
       </Container>
       <Footer />

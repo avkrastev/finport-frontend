@@ -8,9 +8,15 @@ interface Stats {
   totalQuantity: number;
 }
 
+interface Sums {
+  holdingValue: number;
+  difference: number;
+  differenceInPercents: number;
+}
+
 interface Stocks {
   stats: Stats[];
-  sums: {};
+  sums: Sums;
 }
 
 interface StocksState {
@@ -20,7 +26,10 @@ interface StocksState {
 }
 
 const initialState: StocksState = {
-  stocks: { sums: {}, stats: [] },
+  stocks: {
+    sums: { holdingValue: 0, difference: 0, differenceInPercents: 0 },
+    stats: []
+  },
   status: 'idle', //'idle' | 'loading' | 'succeeded' | 'failed',
   error: null
 };

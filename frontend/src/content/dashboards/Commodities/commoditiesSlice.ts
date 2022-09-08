@@ -8,9 +8,15 @@ interface Stats {
   totalQuantity: number;
 }
 
+interface Sums {
+  holdingValue: number;
+  difference: number;
+  differenceInPercents: number;
+}
+
 interface Commodities {
   stats: Stats[];
-  sums: {};
+  sums: Sums;
 }
 
 interface CommoditiesState {
@@ -20,15 +26,21 @@ interface CommoditiesState {
 }
 
 const initialState: CommoditiesState = {
-  commodities: { sums: {}, stats: [] },
+  commodities: {
+    sums: { holdingValue: 0, difference: 0, differenceInPercents: 0 },
+    stats: []
+  },
   status: 'idle', //'idle' | 'loading' | 'succeeded' | 'failed',
   error: null
 };
 
-export const fetchCommodities = createAsyncThunk('commodities/fetchCommodities', async () => {
-  const response = await getAssetsByCategory('commodities');
-  return response.data.assets as Commodities;
-});
+export const fetchCommodities = createAsyncThunk(
+  'commodities/fetchCommodities',
+  async () => {
+    const response = await getAssetsByCategory('commodities');
+    return response.data.assets as Commodities;
+  }
+);
 
 const commoditySlice = createSlice({
   name: 'commodities',
@@ -53,9 +65,12 @@ const commoditySlice = createSlice({
   }
 });
 
-export const selectAllCommodities = (state: RootState) => state.commodities.commodities;
-export const getCommoditiesStatus = (state: RootState) => state.commodities.status;
-export const getCommoditiesError = (state: RootState) => state.commodities.error;
+export const selectAllCommodities = (state: RootState) =>
+  state.commodities.commodities;
+export const getCommoditiesStatus = (state: RootState) =>
+  state.commodities.status;
+export const getCommoditiesError = (state: RootState) =>
+  state.commodities.error;
 
 //export const {} = commoditySlice.actions;
 

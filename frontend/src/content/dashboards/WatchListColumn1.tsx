@@ -1,9 +1,17 @@
-import { Card, Box, Typography, Avatar } from '@mui/material';
+import { Card, Box, Typography, Avatar, SvgIcon } from '@mui/material';
 
 import { styled } from '@mui/material/styles';
 import Label from 'src/components/Label';
 import Text from 'src/components/Text';
+import { formatAmountAndCurrency, roundNumber } from 'src/utils/functions';
 import WatchListColumn1Chart from './WatchListColumn1Chart';
+import WatchListColumnSkeleton from './WatchListColumnSkeleton';
+import CurrencyBitcoinTwoToneIcon from '@mui/icons-material/CurrencyBitcoinTwoTone';
+import AgricultureTwoToneIcon from '@mui/icons-material/AgricultureTwoTone';
+import AutoGraphTwoToneIcon from '@mui/icons-material/AutoGraphTwoTone';
+import AddchartTwoToneIcon from '@mui/icons-material/AddchartTwoTone';
+import GroupTwoToneIcon from '@mui/icons-material/GroupTwoTone';
+import ShowChartTwoToneIcon from '@mui/icons-material/ShowChartTwoTone';
 
 const AvatarWrapper = styled(Avatar)(
   ({ theme }) => `
@@ -18,13 +26,26 @@ const WatchListColumn1ChartWrapper = styled(WatchListColumn1Chart)(
 `
 );
 
-function WatchListColumn1() {
-
+function WatchListColumn1({
+  category,
+  crypto,
+  cryptoLoading,
+  stocks,
+  stocksLoading,
+  p2p,
+  p2pLoading,
+  etf,
+  etfLoading,
+  misc,
+  miscLoading,
+  commodities,
+  commoditiesLoading
+}) {
   const price = {
     week: {
       labels: [
         'Monday',
-        'Tueday',
+        'Tuesday',
         'Wednesday',
         'Thursday',
         'Friday',
@@ -35,19 +56,76 @@ function WatchListColumn1() {
     }
   };
 
+  let holdingValue;
+  let difference;
+  let differenceInPercents;
+  let loading;
+  let icon;
+  switch (category.alias) {
+    case 'crypto':
+      holdingValue = crypto.holdingValue;
+      difference = crypto.difference;
+      differenceInPercents = roundNumber(crypto.differenceInPercents);
+      icon = CurrencyBitcoinTwoToneIcon;
+      loading = cryptoLoading;
+      break;
+    case 'stocks':
+      holdingValue = stocks.holdingValue;
+      difference = stocks.difference;
+      differenceInPercents = roundNumber(stocks.differenceInPercents);
+      icon = ShowChartTwoToneIcon;
+      loading = stocksLoading;
+      break;
+    case 'p2p':
+      holdingValue = p2p.holdingValue;
+      difference = p2p.difference;
+      differenceInPercents = roundNumber(p2p.differenceInPercents);
+      icon = GroupTwoToneIcon;
+      loading = p2pLoading;
+      break;
+    case 'etf':
+      holdingValue = etf.holdingValue;
+      difference = etf.difference;
+      differenceInPercents = roundNumber(etf.differenceInPercents);
+      icon = AddchartTwoToneIcon;
+      loading = etfLoading;
+      break;
+    case 'misc':
+      holdingValue = misc.holdingValue;
+      difference = misc.difference;
+      differenceInPercents = roundNumber(misc.differenceInPercents);
+      icon = AutoGraphTwoToneIcon;
+      loading = miscLoading;
+      break;
+    case 'commodities':
+      holdingValue = commodities.holdingValue;
+      difference = commodities.difference;
+      differenceInPercents = roundNumber(commodities.differenceInPercents);
+      icon = AgricultureTwoToneIcon;
+      loading = commoditiesLoading;
+      break;
+    default:
+      holdingValue = 0;
+      difference = 0;
+      differenceInPercents = roundNumber(0);
+      loading = 'succeeded';
+      break;
+  }
+
+  if (loading !== 'succeeded') {
+    return <WatchListColumnSkeleton />;
+  }
+
   return (
     <Card>
       <Box sx={{ p: 3 }}>
         <Box display="flex" alignItems="center">
           <AvatarWrapper>
-            <img alt="BTC" src="/static/images/placeholders/logo/bitcoin.png" />
+            <SvgIcon color="primary" fontSize="large" component={icon} />
           </AvatarWrapper>
           <Box>
             <Typography variant="h4" noWrap>
-              Bitcoin
-            </Typography>
-            <Typography variant="subtitle1" noWrap>
-              BTC
+              {category.name}
             </Typography>
           </Box>
         </Box>
@@ -60,11 +138,17 @@ function WatchListColumn1() {
           }}
         >
           <Typography variant="h2" sx={{ pr: 1, mb: 1 }}>
-            $56,475.99
+            {formatAmountAndCurrency(holdingValue, 'USD')}
           </Typography>
-          <Text color="success">
-            <b>+12.5%</b>
-          </Text>
+          {parseInt(differenceInPercents) >= 0 ? (
+            <Text color="success">
+              <b>+{differenceInPercents}%</b>
+            </Text>
+          ) : (
+            <Text color="error">
+              <b>{differenceInPercents}%</b>
+            </Text>
+          )}
         </Box>
         <Box
           sx={{
@@ -73,9 +157,13 @@ function WatchListColumn1() {
             justifyContent: 'flex-start'
           }}
         >
-          <Label color="success">+$500</Label>
+          {parseInt(difference) >= 0 ? (
+            <Label color="success">+{formatAmountAndCurrency(difference, 'USD')}</Label>
+          ) : (
+            <Label color="error">{formatAmountAndCurrency(difference, 'USD')}</Label>
+          )}
           <Typography variant="body2" color="text.secondary" sx={{ pl: 1 }}>
-            last 24h
+            since start
           </Typography>
         </Box>
       </Box>
@@ -83,6 +171,7 @@ function WatchListColumn1() {
         <WatchListColumn1ChartWrapper
           data={price.week.data}
           labels={price.week.labels}
+          skeleton={true}
         />
       </Box>
     </Card>

@@ -11,7 +11,8 @@ const {
   getETFAsset,
   getCommodityAsset,
   getMiscAsset,
-  getP2PAsset
+  getP2PAsset,
+  getAssetsSummary
 } = require("../controllers/asset");
 const checkAuth = require("../middleware/auth");
 
@@ -45,6 +46,10 @@ router.get("/misc", (req, res, next) => {
 
 router.get("/p2p", (req, res, next) => {
   getP2PAsset(req, res, next);
+});
+
+router.get("/summary", (req, res, next) => {
+  getAssetsSummary(req, res, next);
 });
 
 router.get("/:id", (req, res, next) => {
