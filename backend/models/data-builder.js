@@ -90,6 +90,9 @@ class DataBuilder {
           totalSum: {
             $sum: "$price_usd",
           },
+          totalSumInOriginalCurrency: {
+            $sum: "$price",
+          },
           totalQuantity: {
             $sum: "$quantity",
           },

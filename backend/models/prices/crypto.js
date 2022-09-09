@@ -15,8 +15,9 @@ class CryptoPrices extends Prices {
   async getPricesPerAssets() {
     let currentPrices;
 
-    currentPrices = this.retrieveFromCache();
-    if (currentPrices.length === 0) {
+    if (cacheProvider.instance().has(this.category + "_prices")) {
+      currentPrices = cacheProvider.instance().get(this.category + "_prices");
+    } else {
       const CoinGeckoClient = new CoinGecko();
       const result = await CoinGeckoClient.simple.price({
         ids: this.assets,

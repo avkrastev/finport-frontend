@@ -10,7 +10,8 @@ const userSchema = new Schema({
     password: { type: String, required: true, minlength: 8 },
     image: { type: String, required: false },
     categories: { type: Array },
-    assets: [{ type:mongoose.Types.ObjectId, required: true, ref: 'Asset' }]
+    assets: [{ type:mongoose.Types.ObjectId, required: true, ref: 'Asset' }],
+    p2p: [{ type:mongoose.Types.ObjectId, required: true, ref: 'P2p' }]
 });
 
 userSchema.plugin(uniqueValidator);

@@ -118,7 +118,9 @@ function Row(props: { row: any; category: string }) {
             color="text.primary"
             noWrap
           >
-            {formatAmountAndCurrency(row.holdingValue, 'USD')}
+            {category !== 'p2p'
+              ? formatAmountAndCurrency(row.holdingValue, 'USD')
+              : formatAmountAndCurrency(row.totalSumInOriginalCurrency, 'EUR')}
           </Typography>
           {category !== 'p2p' && (
             <Typography variant="body2" noWrap gutterBottom>
@@ -135,17 +137,19 @@ function Row(props: { row: any; category: string }) {
           >
             {formatAmountAndCurrency(row.difference, 'USD')}
           </Typography>
-          <Typography variant="body2" noWrap gutterBottom>
-            {row.differenceInPercents >= 0 ? (
-              <Text color="success">
-                {roundNumber(row.differenceInPercents)}%
-              </Text>
-            ) : (
-              <Text color="error">
-                {roundNumber(row.differenceInPercents)}%
-              </Text>
-            )}
-          </Typography>
+          {category !== 'p2p' && (
+            <Typography variant="body2" noWrap gutterBottom>
+              {row.differenceInPercents >= 0 ? (
+                <Text color="success">
+                  {roundNumber(row.differenceInPercents)}%
+                </Text>
+              ) : (
+                <Text color="error">
+                  {roundNumber(row.differenceInPercents)}%
+                </Text>
+              )}
+            </Typography>
+          )}
         </TableCell>
         <TableCell align="right">
           <IconButton
@@ -175,7 +179,7 @@ function Row(props: { row: any; category: string }) {
                     {category !== 'p2p' && (
                       <TableCell align="right">Quantity</TableCell>
                     )}
-                    <TableCell align="right">Total cost ($)</TableCell>
+                    <TableCell align="right">Total cost</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -234,7 +238,12 @@ function Row(props: { row: any; category: string }) {
                         </TableCell>
                       )}
                       <TableCell align="right">
-                        {formatAmountAndCurrency(historyRow.price_usd, 'USD')}
+                        {category !== 'p2p'
+                          ? formatAmountAndCurrency(historyRow.price_usd, 'USD')
+                          : formatAmountAndCurrency(
+                              historyRow.price,
+                              historyRow.currency
+                            )}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -252,7 +261,7 @@ export default function CollapsibleTable({ assets, category, loading }) {
   if (loading !== 'succeeded') {
     return <CollapsibleTableSkeleton />;
   }
-  
+
   return (
     <TableContainer component={Paper}>
       <Table aria-label="collapsible table">

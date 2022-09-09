@@ -1,6 +1,7 @@
 const { validationResult } = require("express-validator");
 const HttpError = require("../models/http-error");
 const Asset = require("../models/asset");
+const P2p = require("../models/p2p");
 const User = require("../models/user");
 const mongoose = require("mongoose");
 const url = require("url");
@@ -16,7 +17,9 @@ const StocksAssetStats = require("../models/stats/stocks");
 const ETFAssetStats = require("../models/stats/etf");
 const CommoditiesAssetStats = require("../models/stats/commodities");
 const MiscAssetStats = require("../models/stats/misc");
-const {CATEGORIES} = require('../utils/categories'); 
+const { CATEGORIES } = require("../utils/categories");
+const P2PAssetStats = require("../models/stats/p2p");
+const { ObjectId, ConnectionClosedEvent } = require("mongodb");
 
 const getAsset = async (req, res, next) => {
   let assets;
@@ -200,13 +203,83 @@ const getP2PAsset = async (req, res, next) => {
       dataBuilder.getTotalSumsByCategoryAndAssetPipeline()
     ).exec();
 
-    const miscAssetStats = new MiscAssetStats(statsResults, sumsResult);
-    const assets = await miscAssetStats.getAllData();
+    const test = await Asset.aggregate([
+      {
+        $match: {
+          category: "p2p",
+          creator: new ObjectId(creator),
+        },
+      },
+      {
+        $lookup: {
+          from: "p2ps",
+          localField: "name",
+          foreignField: "name",
+          as: "percentages",
+        },
+      },
+      {
+        $sort: {
+          date: -1,
+        },
+      },
+    ]).exec();
+
+    const percentages = await P2p.find({ creator });
+
+    const result = test.reduce(function (r, a) {
+      r[a.name] = r[a.name] || [];
+      r[a.name].push(a);
+      return r;
+    }, Object.create(null));
+
+    let dada = [];
+    for (let item in result) {
+      let amount = result[item][0].price;
+      let sum = {};
+      sum.name = item;
+      sum.interest = 0;
+      for (let j in result[item]) {
+        amount += result[item][j].price;
+        if (amount <= 0) {
+          const endDate = new Date(result[item][0].date);
+          result[item][j].time = monthDiffFromToday(
+            result[item][j].date,
+            endDate
+          );
+          result[item][j].interest = compoundInterest(
+            result[item][j].price,
+            result[item][j].percentages[0].apr,
+            result[item][j].time
+          );
+        } else {
+          result[item][j].time = monthDiffFromToday(result[item][j].date);
+          result[item][j].interest = compoundInterest(
+            result[item][j].price,
+            result[item][j].percentages[0].apr,
+            result[item][j].time
+          );
+        }
+        sum.interest += result[item][j].interest;
+      }
+      dada.push(sum);
+    }
+
+    console.log(dada);
+
+    const p2pAssetStats = new P2PAssetStats(
+      statsResults,
+      sumsResult,
+      percentages
+    );
+    const assets = await p2pAssetStats.getAllData();
 
     assets.sums.sumsInDifferentCurrencies = await sumsInSupportedCurrencies(
       assets.sums.holdingValue,
       assets.sums.totalSum
     );
+
+    assets.percentages = percentages;
 
     res.json({ assets });
   } catch (err) {
@@ -214,6 +287,23 @@ const getP2PAsset = async (req, res, next) => {
     const error = new HttpError("Something went wrong!", 500);
     return next(error);
   }
+};
+
+const monthDiffFromToday = (date, date2 = new Date()) => {
+  let months;
+  date = new Date(date);
+  months = (date2.getFullYear() - date.getFullYear()) * 12;
+  months -= date.getMonth();
+  months += date2.getMonth();
+
+  const result = months <= 0 ? 0 : months;
+  return result / 12;
+};
+
+const compoundInterest = (principal, rate, time) => {
+  const r = rate / 100;
+  const a = principal * Math.pow(1 + r / 12, 12 * time);
+  return a - principal;
 };
 
 const getAssetsSummary = async (req, res, next) => {
@@ -232,7 +322,9 @@ const getAssetsSummary = async (req, res, next) => {
     let sumsSummary = [];
     for (let asset of statsResults) {
       let formattedSummary = {};
-      const category = CATEGORIES.find(category => category.alias === asset._id.category);
+      const category = CATEGORIES.find(
+        (category) => category.alias === asset._id.category
+      );
       formattedSummary.name = category.name;
       formattedSummary.alias = category.alias;
       formattedSummary.holdingValue = asset.totalSum;
@@ -245,7 +337,7 @@ const getAssetsSummary = async (req, res, next) => {
 
     const sumsInDifferentCurrencies = await sumsInSupportedCurrencies(
       sumsResult[0].totalSum,
-      sumsResult[0].totalSum,
+      sumsResult[0].totalSum
     );
 
     res.json({
@@ -253,7 +345,7 @@ const getAssetsSummary = async (req, res, next) => {
         sums: {
           totalSum: sumsResult[0].totalSum,
           holdingValue: sumsResult[0].totalSum,
-          sumsInDifferentCurrencies
+          sumsInDifferentCurrencies,
         },
         stats: sumsSummary,
       },

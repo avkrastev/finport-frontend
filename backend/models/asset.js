@@ -13,7 +13,7 @@ const assetSchema = new Schema({
   quantity: { type: Number, required: false },
   date: { type: String, required: true },
   type: { type: Number, required: true },
-  creator: { type: mongoose.Types.ObjectId, required: true, ref: "User" },
+  creator: { type: mongoose.Types.ObjectId, required: true, ref: "User" }
 });
 
 assetSchema.set("toJSON", {
