@@ -220,6 +220,7 @@ const getP2PAsset = async (req, res, next) => {
       },
       {
         $sort: {
+          type: -1,
           date: -1,
         },
       },
