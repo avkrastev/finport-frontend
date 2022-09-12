@@ -94,9 +94,17 @@ function AccountBalance({ assets, category, loading, ...rest }) {
   const difference = rest.totalDifference
     ? rest.totalDifference
     : assets?.sums?.difference;
-  const differenceInPercents = rest.totalDifferenceInPercents
-    ? rest.totalDifferenceInPercents
-    : assets?.sums?.differenceInPercents;
+
+  let differenceInPercents = assets.sums.differenceInPercents;
+  if (rest.totalDifference) {
+    differenceInPercents = (rest.totalDifference / assets.sums.totalSum) * 100;
+  }
+
+  let sumsInDifferentCurrencies = assets.sums.sumsInDifferentCurrencies;
+  if (rest.totalSumsInDifferentInCurrencies) {
+    sumsInDifferentCurrencies = rest.totalSumsInDifferentInCurrencies;
+  }
+
   if (loading !== 'succeeded') {
     return <AccountBalanceSkeleton />;
   }
@@ -113,25 +121,31 @@ function AccountBalance({ assets, category, loading, ...rest }) {
               <Typography variant="h1" gutterBottom>
                 {rest.totalBalance
                   ? formatAmountAndCurrency(rest.totalBalance, 'USD')
-                  : formatAmountAndCurrency(assets?.sums?.holdingValue, 'USD')}
+                  : formatAmountAndCurrency(assets.sums.holdingValue, 'USD')}
                 &nbsp;/&nbsp;
-                {formatAmountAndCurrency(assets?.sums?.totalSum, 'USD')}
+                {formatAmountAndCurrency(assets.sums.totalSum, 'USD')}
               </Typography>
-              {assets?.sums?.sumsInDifferentCurrencies?.map((item) => {
-                return (
-                  <Typography
-                    sx={{ mb: 1 }}
-                    key={item.currency}
-                    variant="h4"
-                    fontWeight="normal"
-                    color="text.secondary"
-                  >
-                    {formatAmountAndCurrency(item.holdingAmount, item.currency)}
-                    &nbsp;/&nbsp;
-                    {formatAmountAndCurrency(item.totalAmount, item.currency)}
-                  </Typography>
-                );
-              })}
+              
+              {sumsInDifferentCurrencies
+                .filter((item) => item.currency !== 'USD')
+                .map((item, i) => {
+                  return (
+                    <Typography
+                      sx={{ mb: 1 }}
+                      key={i}
+                      variant="h4"
+                      fontWeight="normal"
+                      color="text.secondary"
+                    >
+                      {formatAmountAndCurrency(
+                        item.holdingAmount,
+                        item.currency
+                      )}
+                      &nbsp;/&nbsp;
+                      {formatAmountAndCurrency(item.totalAmount, item.currency)}
+                    </Typography>
+                  );
+                })}
 
               {category === 'crypto' && (
                 <Typography
@@ -170,6 +184,12 @@ function AccountBalance({ assets, category, loading, ...rest }) {
                   </Typography>
                 </Box>
               </Box>
+              {category === 'p2p' && (
+                <Typography variant="h5">
+                  * The compound interest calculations are based on the best
+                  case scenario.
+                </Typography>
+              )}
             </Box>
           </Box>
         </Grid>

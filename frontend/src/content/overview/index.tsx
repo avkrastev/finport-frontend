@@ -43,6 +43,7 @@ import {
   getETFsStatus,
   selectAllETFs
 } from '../dashboards/Etf/ETFsSlice';
+import { currencies } from 'src/constants/common';
 
 function Overview() {
   const dispatch: AppDispatch = useDispatch();
@@ -63,8 +64,18 @@ function Overview() {
 
   const [totalBalance, setTotalBalance] = useState(0);
   const [totalDifference, setTotalDifference] = useState(0);
-  const [totalDifferenceInPercents, setTotalDifferenceInPercents] = useState(0);
-  const [totalSumsInDifferentInCurrencies, setTotalSumsInDifferentInCurrencies] = useState({});
+  const [
+    totalSumsInDifferentInCurrencies,
+    setTotalSumsInDifferentInCurrencies
+  ] = useState(() => {
+    return currencies.map((currency) => {
+      let data: any = {};
+      data.currency = currency.value;
+      data.holdingAmount = 0;
+      data.totalAmount = 0;
+      return data;
+    });
+  });
 
   useEffect(() => {
     if (summaryStatus === 'idle') {
@@ -77,9 +88,17 @@ function Overview() {
       dispatch(fetchCrypto());
     }
     if (cryptoStatus === 'succeeded') {
-      setTotalBalance(prevState => prevState + crypto.sums.holdingValue);
-      setTotalDifference(prevState => prevState + crypto.sums.difference);
-      setTotalDifferenceInPercents(prevState => prevState + crypto.sums.differenceInPercents);
+      setTotalBalance((prevState) => prevState + crypto.sums.holdingValue);
+      setTotalDifference((prevState) => prevState + crypto.sums.difference);
+      setTotalSumsInDifferentInCurrencies((prevState) => {
+        for (let i in prevState) {
+          prevState[i].holdingAmount +=
+            crypto.sums.sumsInDifferentCurrencies[i].holdingAmount;
+          prevState[i].totalAmount +=
+            crypto.sums.sumsInDifferentCurrencies[i].totalAmount;
+        }
+        return prevState;
+      });
     }
   }, [cryptoStatus, dispatch, crypto]);
 
@@ -88,9 +107,17 @@ function Overview() {
       dispatch(fetchStocks());
     }
     if (stocksStatus === 'succeeded') {
-      setTotalBalance(prevState => (prevState + stocks.sums.holdingValue));
-      setTotalDifference(prevState => prevState + stocks.sums.difference);
-      setTotalDifferenceInPercents(prevState => prevState + stocks.sums.differenceInPercents);
+      setTotalBalance((prevState) => prevState + stocks.sums.holdingValue);
+      setTotalDifference((prevState) => prevState + stocks.sums.difference);
+      setTotalSumsInDifferentInCurrencies((prevState) => {
+        for (let i in prevState) {
+          prevState[i].holdingAmount +=
+            stocks.sums.sumsInDifferentCurrencies[i].holdingAmount;
+          prevState[i].totalAmount +=
+            stocks.sums.sumsInDifferentCurrencies[i].totalAmount;
+        }
+        return prevState;
+      });
     }
   }, [stocksStatus, dispatch, stocks]);
 
@@ -99,9 +126,17 @@ function Overview() {
       dispatch(fetchP2P());
     }
     if (p2pStatus === 'succeeded') {
-      setTotalBalance(prevState => (prevState + p2p.sums.holdingValue));
-      setTotalDifference(prevState => prevState + p2p.sums.difference);
-      setTotalDifferenceInPercents(prevState => prevState + p2p.sums.differenceInPercents);
+      setTotalBalance((prevState) => prevState + p2p.sums.holdingValue);
+      setTotalDifference((prevState) => prevState + p2p.sums.difference);
+      setTotalSumsInDifferentInCurrencies((prevState) => {
+        for (let i in prevState) {
+          prevState[i].holdingAmount +=
+            p2p.sums.sumsInDifferentCurrencies[i].holdingAmount;
+          prevState[i].totalAmount +=
+            p2p.sums.sumsInDifferentCurrencies[i].totalAmount;
+        }
+        return prevState;
+      });
     }
   }, [p2pStatus, dispatch, p2p]);
 
@@ -110,9 +145,17 @@ function Overview() {
       dispatch(fetchMisc());
     }
     if (miscStatus === 'succeeded') {
-      setTotalBalance(prevState => (prevState + misc.sums.holdingValue));
-      setTotalDifference(prevState => prevState + misc.sums.difference);
-      setTotalDifferenceInPercents(prevState => prevState + misc.sums.differenceInPercents);
+      setTotalBalance((prevState) => prevState + misc.sums.holdingValue);
+      setTotalDifference((prevState) => prevState + misc.sums.difference);
+      setTotalSumsInDifferentInCurrencies((prevState) => {
+        for (let i in prevState) {
+          prevState[i].holdingAmount +=
+            misc.sums.sumsInDifferentCurrencies[i].holdingAmount;
+          prevState[i].totalAmount +=
+            misc.sums.sumsInDifferentCurrencies[i].totalAmount;
+        }
+        return prevState;
+      });
     }
   }, [miscStatus, dispatch, misc]);
 
@@ -121,9 +164,19 @@ function Overview() {
       dispatch(fetchCommodities());
     }
     if (commoditiesStatus === 'succeeded') {
-      setTotalBalance(prevState => (prevState + commodities.sums.holdingValue));
-      setTotalDifference(prevState => prevState + commodities.sums.difference);
-      setTotalDifferenceInPercents(prevState => prevState + commodities.sums.differenceInPercents);
+      setTotalBalance((prevState) => prevState + commodities.sums.holdingValue);
+      setTotalDifference(
+        (prevState) => prevState + commodities.sums.difference
+      );
+      setTotalSumsInDifferentInCurrencies((prevState) => {
+        for (let i in prevState) {
+          prevState[i].holdingAmount +=
+            commodities.sums.sumsInDifferentCurrencies[i].holdingAmount;
+          prevState[i].totalAmount +=
+            commodities.sums.sumsInDifferentCurrencies[i].totalAmount;
+        }
+        return prevState;
+      });
     }
   }, [commoditiesStatus, dispatch, commodities]);
 
@@ -132,9 +185,17 @@ function Overview() {
       dispatch(fetchETFs());
     }
     if (etfStatus === 'succeeded') {
-      setTotalBalance(prevState => (prevState + etf.sums.holdingValue));
-      setTotalDifference(prevState => prevState + etf.sums.difference);
-      setTotalDifferenceInPercents(prevState => prevState + etf.sums.differenceInPercents);
+      setTotalBalance((prevState) => prevState + etf.sums.holdingValue);
+      setTotalDifference((prevState) => prevState + etf.sums.difference);
+      setTotalSumsInDifferentInCurrencies((prevState) => {
+        for (let i in prevState) {
+          prevState[i].holdingAmount +=
+            etf.sums.sumsInDifferentCurrencies[i].holdingAmount;
+          prevState[i].totalAmount +=
+            etf.sums.sumsInDifferentCurrencies[i].totalAmount;
+        }
+        return prevState;
+      });
     }
   }, [etfStatus, dispatch, etf]);
 
@@ -161,7 +222,9 @@ function Overview() {
               loading={summaryStatus}
               totalBalance={totalBalance}
               totalDifference={totalDifference}
-              totalDifferenceInPercents={totalDifferenceInPercents}
+              totalSumsInDifferentInCurrencies={
+                totalSumsInDifferentInCurrencies
+              }
             />
           </Grid>
           <Grid item xs={12}>

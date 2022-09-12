@@ -8,10 +8,17 @@ interface Stats {
   totalQuantity: number;
 }
 
+interface SumsInDifferentCurrencies {
+  currency: string;
+  holdingAmount: number;
+  totalAmount: number;
+}
+
 interface Sums {
   holdingValue: number;
   difference: number;
   differenceInPercents: number;
+  sumsInDifferentCurrencies: SumsInDifferentCurrencies[];
 }
 
 interface Misc {
@@ -27,7 +34,14 @@ interface MiscState {
 
 const initialState: MiscState = {
   misc: {
-    sums: { holdingValue: 0, difference: 0, differenceInPercents: 0 },
+    sums: {
+      holdingValue: 0,
+      difference: 0,
+      differenceInPercents: 0,
+      sumsInDifferentCurrencies: [
+        { currency: '', holdingAmount: 0, totalAmount: 0 }
+      ]
+    },
     stats: []
   },
   status: 'idle', //'idle' | 'loading' | 'succeeded' | 'failed',

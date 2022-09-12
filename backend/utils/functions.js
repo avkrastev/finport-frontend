@@ -72,19 +72,22 @@ const roundNumber = (num, scale = 2) => {
   }
 };
 
-const sumsInSupportedCurrencies = async(holdingValue, totalValue) => {
+const sumsInSupportedCurrencies = async (
+  holdingValue,
+  totalValue
+) => {
   const rates = await this.exchangeRatesBaseUSD(0, "", "", true);
 
-  return CURRENCIES.filter(
-    (currency) => currency.value !== "USD"
-  ).map((currency) => {
-    let exchanged = {};
-    exchanged.currency = currency.value;
-    exchanged.holdingAmount = rates[currency.value] * holdingValue;
-    exchanged.totalAmount = rates[currency.value] * totalValue;
-    return exchanged;
-  });
-}
+  return CURRENCIES.map(
+    (currency) => {
+      let exchanged = {};
+      exchanged.currency = currency.value;
+      exchanged.holdingAmount = rates[currency.value] * holdingValue;
+      exchanged.totalAmount = rates[currency.value] * totalValue;
+      return exchanged;
+    }
+  );
+};
 
 exports.exchangeRatesBaseUSD = exchangeRatesBaseUSD;
 exports.roundNumber = roundNumber;

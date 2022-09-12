@@ -100,7 +100,9 @@ function WatchListColumn1({
     case 'commodities':
       holdingValue = commodities.holdingValue;
       difference = commodities.difference;
-      differenceInPercents = roundNumber(commodities.differenceInPercents);
+      differenceInPercents = commodities.differenceInPercents
+        ? roundNumber(commodities.differenceInPercents)
+        : 0;
       icon = AgricultureTwoToneIcon;
       loading = commoditiesLoading;
       break;
@@ -158,9 +160,13 @@ function WatchListColumn1({
           }}
         >
           {parseInt(difference) >= 0 ? (
-            <Label color="success">+{formatAmountAndCurrency(difference, 'USD')}</Label>
+            <Label color="success">
+              +{formatAmountAndCurrency(difference, 'USD')}
+            </Label>
           ) : (
-            <Label color="error">{formatAmountAndCurrency(difference, 'USD')}</Label>
+            <Label color="error">
+              {formatAmountAndCurrency(difference, 'USD')}
+            </Label>
           )}
           <Typography variant="body2" color="text.secondary" sx={{ pl: 1 }}>
             since start

@@ -203,81 +203,78 @@ const getP2PAsset = async (req, res, next) => {
       dataBuilder.getTotalSumsByCategoryAndAssetPipeline()
     ).exec();
 
-    const test = await Asset.aggregate([
-      {
-        $match: {
-          category: "p2p",
-          creator: new ObjectId(creator),
-        },
-      },
-      {
-        $lookup: {
-          from: "p2ps",
-          localField: "name",
-          foreignField: "name",
-          as: "percentages",
-        },
-      },
-      {
-        $sort: {
-          type: -1,
-          date: -1,
-        },
-      },
-    ]).exec();
+    const boughtParts = await Asset.aggregate(
+      dataBuilder.getBoughtItemsPerCategory()
+    ).exec();
+
+    const soldParts = await Asset.aggregate(
+      dataBuilder.getSoldItemsPerCategory()
+    ).exec();
 
     const percentages = await P2p.find({ creator });
 
-    const result = test.reduce(function (r, a) {
-      r[a.name] = r[a.name] || [];
-      r[a.name].push(a);
-      return r;
+    const boughtPartsGrouped = boughtParts.reduce(function (prevArr, newArr) {
+      prevArr[newArr.name] = prevArr[newArr.name] || [];
+      prevArr[newArr.name].push(newArr);
+      return prevArr;
     }, Object.create(null));
 
-    let dada = [];
-    for (let item in result) {
-      let amount = result[item][0].price;
-      let sum = {};
-      sum.name = item;
-      sum.interest = 0;
-      for (let j in result[item]) {
-        amount += result[item][j].price;
+    let totalInterestPaid = [];
+    for (let item in boughtPartsGrouped) {
+      let amount = 0;
+      let apr = 0;
+      const totalSoldPerPlatform = soldParts.find(
+        (part) => part._id.name === item
+      );
+      if (totalSoldPerPlatform) amount = totalSoldPerPlatform.totalSum;
+      const platformHasAPR = percentages.find(
+        (percentage) => percentage.name === item
+      );
+      if (platformHasAPR) apr = platformHasAPR.apr;
+
+      let interestPerItem = {};
+      interestPerItem.name = item;
+      interestPerItem.interest = 0;
+      interestPerItem.totalInvested = 0
+      for (let j in boughtPartsGrouped[item]) {
+        amount += boughtPartsGrouped[item][j].price;
+        const price = boughtPartsGrouped[item][j].price;
         if (amount <= 0) {
-          const endDate = new Date(result[item][0].date);
-          result[item][j].time = monthDiffFromToday(
-            result[item][j].date,
+          const endDate = new Date(totalSoldPerPlatform.date);
+          const time = monthDiffFromToday(
+            boughtPartsGrouped[item][j].date,
             endDate
           );
-          result[item][j].interest = compoundInterest(
-            result[item][j].price,
-            result[item][j].percentages[0].apr,
-            result[item][j].time
+          boughtPartsGrouped[item][j].interest = compoundInterest(
+            price,
+            apr,
+            time
           );
         } else {
-          result[item][j].time = monthDiffFromToday(result[item][j].date);
-          result[item][j].interest = compoundInterest(
-            result[item][j].price,
-            result[item][j].percentages[0].apr,
-            result[item][j].time
+          const time = monthDiffFromToday(boughtPartsGrouped[item][j].date);
+          boughtPartsGrouped[item][j].interest = compoundInterest(
+            price,
+            apr,
+            time
           );
         }
-        sum.interest += result[item][j].interest;
+        interestPerItem.interest += boughtPartsGrouped[item][j].interest;
+        interestPerItem.totalInvested += price;
       }
-      dada.push(sum);
+      totalInterestPaid.push(interestPerItem);
     }
-
-    console.log(dada);
 
     const p2pAssetStats = new P2PAssetStats(
       statsResults,
-      sumsResult,
-      percentages
+      sumsResult
     );
+    p2pAssetStats.setInterestPaid(totalInterestPaid);
     const assets = await p2pAssetStats.getAllData();
 
     assets.sums.sumsInDifferentCurrencies = await sumsInSupportedCurrencies(
       assets.sums.holdingValue,
-      assets.sums.totalSum
+      assets.sums.totalSum,
+      'EUR'
     );
 
     assets.percentages = percentages;

@@ -100,6 +100,47 @@ class DataBuilder {
       },
     ];
   }
+
+  getBoughtItemsPerCategory() {
+    return [
+      {
+        $match: {
+          category: this.category,
+          creator: new ObjectId(this.userId),
+          type: 0,
+        },
+      },
+      {
+        $sort: {
+          type: -1,
+          date: -1,
+        },
+      },
+    ];
+  }
+
+  getSoldItemsPerCategory() {
+    return [
+      {
+        $match: {
+          category: this.category,
+          creator: new ObjectId(this.userId),
+          type: 1,
+        },
+      },
+      {
+        $group: {
+          _id: {
+            name: "$name",
+          },
+          totalSum: {
+            $sum: "$price",
+          },
+          date: { $min: "$date" },
+        },
+      },
+    ];
+  }
 }
 
 module.exports = DataBuilder;

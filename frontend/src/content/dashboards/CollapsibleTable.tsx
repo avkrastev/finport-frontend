@@ -104,13 +104,13 @@ function Row(props: { row: any; category: string }) {
             </Typography>
           </TableCell>
         )}
-        {category !== 'p2p' && (
-          <TableCell align="right">
-            <Typography variant="body1" color="text.primary" noWrap>
-              {formatAmountAndCurrency(row.averageNetCost, 'USD')}
-            </Typography>
-          </TableCell>
-        )}
+        <TableCell align="right">
+          <Typography variant="body1" color="text.primary" noWrap>
+            {category !== 'p2p'
+              ? formatAmountAndCurrency(row.averageNetCost, 'USD')
+              : formatAmountAndCurrency(row.totalInvested, 'EUR')}
+          </Typography>
+        </TableCell>
         <TableCell align="right">
           <Typography
             variant="body1"
@@ -137,19 +137,18 @@ function Row(props: { row: any; category: string }) {
           >
             {formatAmountAndCurrency(row.difference, 'USD')}
           </Typography>
-          {category !== 'p2p' && (
-            <Typography variant="body2" noWrap gutterBottom>
-              {row.differenceInPercents >= 0 ? (
-                <Text color="success">
-                  {roundNumber(row.differenceInPercents)}%
-                </Text>
-              ) : (
-                <Text color="error">
-                  {roundNumber(row.differenceInPercents)}%
-                </Text>
-              )}
-            </Typography>
-          )}
+
+          <Typography variant="body2" noWrap gutterBottom>
+            {row.differenceInPercents >= 0 ? (
+              <Text color="success">
+                {roundNumber(row.differenceInPercents)}%
+              </Text>
+            ) : (
+              <Text color="error">
+                {roundNumber(row.differenceInPercents)}%
+              </Text>
+            )}
+          </Typography>
         </TableCell>
         <TableCell align="right">
           <IconButton
@@ -271,9 +270,9 @@ export default function CollapsibleTable({ assets, category, loading }) {
             {category !== 'p2p' && (
               <TableCell align="right">Current Price</TableCell>
             )}
-            {category !== 'p2p' && (
-              <TableCell align="right">Average Net Cost</TableCell>
-            )}
+            <TableCell align="right">
+              {category !== 'p2p' ? 'Average Net Cost' : 'Total Invested'}
+            </TableCell>
             <TableCell align="right">Holdings</TableCell>
             <TableCell align="right">P&amp;L</TableCell>
             <TableCell />

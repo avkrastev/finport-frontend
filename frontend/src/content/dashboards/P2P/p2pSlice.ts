@@ -12,10 +12,17 @@ interface Stats {
   totalQuantity: number;
 }
 
+interface SumsInDifferentCurrencies {
+  currency: string;
+  holdingAmount: number;
+  totalAmount: number;
+}
+
 interface Sums {
   holdingValue: number;
   difference: number;
   differenceInPercents: number;
+  sumsInDifferentCurrencies: SumsInDifferentCurrencies[];
 }
 
 interface Percentages {
@@ -39,7 +46,14 @@ interface P2PState {
 
 const initialState: P2PState = {
   p2p: {
-    sums: { holdingValue: 0, difference: 0, differenceInPercents: 0 },
+    sums: {
+      holdingValue: 0,
+      difference: 0,
+      differenceInPercents: 0,
+      sumsInDifferentCurrencies: [
+        { currency: '', holdingAmount: 0, totalAmount: 0 }
+      ]
+    },
     stats: [],
     percentages: []
   },
