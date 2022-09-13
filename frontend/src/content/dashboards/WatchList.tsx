@@ -3,19 +3,9 @@ import WatchListColumn1 from './WatchListColumn1';
 
 function WatchList({
   categories,
-  crypto,
-  cryptoLoading,
-  stocks,
-  stocksLoading,
-  p2p,
-  p2pLoading,
-  etf,
-  etfLoading,
-  misc,
-  miscLoading,
-  commodities,
-  commoditiesLoading,
+  ...rest
 }) {
+
   return (
     <>
       <Box
@@ -39,18 +29,7 @@ function WatchList({
               <Grid item lg={4} xs={12} key={category.alias}>
                 <WatchListColumn1
                   category={category}
-                  crypto={crypto.sums}
-                  cryptoLoading={cryptoLoading}
-                  stocks={stocks.sums}
-                  stocksLoading={stocksLoading}
-                  p2p={p2p.sums}
-                  p2pLoading={p2pLoading}
-                  etf={etf.sums}
-                  etfLoading={etfLoading}
-                  misc={misc.sums}
-                  miscLoading={miscLoading}
-                  commodities={commodities.sums}
-                  commoditiesLoading={commoditiesLoading}
+                  {...rest}
                 />
               </Grid>
             );

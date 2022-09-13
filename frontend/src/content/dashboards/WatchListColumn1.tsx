@@ -3,7 +3,7 @@ import { Card, Box, Typography, Avatar, SvgIcon } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Label from 'src/components/Label';
 import Text from 'src/components/Text';
-import { formatAmountAndCurrency, roundNumber } from 'src/utils/functions';
+import { formatAmountAndCurrency, padArrayStart, roundNumber } from 'src/utils/functions';
 import WatchListColumn1Chart from './WatchListColumn1Chart';
 import WatchListColumnSkeleton from './WatchListColumnSkeleton';
 import CurrencyBitcoinTwoToneIcon from '@mui/icons-material/CurrencyBitcoinTwoTone';
@@ -28,33 +28,29 @@ const WatchListColumn1ChartWrapper = styled(WatchListColumn1Chart)(
 
 function WatchListColumn1({
   category,
-  crypto,
-  cryptoLoading,
-  stocks,
-  stocksLoading,
-  p2p,
-  p2pLoading,
-  etf,
-  etfLoading,
-  misc,
-  miscLoading,
-  commodities,
-  commoditiesLoading
+  ...rest
 }) {
-  const price = {
-    week: {
-      labels: [
-        'Monday',
-        'Tuesday',
-        'Wednesday',
-        'Thursday',
-        'Friday',
-        'Saturday',
-        'Sunday'
-      ],
-      data: [55.701, 57.598, 48.607, 46.439, 58.755, 46.978, 58.16]
+  let prices = [];
+  let categories = {};
+  const labels = [
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday'
+  ];
+  for (let date of rest.history) {
+    const categoryDate = date.categories.find(
+      (item) => item.category === category.alias
+    );
+    if (categoryDate) {
+      prices.push(roundNumber(categoryDate.price));
     }
-  };
+
+    categories[category.alias] = padArrayStart(prices, 7, 0);
+  }
 
   let holdingValue;
   let difference;
@@ -63,48 +59,48 @@ function WatchListColumn1({
   let icon;
   switch (category.alias) {
     case 'crypto':
-      holdingValue = crypto.holdingValue;
-      difference = crypto.difference;
-      differenceInPercents = roundNumber(crypto.differenceInPercents);
+      holdingValue = rest.crypto.holdingValue;
+      difference = rest.crypto.difference;
+      differenceInPercents = roundNumber(rest.crypto.differenceInPercents);
       icon = CurrencyBitcoinTwoToneIcon;
-      loading = cryptoLoading;
+      loading = rest.cryptoLoading;
       break;
     case 'stocks':
-      holdingValue = stocks.holdingValue;
-      difference = stocks.difference;
-      differenceInPercents = roundNumber(stocks.differenceInPercents);
+      holdingValue = rest.stocks.holdingValue;
+      difference = rest.stocks.difference;
+      differenceInPercents = roundNumber(rest.stocks.differenceInPercents);
       icon = ShowChartTwoToneIcon;
-      loading = stocksLoading;
+      loading = rest.stocksLoading;
       break;
     case 'p2p':
-      holdingValue = p2p.holdingValue;
-      difference = p2p.difference;
-      differenceInPercents = roundNumber(p2p.differenceInPercents);
+      holdingValue = rest.p2p.holdingValue;
+      difference = rest.p2p.difference;
+      differenceInPercents = roundNumber(rest.p2p.differenceInPercents);
       icon = GroupTwoToneIcon;
-      loading = p2pLoading;
+      loading = rest.p2pLoading;
       break;
     case 'etf':
-      holdingValue = etf.holdingValue;
-      difference = etf.difference;
-      differenceInPercents = roundNumber(etf.differenceInPercents);
+      holdingValue = rest.etf.holdingValue;
+      difference = rest.etf.difference;
+      differenceInPercents = roundNumber(rest.etf.differenceInPercents);
       icon = AddchartTwoToneIcon;
-      loading = etfLoading;
+      loading = rest.etfLoading;
       break;
     case 'misc':
-      holdingValue = misc.holdingValue;
-      difference = misc.difference;
-      differenceInPercents = roundNumber(misc.differenceInPercents);
+      holdingValue = rest.misc.holdingValue;
+      difference = rest.misc.difference;
+      differenceInPercents = roundNumber(rest.misc.differenceInPercents);
       icon = AutoGraphTwoToneIcon;
-      loading = miscLoading;
+      loading = rest.miscLoading;
       break;
     case 'commodities':
-      holdingValue = commodities.holdingValue;
-      difference = commodities.difference;
-      differenceInPercents = commodities.differenceInPercents
-        ? roundNumber(commodities.differenceInPercents)
+      holdingValue = rest.commodities.holdingValue;
+      difference = rest.commodities.difference;
+      differenceInPercents = rest.commodities.differenceInPercents
+        ? roundNumber(rest.commodities.differenceInPercents)
         : 0;
       icon = AgricultureTwoToneIcon;
-      loading = commoditiesLoading;
+      loading = rest.commoditiesLoading;
       break;
     default:
       holdingValue = 0;
@@ -175,8 +171,8 @@ function WatchListColumn1({
       </Box>
       <Box height={130} sx={{ ml: -1.5 }}>
         <WatchListColumn1ChartWrapper
-          data={price.week.data}
-          labels={price.week.labels}
+          data={categories[category.alias]}
+          labels={labels}
           skeleton={true}
         />
       </Box>

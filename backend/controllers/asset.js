@@ -19,7 +19,7 @@ const CommoditiesAssetStats = require("../models/stats/commodities");
 const MiscAssetStats = require("../models/stats/misc");
 const { CATEGORIES } = require("../utils/categories");
 const P2PAssetStats = require("../models/stats/p2p");
-const { ObjectId, ConnectionClosedEvent } = require("mongodb");
+const { addHistory } = require("./history");
 
 const getAsset = async (req, res, next) => {
   let assets;
@@ -64,6 +64,8 @@ const getCryptoAsset = async (req, res, next) => {
       assets.sums.totalSum
     );
 
+    await addHistoryData('crypto', assets.sums.holdingValue, creator);
+
     res.json({ assets });
   } catch (err) {
     const error = new HttpError("Something went wrong!", 500);
@@ -91,6 +93,8 @@ const getStockAsset = async (req, res, next) => {
       assets.sums.holdingValue,
       assets.sums.totalSum
     );
+
+    await addHistoryData('stocks', assets.sums.holdingValue, creator);
 
     res.json({ assets });
   } catch (err) {
@@ -120,6 +124,8 @@ const getETFAsset = async (req, res, next) => {
       assets.sums.holdingValue,
       assets.sums.totalSum
     );
+
+    await addHistoryData('etf', assets.sums.holdingValue, creator);
 
     res.json({ assets });
   } catch (err) {
@@ -153,6 +159,8 @@ const getCommodityAsset = async (req, res, next) => {
       assets.sums.totalSum
     );
 
+    await addHistoryData('commodities', assets.sums.holdingValue, creator);
+
     res.json({ assets });
   } catch (err) {
     console.log(err);
@@ -181,6 +189,8 @@ const getMiscAsset = async (req, res, next) => {
       assets.sums.holdingValue,
       assets.sums.totalSum
     );
+
+    await addHistoryData('misc', assets.sums.holdingValue, creator);
 
     res.json({ assets });
   } catch (err) {
@@ -235,7 +245,7 @@ const getP2PAsset = async (req, res, next) => {
       let interestPerItem = {};
       interestPerItem.name = item;
       interestPerItem.interest = 0;
-      interestPerItem.totalInvested = 0
+      interestPerItem.totalInvested = 0;
       for (let j in boughtPartsGrouped[item]) {
         amount += boughtPartsGrouped[item][j].price;
         const price = boughtPartsGrouped[item][j].price;
@@ -264,20 +274,19 @@ const getP2PAsset = async (req, res, next) => {
       totalInterestPaid.push(interestPerItem);
     }
 
-    const p2pAssetStats = new P2PAssetStats(
-      statsResults,
-      sumsResult
-    );
+    const p2pAssetStats = new P2PAssetStats(statsResults, sumsResult);
     p2pAssetStats.setInterestPaid(totalInterestPaid);
     const assets = await p2pAssetStats.getAllData();
 
     assets.sums.sumsInDifferentCurrencies = await sumsInSupportedCurrencies(
       assets.sums.holdingValue,
       assets.sums.totalSum,
-      'EUR'
+      "EUR"
     );
 
     assets.percentages = percentages;
+
+    await addHistoryData('p2p', assets.sums.holdingValue, creator);
 
     res.json({ assets });
   } catch (err) {
@@ -286,6 +295,22 @@ const getP2PAsset = async (req, res, next) => {
     return next(error);
   }
 };
+
+const addHistoryData = async (category, price, user) => {
+  try {
+    await addHistory(
+      {
+        date: fns.format(new Date(), "yyyy-MM-dd"),
+        category,
+        price,
+      },
+      user
+    );
+  } catch (err) {
+    console.log(err);
+    new HttpError("Error storing history data!", 500);
+  }
+}
 
 const monthDiffFromToday = (date, date2 = new Date()) => {
   let months;
@@ -329,12 +354,7 @@ const getAssetsSummary = async (req, res, next) => {
       sumsSummary.push(formattedSummary);
     }
 
-    //console.log(statsResults)
-    // const miscAssetStats = new MiscAssetStats(statsResults, sumsResult);
-    // const assets = await miscAssetStats.getAllData();
-
     const sumsInDifferentCurrencies = await sumsInSupportedCurrencies(
-      sumsResult[0].totalSum,
       sumsResult[0].totalSum
     );
 

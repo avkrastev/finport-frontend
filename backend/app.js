@@ -5,6 +5,8 @@ const mongoose = require("mongoose");
 const userRoutes = require("./routes/user");
 const assetRoutes = require("./routes/asset");
 const p2pRoutes = require("./routes/p2p");
+const historyRoutes = require("./routes/history");
+
 const checkAuth = require("./middleware/auth");
 const cacheProvider = require("./utils/cache-provider");
 
@@ -41,6 +43,7 @@ app.use(unless(checkAuth, "/api/users/login", "/api/users/signup"));
 app.use("/api/users", userRoutes);
 app.use("/api/assets", assetRoutes);
 app.use("/api/p2p", p2pRoutes);
+app.use("/api/history", historyRoutes);
 
 app.use((error, req, res, next) => {
   if (res.headerSent) {

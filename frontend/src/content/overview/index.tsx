@@ -8,8 +8,10 @@ import AccountBalance from '../dashboards/AccountBalance';
 import { AppDispatch } from 'src/app/store';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+  fetchHistory,
   fetchSummary,
   getSummaryStatus,
+  selectAllHistory,
   selectAllSummary
 } from './summarySlice';
 import { useEffect, useState } from 'react';
@@ -49,6 +51,7 @@ function Overview() {
   const dispatch: AppDispatch = useDispatch();
   const summary = useSelector(selectAllSummary);
   const summaryStatus = useSelector(getSummaryStatus);
+  const history = useSelector(selectAllHistory);
   const crypto = useSelector(selectAllCrypto);
   const cryptoStatus = useSelector(getCryptoStatus);
   const stocks = useSelector(selectAllStocks);
@@ -80,8 +83,9 @@ function Overview() {
   useEffect(() => {
     if (summaryStatus === 'idle') {
       dispatch(fetchSummary());
+      dispatch(fetchHistory());
     }
-  }, [summaryStatus, dispatch, summary.sums.totalSum]);
+  }, [summaryStatus, dispatch]);
 
   useEffect(() => {
     if (cryptoStatus === 'idle') {
@@ -230,18 +234,19 @@ function Overview() {
           <Grid item xs={12}>
             <WatchList
               categories={summary.stats}
-              crypto={crypto}
+              crypto={crypto.sums}
               cryptoLoading={cryptoStatus}
-              stocks={stocks}
+              stocks={stocks.sums}
               stocksLoading={stocksStatus}
-              p2p={p2p}
+              p2p={p2p.sums}
               p2pLoading={p2pStatus}
-              etf={etf}
+              etf={etf.sums}
               etfLoading={etfStatus}
-              misc={misc}
+              misc={misc.sums}
               miscLoading={miscStatus}
-              commodities={commodities}
+              commodities={commodities.sums}
               commoditiesLoading={commoditiesStatus}
+              history={history}
             />
           </Grid>
         </Grid>
