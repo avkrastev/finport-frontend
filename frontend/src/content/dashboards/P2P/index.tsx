@@ -44,7 +44,7 @@ function DashboardCrypto() {
             <AccountBalance assets={p2p} category="p2p" loading={p2pStatus} />
           </Grid>
           <Grid item lg={12} xs={12}>
-            <Wallets assets={p2p} />
+            <Wallets assets={p2p} status={p2pStatus} />
           </Grid>
           <Grid item xs={12}>
             <CollapsibleTable

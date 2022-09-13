@@ -116,7 +116,13 @@ const SubMenuWrapper = styled(List)(
 
               &.Mui-active,
               &:hover {
-                background-color: ${theme.sidebar.menuItemBg};
+                background-color: ${theme.sidebar.menuItemBgActive};
+                color: ${theme.sidebar.menuItemColorActive};
+    
+                .MuiButton-startIcon,
+                .MuiButton-endIcon {
+                    color: ${theme.sidebar.menuItemIconColorActive};
+                }
               }
             }
           }
@@ -149,16 +155,26 @@ const reduceChildRoutes = ({
 }): Array<JSX.Element> => {
   const key = item.name;
 
-  const exactMatch = item.link ? !!matchPath({
-    path: item.link,
-    end: true
-  }, path) : false;
+  const exactMatch = item.link
+    ? !!matchPath(
+        {
+          path: item.link,
+          end: true
+        },
+        path
+      )
+    : false;
 
   if (item.items) {
-    const partialMatch = item.link ? !!matchPath({
-      path: item.link,
-      end: false
-    }, path) : false;
+    const partialMatch = item.link
+      ? !!matchPath(
+          {
+            path: item.link,
+            end: false
+          },
+          path
+        )
+      : false;
 
     ev.push(
       <SidebarMenuItem
@@ -177,7 +193,7 @@ const reduceChildRoutes = ({
       </SidebarMenuItem>
     );
   } else {
-    item.show && 
+    item.show &&
       ev.push(
         <SidebarMenuItem
           key={key}
@@ -191,29 +207,37 @@ const reduceChildRoutes = ({
   }
 
   return ev;
-}
+};
 
 function SidebarMenu() {
   const location = useLocation();
   const { authUserData } = useContext(AuthContext);
 
-  let dashboards = menuItems.find((section) => section.heading === 'Dashboards');
-  dashboards.items = dashboards.items.map((item, i) => Object.assign({}, item, authUserData.categories[i]));
+  let dashboards = menuItems.find(
+    (section) => section.heading === 'Dashboards'
+  );
+  dashboards.items = dashboards.items.map((item, i) =>
+    Object.assign({}, item, authUserData.categories[i])
+  );
 
   return (
     <>
       {menuItems.map((section) => {
-        return <MenuWrapper
-          key={section.heading}
-          subheader={
-            <ListSubheader component="div" disableSticky>{section.heading}</ListSubheader>
-          }
-        >
-          {renderSidebarMenuItems({
-            items: section.items,
-            path: location.pathname,
-          })}
-        </MenuWrapper>
+        return (
+          <MenuWrapper
+            key={section.heading}
+            subheader={
+              <ListSubheader component="div" disableSticky>
+                {section.heading}
+              </ListSubheader>
+            }
+          >
+            {renderSidebarMenuItems({
+              items: section.items,
+              path: location.pathname
+            })}
+          </MenuWrapper>
+        );
       })}
     </>
   );

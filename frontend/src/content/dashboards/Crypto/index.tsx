@@ -11,7 +11,6 @@ import { useEffect } from 'react';
 import { AppDispatch } from 'src/app/store';
 import { fetchCrypto, getCryptoStatus, selectAllCrypto } from './cryptoSlice';
 import CollapsibleTable from '../CollapsibleTable';
-import AccountBalanceSkeleton from '../AccountBalanceSkeleton';
 
 function DashboardCrypto() {
   const dispatch: AppDispatch = useDispatch();

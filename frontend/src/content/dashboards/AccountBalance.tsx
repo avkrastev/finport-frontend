@@ -187,7 +187,7 @@ function AccountBalance({ assets, category, loading, ...rest }) {
               {category === 'p2p' && (
                 <Typography variant="h5">
                   * The compound interest calculations are based on the best
-                  case scenario.
+                  case scenario. Therefore the data is approximate.
                 </Typography>
               )}
             </Box>

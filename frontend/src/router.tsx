@@ -26,6 +26,10 @@ const Commodities = Loader(lazy(() => import('src/content/dashboards/Commodities
 const Misc = Loader(lazy(() => import('src/content/dashboards/Misc')));
 const P2P = Loader(lazy(() => import('src/content/dashboards/P2P')));
 
+// Reports
+const Monthly = Loader(lazy(() => import('src/content/dashboards/Reports/Monthly')));
+const Yearly = Loader(lazy(() => import('src/content/dashboards/Reports/Yearly')));
+
 // Applications
 const Transactions = Loader(
   lazy(() => import('src/content/applications/Transactions'))
@@ -151,7 +155,16 @@ const routes = (isLoggedIn: any) => [
           },
           {
             path: 'reports',
-            element: <StatusComingSoon />
+            children: [
+              {
+                path: 'monthly',
+                element: <Monthly />
+              },
+              {
+                path: 'yearly',
+                element: <Yearly />
+              },
+            ]
           },
           {
             path: 'snapshots',

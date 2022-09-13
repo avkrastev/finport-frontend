@@ -115,7 +115,19 @@ const menuItems: MenuItems[] = [
         name: 'Reports',
         icon: AssessmentTwoToneIcon,
         link: '/management/reports',
-        show: true
+        show: true,
+        items: [
+          {
+            name: 'Monthly',
+            link: '/management/reports/monthly',
+            show: true
+          },
+          {
+            name: 'Yearly',
+            link: '/management/reports/yearly',
+            show: true
+          }
+        ]
       },
       {
         name: 'Snapshots',

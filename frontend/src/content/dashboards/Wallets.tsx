@@ -23,6 +23,7 @@ import { useState } from 'react';
 import { AppDispatch } from 'src/app/store';
 import { useDispatch } from 'react-redux';
 import { addAPR, changeP2PStatus, updateAPR } from './P2P/p2pSlice';
+import WalletsSkeleton from './WalletsSkeleton';
 
 const AvatarAddWrapper = styled(Avatar)(
   ({ theme }) => `
@@ -56,7 +57,7 @@ const CardAddAction = styled(Card)(
 `
 );
 
-function Wallets({ assets }) {
+function Wallets({ assets, status }) {
   const dispatch: AppDispatch = useDispatch();
 
   const [platformAPR, setPlatformAPR] = useState({});
@@ -89,6 +90,10 @@ function Wallets({ assets }) {
     });
     dispatch(changeP2PStatus('idle'));
   };
+
+  if (status !== 'succeeded') {
+    return <WalletsSkeleton />;
+  }
 
   return (
     <>

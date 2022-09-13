@@ -18,14 +18,28 @@ import Text from 'src/components/Text';
 import { getAssets } from 'src/utils/api/assetsApiFunction';
 import { format } from 'date-fns';
 import { transactionTypes } from 'src/constants/common';
-import { useTheme } from '@mui/material';
+import { Tooltip, useTheme } from '@mui/material';
 import CollapsibleTableSkeleton from './CollapsibleTableSkeleton';
+import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
+import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
+import ConfirmDialog from '../applications/Transactions/ConfirmDialog';
+import { changeTransactionStatus, deleteTransaction } from '../applications/Transactions/transactionSlice';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from 'src/app/store';
+import TransactionModal from 'src/components/TransactionModal';
 
 function Row(props: { row: any; category: string }) {
+  const dispatch: AppDispatch = useDispatch();
   const { row, category } = props;
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [historyData, setHistoryData] = React.useState([]);
+  const [openTransactionModal, setOpenTransactionModal] = React.useState(false);
+  const [selectedTransaction, setSelectedTransaction] = React.useState({});
+  const [openConfirmModal, setOpenConfirmModal] = React.useState(false);
+  const [clickedTransactionId, setClickedTransactionId] = React.useState(null);
+
+  const handleCloseConfirmModal = () => setOpenConfirmModal(false);
 
   const handleShowHistory = async (row) => {
     setOpen(!open);
@@ -61,6 +75,31 @@ function Row(props: { row: any; category: string }) {
       if (response.status === 200) {
         setHistoryData(response.data.assets);
       }
+    }
+  };
+
+  const handleCloseTransactionModal = () => {
+    setOpenTransactionModal(false);
+  };
+
+  const openEditModal = (row) => {
+    setSelectedTransaction({ ...row });
+    setOpenTransactionModal(true);
+  };
+
+  const openDeleteModal = (id) => {
+    setClickedTransactionId(id);
+    setOpenConfirmModal(true);
+  };
+
+  const handleDeleteTransaction = () => {
+    try {
+      if (clickedTransactionId)
+        dispatch(deleteTransaction(clickedTransactionId)).unwrap();
+      handleCloseConfirmModal();
+      dispatch(changeTransactionStatus('idle'));
+    } catch (err) {
+      console.error('Failed to delete the transaction', err);
     }
   };
 
@@ -179,6 +218,7 @@ function Row(props: { row: any; category: string }) {
                       <TableCell align="right">Quantity</TableCell>
                     )}
                     <TableCell align="right">Total cost</TableCell>
+                    <TableCell align="right">Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -244,6 +284,38 @@ function Row(props: { row: any; category: string }) {
                               historyRow.currency
                             )}
                       </TableCell>
+                      <TableCell align="right">
+                        <Tooltip title="Edit Transaction" arrow>
+                          <IconButton
+                            onClick={() => openEditModal(historyRow)}
+                            sx={{
+                              '&:hover': {
+                                background: theme.colors.primary.lighter
+                              },
+                              color: theme.palette.primary.main
+                            }}
+                            color="inherit"
+                            size="small"
+                          >
+                            <EditTwoToneIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Delete Transaction" arrow>
+                          <IconButton
+                            onClick={() => openDeleteModal(historyRow.id)}
+                            sx={{
+                              '&:hover': {
+                                background: theme.colors.error.lighter
+                              },
+                              color: theme.palette.error.main
+                            }}
+                            color="inherit"
+                            size="small"
+                          >
+                            <DeleteTwoToneIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -252,6 +324,19 @@ function Row(props: { row: any; category: string }) {
           </Collapse>
         </TableCell>
       </TableRow>
+      <TransactionModal
+        transaction={selectedTransaction}
+        open={openTransactionModal}
+        close={handleCloseTransactionModal}
+        tabs={true}
+      />
+      <ConfirmDialog
+        click={handleDeleteTransaction}
+        open={openConfirmModal}
+        close={handleCloseConfirmModal}
+        title="Are you sure you want to delete this transaction?"
+        transactionId={clickedTransactionId}
+      />
     </React.Fragment>
   );
 }

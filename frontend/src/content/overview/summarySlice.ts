@@ -74,20 +74,13 @@ const summarySlice = createSlice({
         state.status = 'failed';
         state.error = action.error.message;
       })
-      .addCase(fetchHistory.pending, (state) => {
-        state.status = 'loading';
-      })
       .addCase(
         fetchHistory.fulfilled,
         (state, action: PayloadAction<History[]>) => {
           state.status = 'succeeded';
           state.history = action.payload;
         }
-      )
-      .addCase(fetchHistory.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message;
-      });
+      );
   }
 });
 

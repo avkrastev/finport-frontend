@@ -141,6 +141,47 @@ class DataBuilder {
       },
     ];
   }
+
+  getTransactionsPerMonths() {
+    return [
+      {
+        $group: {
+          _id: {
+            year: {
+              $year: {
+                $dateFromString: {
+                  dateString: "$date",
+                },
+              },
+            },
+            month: {
+              $month: {
+                $dateFromString: {
+                  dateString: "$date",
+                },
+              },
+            },
+          },
+          transactions: {
+            $push: {
+              date: "$date",
+              name: "$name",
+              type: "$type",
+            },
+          },
+          count: {
+            $sum: 1,
+          },
+        },
+      },
+      {
+        $sort: {
+          "_id.year": -1,
+          "_id.month": -1,
+        },
+      },
+    ];
+  }
 }
 
 module.exports = DataBuilder;
