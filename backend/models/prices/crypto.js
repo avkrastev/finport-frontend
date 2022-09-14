@@ -22,25 +22,32 @@ class CryptoPrices extends Prices {
       currentPrices = cacheProvider
         .instance()
         .get(this.category + "_prices_" + this.creator);
-    } else {
-      const CoinGeckoClient = new CoinGecko();
-      const result = await CoinGeckoClient.simple.price({
-        ids: this.assets,
-        vs_currencies: this.currency.toLowerCase(),
-      });
+    }
 
-      if (result.code === 200) {
-        cacheProvider
-          .instance()
-          .set(
-            this.category + "_prices_" + this.creator,
-            result.data,
-            cryptoCacheTTL
-          );
-        currentPrices = result.data;
-      } else {
-        return new HttpError("Something went wrong!", 500);
-      }
+    if (
+      currentPrices &&
+      Object.keys(currentPrices).length === this.assets.length
+    ) {
+      return currentPrices;
+    }
+
+    const CoinGeckoClient = new CoinGecko();
+    const result = await CoinGeckoClient.simple.price({
+      ids: this.assets,
+      vs_currencies: this.currency.toLowerCase(),
+    });
+
+    if (result.code === 200) {
+      cacheProvider
+        .instance()
+        .set(
+          this.category + "_prices_" + this.creator,
+          result.data,
+          cryptoCacheTTL
+        );
+      currentPrices = result.data;
+    } else {
+      return new HttpError("Something went wrong!", 500);
     }
 
     return currentPrices;

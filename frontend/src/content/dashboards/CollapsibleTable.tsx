@@ -15,7 +15,6 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import Icon from 'react-crypto-icons';
 import { formatAmountAndCurrency, roundNumber } from 'src/utils/functions';
 import Text from 'src/components/Text';
-import { getAssets } from 'src/utils/api/assetsApiFunction';
 import { format } from 'date-fns';
 import { transactionTypes } from 'src/constants/common';
 import { Tooltip, useTheme } from '@mui/material';
@@ -23,17 +22,23 @@ import CollapsibleTableSkeleton from './CollapsibleTableSkeleton';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
 import ConfirmDialog from '../applications/Transactions/ConfirmDialog';
-import { changeTransactionStatus, deleteTransaction } from '../applications/Transactions/transactionSlice';
-import { useDispatch } from 'react-redux';
+import {
+  changeTransactionStatus,
+  deleteTransaction,
+  fetchFilteredTransactions,
+  selectFilteredTransactions
+} from '../applications/Transactions/transactionSlice';
+import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from 'src/app/store';
 import TransactionModal from 'src/components/TransactionModal';
+import { changeCryptoStatus } from './Crypto/cryptoSlice';
 
 function Row(props: { row: any; category: string }) {
   const dispatch: AppDispatch = useDispatch();
+  const historyData = useSelector(selectFilteredTransactions);
   const { row, category } = props;
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  const [historyData, setHistoryData] = React.useState([]);
   const [openTransactionModal, setOpenTransactionModal] = React.useState(false);
   const [selectedTransaction, setSelectedTransaction] = React.useState({});
   const [openConfirmModal, setOpenConfirmModal] = React.useState(false);
@@ -71,10 +76,7 @@ function Row(props: { row: any; category: string }) {
           params = '';
       }
 
-      const response = await getAssets(params.toString());
-      if (response.status === 200) {
-        setHistoryData(response.data.assets);
-      }
+      dispatch(fetchFilteredTransactions(params.toString()));
     }
   };
 
@@ -95,9 +97,13 @@ function Row(props: { row: any; category: string }) {
   const handleDeleteTransaction = () => {
     try {
       if (clickedTransactionId)
-        dispatch(deleteTransaction(clickedTransactionId)).unwrap();
+        dispatch(deleteTransaction(clickedTransactionId))
+          .unwrap()
+          .then(() => {
+            dispatch(changeTransactionStatus('idle'));
+            dispatch(changeCryptoStatus('idle'));
+          });
       handleCloseConfirmModal();
-      dispatch(changeTransactionStatus('idle'));
     } catch (err) {
       console.error('Failed to delete the transaction', err);
     }

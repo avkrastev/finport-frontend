@@ -55,7 +55,11 @@ export const fetchCrypto = createAsyncThunk('crypto/fetchCrypto', async () => {
 const cryptoSlice = createSlice({
   name: 'crypto',
   initialState,
-  reducers: {},
+  reducers: {
+    changeCryptoStatus(state, action) {
+      state.status = action.payload;
+    }
+  },
   extraReducers(builder) {
     builder
       .addCase(fetchCrypto.pending, (state) => {
@@ -79,6 +83,6 @@ export const selectAllCrypto = (state: RootState) => state.crypto.crypto;
 export const getCryptoStatus = (state: RootState) => state.crypto.status;
 export const getCryptoError = (state: RootState) => state.crypto.error;
 
-//export const {} = cryptoSlice.actions;
+export const { changeCryptoStatus } = cryptoSlice.actions;
 
 export default cryptoSlice.reducer;

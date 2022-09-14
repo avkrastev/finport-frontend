@@ -34,6 +34,7 @@ import {
 } from '../../content/applications/Transactions/transactionSlice';
 import { MobileDateTimePicker } from '@mui/x-date-pickers';
 import { AuthContext } from 'src/utils/context/authContext';
+import { changeCryptoStatus } from 'src/content/dashboards/Crypto/cryptoSlice';
 
 function TransactionModal(props) {
   const autoC = useRef(null);
@@ -187,6 +188,15 @@ function TransactionModal(props) {
         dispatch(updateTransaction(transactionForm));
       } else {
         dispatch(addNewTransaction(transactionForm));
+      }
+
+      switch(transactionForm.category) {
+        case 'crypto':
+          dispatch(changeCryptoStatus('idle'));
+        break;
+        default:
+          break;
+
       }
 
       props.close();

@@ -15,6 +15,7 @@ interface Transaction {
   symbol: string;
   currency: string;
   price: number;
+  price_usd: number;
   quantity: number;
   date: Date;
   type: number;
@@ -22,6 +23,7 @@ interface Transaction {
 
 interface TransactionState {
   transactions: Transaction[];
+  filteredTransactions: Transaction[];
   status: string;
   addStatus: string;
   updateStatus: string;
@@ -31,6 +33,7 @@ interface TransactionState {
 
 const initialState: TransactionState = {
   transactions: [],
+  filteredTransactions: [],
   status: 'idle', //'idle' | 'loading' | 'succeeded' | 'failed',
   addStatus: 'idle', //'idle' | 'loading' | 'succeeded' | 'failed',
   updateStatus: 'idle', //'idle' | 'loading' | 'succeeded' | 'failed',
@@ -77,6 +80,14 @@ export const deleteTransactions = createAsyncThunk(
     const response = await deleteAssets(ids);
     if (response?.status === 200) return ids;
     return `${response?.status}: ${response?.statusText}`;
+  }
+);
+
+export const fetchFilteredTransactions = createAsyncThunk(
+  'transactions/fetchFilteredTransactions',
+  async (params: string) => {
+    const response = await getAssets(params);
+    return response.data.assets as Transaction[];
   }
 );
 
@@ -173,11 +184,19 @@ const transactionsSlice = createSlice({
         state.deleteStatus = 'failed';
         state.error = action.error.message;
       })
+      .addCase(
+        fetchFilteredTransactions.fulfilled,
+        (state, action: PayloadAction<Transaction[]>) => {
+          state.filteredTransactions = action.payload;
+        }
+      );
   }
 });
 
 export const selectAllTransactions = (state: RootState) =>
   state.transactions.transactions;
+export const selectFilteredTransactions = (state: RootState) =>
+  state.transactions.filteredTransactions;
 export const getTransactionsStatus = (state: RootState) =>
   state.transactions.status;
 export const getTransactionAddStatus = (state: RootState) =>

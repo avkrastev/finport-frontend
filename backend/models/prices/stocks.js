@@ -21,11 +21,16 @@ class StockPrices extends Prices {
       currentPrices = cacheProvider
         .instance()
         .get(this.category + "_prices_" + this.creator);
-    } else {
-      currentPrices = this.fetchStockPrices(apiKey, stocksCacheTTL);
     }
 
-    return currentPrices;
+    if (
+      currentPrices &&
+      Object.keys(currentPrices).length === this.assets.length
+    ) {
+      return currentPrices;
+    }
+
+    return this.fetchStockPrices(apiKey, stocksCacheTTL);
   }
 }
 

@@ -178,7 +178,7 @@ function AccountBalance({ assets, category, loading, ...rest }) {
                     <TrendingFlat fontSize="large" />
                   </AvatarEqual>
                 )}
-                {rest.totalBalance > 0 && (
+                {(assets?.sums?.holdingValue > 0 || rest.totalBalance > 0) && (
                   <Box>
                     <Typography variant="h4">
                       {formatAmountAndCurrency(difference, 'USD')}

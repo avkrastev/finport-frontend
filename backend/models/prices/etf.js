@@ -15,15 +15,21 @@ class ETFPrices extends Prices {
   async getPricesPerAssets(apiKey) {
     let currentPrices;
 
-    if (cacheProvider.instance().has(this.category + "_prices_" + this.creator)) {
+    if (
+      cacheProvider.instance().has(this.category + "_prices_" + this.creator)
+    ) {
       currentPrices = cacheProvider
         .instance()
         .get(this.category + "_prices_" + this.creator);
-    } else {
-      currentPrices = await this.fetchStockPrices(apiKey, etfCacheTTL);
+    }
+    if (
+      currentPrices &&
+      Object.keys(currentPrices).length === this.assets.length
+    ) {
+      return currentPrices;
     }
 
-    return currentPrices;
+    return await this.fetchStockPrices(apiKey, etfCacheTTL);
   }
 }
 

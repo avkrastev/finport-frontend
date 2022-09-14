@@ -17,6 +17,7 @@ import {
 } from './transactionSlice';
 import TransactionModal from 'src/components/TransactionModal';
 import SuspenseLoader from 'src/components/SuspenseLoader';
+import { changeCryptoStatus } from 'src/content/dashboards/Crypto/cryptoSlice';
 
 function RecentOrders() {
   const dispatch = useDispatch();
@@ -93,6 +94,7 @@ function RecentOrders() {
     try {
       if (clickedTransactionId)
         dispatch(deleteTransaction(clickedTransactionId)).unwrap();
+        dispatch(changeCryptoStatus('idle'));
       handleCloseConfirmModal();
     } catch (err) {
       console.error('Failed to delete the transaction', err);
