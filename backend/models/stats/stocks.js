@@ -1,6 +1,7 @@
 const StocksPrices = require("../prices/stocks");
 const AssetStats = require("./asset");
 const { exchangeRatesBaseUSD } = require("../../utils/functions");
+const User = require("../user");
 
 class StocksAssetStats extends AssetStats {
   constructor(data, totals, creator) {
@@ -15,7 +16,7 @@ class StocksAssetStats extends AssetStats {
     const ids = this.data.map((item) => item._id.symbol);
 
     const stocksPrices = new StocksPrices(ids, "USD", this.creator);
-    this.currentPrices = await stocksPrices.getPricesPerAssets();
+    this.currentPrices = await stocksPrices.getPricesPerAssets(this.apiKey);
     this.exchangeRatesList = await exchangeRatesBaseUSD(0, "", "", true);
   }
 
@@ -52,8 +53,15 @@ class StocksAssetStats extends AssetStats {
   }
 
   async getAllData() {
-    await this.getPrices();
-    this.getStats();
+    const userData = await User.findById(this.creator);
+    if (userData.stocks_api_key) {
+      this.apiKey = userData.stocks_api_key;
+      await this.getPrices();
+      this.getStats();
+    } else {
+      this.getStatsWithoutCurrentPrices()
+    }
+
     this.getTotals();
     return {
       sums: this.sums,

@@ -14,13 +14,13 @@ export async function autocompleteStocks(query) {
   }
 }
 
-export async function autocompleteStocks2(query) {
+export async function autocompleteStocks2(query, apiKey) {
   try {
     const response = await axios.get(
       'https://yfapi.net/v6/finance/autocomplete?lang=en&query=' + query,
       {
         headers: {
-          'x-api-key': 'cNOtBiw0pQ7jbOOJqcs6J6FDrVRuLKDo5H6fsUg8'
+          'x-api-key': apiKey
         }
       }
     );

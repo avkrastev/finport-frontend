@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useContext } from 'react';
 import { useDispatch } from 'react-redux';
 import {
   Button,
@@ -17,7 +17,10 @@ import {
 } from '@mui/material';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { autocompleteStocks, autocompleteStocks2 } from '../../utils/api/stocksApiFunction';
+import {
+  autocompleteStocks,
+  autocompleteStocks2
+} from '../../utils/api/stocksApiFunction';
 import { autocompleteCrypto } from '../../utils/api/cryptoApiFunction';
 import {
   p2pPlatforms,
@@ -30,6 +33,7 @@ import {
   updateTransaction
 } from '../../content/applications/Transactions/transactionSlice';
 import { MobileDateTimePicker } from '@mui/x-date-pickers';
+import { AuthContext } from 'src/utils/context/authContext';
 
 function TransactionModal(props) {
   const autoC = useRef(null);
@@ -39,6 +43,8 @@ function TransactionModal(props) {
   const [transferDropdown, setTransferDropdown] = useState(2);
   const [assetsDropdown, setAssetsDropdown] = useState([]);
   const [isEditForm, setIsEditForm] = useState(false);
+
+  const { authUserData } = useContext(AuthContext);
 
   const [transactionForm, setTransactionForm] = useState({
     id: '',
@@ -108,7 +114,10 @@ function TransactionModal(props) {
         case 'stocks':
         case 'etf':
           if (currentVal.length > 2) {
-            const responseData = await autocompleteStocks2(currentVal);
+            const responseData = await autocompleteStocks2(
+              currentVal,
+              authUserData.stocks_api_key
+            );
             assets = responseData.data.ResultSet.Result.map((item) => {
               let newItems = {};
               newItems.symbol = item.symbol;
@@ -262,7 +271,11 @@ function TransactionModal(props) {
                   ? '(' + transactionForm.symbol + ')'
                   : ''}
               </Typography>
-            ) : transactionForm.category === 'misc' ? (
+            ) : transactionForm.category === 'misc' ||
+              (transactionForm.category === 'stocks' &&
+                !authUserData.stocks_api_key) ||
+              (transactionForm.category === 'etf' &&
+                !authUserData.stocks_api_key) ? (
               <TextField
                 sx={{ mt: 1, mb: 2 }}
                 margin="dense"

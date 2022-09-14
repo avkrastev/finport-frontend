@@ -12,7 +12,7 @@ class StockPrices extends Prices {
     this.creator = creator;
   }
 
-  async getPricesPerAssets() {
+  async getPricesPerAssets(apiKey) {
     let currentPrices;
 
     if (
@@ -22,7 +22,7 @@ class StockPrices extends Prices {
         .instance()
         .get(this.category + "_prices_" + this.creator);
     } else {
-      currentPrices = this.fetchStockPrices(stocksCacheTTL);
+      currentPrices = this.fetchStockPrices(apiKey, stocksCacheTTL);
     }
 
     return currentPrices;

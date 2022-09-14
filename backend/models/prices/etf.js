@@ -12,7 +12,7 @@ class ETFPrices extends Prices {
     this.creator = creator;
   }
 
-  async getPricesPerAssets() {
+  async getPricesPerAssets(apiKey) {
     let currentPrices;
 
     if (cacheProvider.instance().has(this.category + "_prices_" + this.creator)) {
@@ -20,7 +20,7 @@ class ETFPrices extends Prices {
         .instance()
         .get(this.category + "_prices_" + this.creator);
     } else {
-      currentPrices = await this.fetchStockPrices(etfCacheTTL);
+      currentPrices = await this.fetchStockPrices(apiKey, etfCacheTTL);
     }
 
     return currentPrices;

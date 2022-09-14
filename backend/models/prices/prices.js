@@ -7,12 +7,12 @@ class Prices {
     this.creator = creator;
   }
 
-  async fetchStockPrices(ttl) {
+  async fetchStockPrices(apiKey, ttl) {
     const options = {
       method: "GET",
       url: "https://yfapi.net/v6/finance/quote?symbols=" + this.assets,
       headers: {
-        "x-api-key": "cNOtBiw0pQ7jbOOJqcs6J6FDrVRuLKDo5H6fsUg8",
+        "x-api-key": apiKey,
       },
     };
     const prices = await axios

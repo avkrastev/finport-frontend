@@ -12,6 +12,7 @@ class CryptoAssetStats extends AssetStats {
 
   async getPrices() {
     const ids = this.data.map((item) => item._id.assetId);
+    if (ids.indexOf("bitcoin") === -1) ids.push("bitcoin");
 
     const cryptoPrices = new CryptoPrices(ids, "USD", this.creator);
     this.currentPrices = await cryptoPrices.getPricesPerAssets();
@@ -48,7 +49,7 @@ class CryptoAssetStats extends AssetStats {
     await this.getPrices();
     this.getStats();
     this.getTotals();
-    //this.sums.inBitcoin = this.balance / this.currentPrices["bitcoin"].usd;
+    this.sums.inBitcoin = this.balance / this.currentPrices["bitcoin"].usd;
 
     return {
       sums: this.sums,

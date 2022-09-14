@@ -144,7 +144,7 @@ function EditProfileTab() {
                   </Box>
                 </Grid>
                 <Grid item xs={12} sm={12} md={10}>
-                  <Text color="black">34f34t453tg45g5ghh56h</Text>
+                  <Text color="black">{authUserData.stocks_api_key}</Text>
                 </Grid>
                 <Grid item xs={12} sm={12} md={2} />
                 <Grid item xs={12} sm={12} md={10}>

@@ -1,6 +1,7 @@
 const ETFPrices = require("../prices/etf");
 const { exchangeRatesBaseUSD } = require("../../utils/functions");
 const AssetStats = require("./asset");
+const User = require("../user");
 
 class ETFAssetStats extends AssetStats {
   constructor(data, totals, creator) {
@@ -15,13 +16,19 @@ class ETFAssetStats extends AssetStats {
     const ids = this.data.map((item) => item._id.symbol);
 
     const stocksPrices = new ETFPrices(ids, "USD", this.creator);
-    this.currentPrices = await stocksPrices.getPricesPerAssets();
+    this.currentPrices = await stocksPrices.getPricesPerAssets(this.apiKey);
     this.exchangeRatesList = await exchangeRatesBaseUSD(0, "", "", true);
   }
 
   async getAllData() {
-    await this.getPrices();
-    this.getStats();
+    const userData = await User.findById(this.creator);
+    if (userData.stocks_api_key) {
+      this.apiKey = userData.stocks_api_key;
+      await this.getPrices();
+      this.getStats();
+    } else {
+      this.getStatsWithoutCurrentPrices();
+    }
     this.getTotals();
     return {
       sums: this.sums,
