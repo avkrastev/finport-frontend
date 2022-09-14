@@ -5,6 +5,7 @@ import { getAssetsSummary } from '../../utils/api/assetsApiFunction';
 
 interface Stats {
   _id: object;
+  alias: string;
   totalSum: string;
   totalQuantity: number;
 }

@@ -186,7 +186,7 @@ function Wallets({ assets, status }) {
             </Grid>
           );
         })}
-        <Grid xs={12} sm={6} md={3} item>
+        {/* <Grid xs={12} sm={6} md={3} item>
           <Tooltip arrow title="Click to add a new P2P Platform">
             <CardAddAction>
               <CardActionArea sx={{ px: 1 }}>
@@ -198,7 +198,7 @@ function Wallets({ assets, status }) {
               </CardActionArea>
             </CardAddAction>
           </Tooltip>
-        </Grid>
+        </Grid> */}
       </Grid>
     </>
   );

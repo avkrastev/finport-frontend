@@ -3,17 +3,18 @@ const { exchangeRatesBaseUSD } = require("../../utils/functions");
 const AssetStats = require("./asset");
 
 class ETFAssetStats extends AssetStats {
-  constructor(data, totals) {
+  constructor(data, totals, creator) {
     super();
     this.data = data;
     this.totals = totals;
     this.category = "etf";
+    this.creator = creator;
   }
 
   async getPrices() {
     const ids = this.data.map((item) => item._id.symbol);
 
-    const stocksPrices = new ETFPrices(ids, "USD");
+    const stocksPrices = new ETFPrices(ids, "USD", this.creator);
     this.currentPrices = await stocksPrices.getPricesPerAssets();
     this.exchangeRatesList = await exchangeRatesBaseUSD(0, "", "", true);
   }

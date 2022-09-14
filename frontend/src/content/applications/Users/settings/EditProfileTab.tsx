@@ -29,7 +29,9 @@ function EditProfileTab() {
   const [loading, setLoading] = useState(false);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const category = dashboard.find((dashboard) => dashboard.alias === event.target.name);
+    const category = dashboard.find(
+      (dashboard) => dashboard.alias === event.target.name
+    );
     category.show = event.target.checked;
 
     async function fetchUserData() {
@@ -60,7 +62,7 @@ function EditProfileTab() {
                 Personal Details
               </Typography>
               <Typography variant="subtitle2">
-                Manage informations related to your personal details
+                Manage information related to your personal details
               </Typography>
             </Box>
             <Button variant="text" startIcon={<EditTwoToneIcon />}>
@@ -92,10 +94,63 @@ function EditProfileTab() {
                   </Text>
                 </Grid>
                 <Grid item xs={12} sm={12} md={7}>
-                  <Label color={authUserData.email_verified ? 'success' : 'error'}>
-                    {authUserData.email_verified ? <DoneTwoToneIcon fontSize="small" /> : <CloseTwoToneIcon fontSize="small" />}
-                    <b>{authUserData.email_verified ? 'Verified' : 'Not verified'}</b>
+                  <Label
+                    color={authUserData.email_verified ? 'success' : 'error'}
+                  >
+                    {authUserData.email_verified ? (
+                      <DoneTwoToneIcon fontSize="small" />
+                    ) : (
+                      <CloseTwoToneIcon fontSize="small" />
+                    )}
+                    <b>
+                      {authUserData.email_verified
+                        ? 'Verified'
+                        : 'Not verified'}
+                    </b>
                   </Label>
+                </Grid>
+              </Grid>
+            </Typography>
+          </CardContent>
+        </Card>
+      </Grid>
+      <Grid item xs={12}>
+        <Card>
+          <Box
+            p={3}
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+          >
+            <Box>
+              <Typography variant="h4" gutterBottom>
+                API keys
+              </Typography>
+              <Typography variant="subtitle2">
+                Manage keys for reading data from 3rd party interfaces
+              </Typography>
+            </Box>
+            <Button variant="text" startIcon={<EditTwoToneIcon />}>
+              Edit
+            </Button>
+          </Box>
+          <Divider />
+          <CardContent sx={{ p: 4 }}>
+            <Typography variant="subtitle2">
+              <Grid container sx={{ p: 2 }}>
+                <Grid item xs={12} sm={12} md={2}>
+                  <Box pr={3} pb={2}>
+                    Stocks API Key:
+                  </Box>
+                </Grid>
+                <Grid item xs={12} sm={12} md={10}>
+                  <Text color="black">34f34t453tg45g5ghh56h</Text>
+                </Grid>
+                <Grid item xs={12} sm={12} md={2} />
+                <Grid item xs={12} sm={12} md={10}>
+                  <Typography variant="subtitle2">
+                    You must obtain it from here https://financeapi.net/
+                  </Typography>
                 </Grid>
               </Grid>
             </Typography>
@@ -121,9 +176,7 @@ function EditProfileTab() {
             <LinearProgress />
           </Box>
           <Divider />
-          <Box sx={{ width: '100%' }}>
-            { loading && <LinearProgress /> }
-          </Box>
+          <Box sx={{ width: '100%' }}>{loading && <LinearProgress />}</Box>
           <CardContent sx={{ p: 1 }}>
             <Typography variant="subtitle2">
               <List>
@@ -132,8 +185,11 @@ function EditProfileTab() {
                     <Fragment key={i}>
                       <ListItem sx={{ p: 1 }}>
                         <ListItemText
-                          primaryTypographyProps={{ variant: 'h5', gutterBottom: true }}
-                          primary={category.name} 
+                          primaryTypographyProps={{
+                            variant: 'h5',
+                            gutterBottom: true
+                          }}
+                          primary={category.name}
                         />
                         <Switch
                           color="primary"
@@ -142,8 +198,8 @@ function EditProfileTab() {
                           name={category.alias}
                         />
                       </ListItem>
-                      { i < dashboard.length - 1 && <Divider component="li" /> }
-                  </Fragment>
+                      {i < dashboard.length - 1 && <Divider component="li" />}
+                    </Fragment>
                   );
                 })}
               </List>

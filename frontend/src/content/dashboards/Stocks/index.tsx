@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import PageHeader from '../PageHeader';
 import PageTitleWrapper from 'src/components/PageTitleWrapper';
-import { Grid, Container } from '@mui/material';
+import { Grid, Container, Alert } from '@mui/material';
 import Footer from 'src/components/Footer';
 
 import AccountBalance from '../AccountBalance';
@@ -39,6 +39,9 @@ function DashboardCrypto() {
           alignItems="stretch"
           spacing={3}
         >
+          <Alert variant="outlined" severity="info">
+            To be able to see stock data price please add an API key here.
+          </Alert>
           <Grid item xs={12}>
             <AccountBalance
               assets={stocks}
@@ -46,13 +49,15 @@ function DashboardCrypto() {
               loading={stocksStatus}
             />
           </Grid>
-          <Grid item xs={12}>
-            <CollapsibleTable
-              assets={stocks?.stats}
-              category="stocks"
-              loading={stocksStatus}
-            />
-          </Grid>
+          {stocks.stats && (
+            <Grid item xs={12}>
+              <CollapsibleTable
+                assets={stocks.stats}
+                category="stocks"
+                loading={stocksStatus}
+              />
+            </Grid>
+          )}
         </Grid>
       </Container>
       <Footer />

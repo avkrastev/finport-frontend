@@ -43,16 +43,20 @@ function DashboardCrypto() {
           <Grid item xs={12}>
             <AccountBalance assets={p2p} category="p2p" loading={p2pStatus} />
           </Grid>
-          <Grid item lg={12} xs={12}>
-            <Wallets assets={p2p} status={p2pStatus} />
-          </Grid>
-          <Grid item xs={12}>
-            <CollapsibleTable
-              assets={p2p?.stats}
-              category="p2p"
-              loading={p2pStatus}
-            />
-          </Grid>
+          {p2p && (
+            <Grid item lg={12} xs={12}>
+              <Wallets assets={p2p} status={p2pStatus} />
+            </Grid>
+          )}
+          {p2p.stats && (
+            <Grid item xs={12}>
+              <CollapsibleTable
+                assets={p2p.stats}
+                category="p2p"
+                loading={p2pStatus}
+              />
+            </Grid>
+          )}
         </Grid>
       </Container>
       <Footer />

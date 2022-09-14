@@ -88,10 +88,19 @@ function Overview() {
   }, [summaryStatus, dispatch]);
 
   useEffect(() => {
-    if (cryptoStatus === 'idle') {
+    if (
+      cryptoStatus === 'idle' &&
+      summaryStatus === 'succeeded' &&
+      summary.stats.length > 0 &&
+      summary.stats.find((item) => item.alias === 'crypto')
+    ) {
       dispatch(fetchCrypto());
     }
-    if (cryptoStatus === 'succeeded') {
+    if (
+      cryptoStatus === 'succeeded' &&
+      summary.stats.length > 0 &&
+      summary.stats.find((item) => item.alias === 'crypto')
+    ) {
       setTotalBalance((prevState) => prevState + crypto.sums.holdingValue);
       setTotalDifference((prevState) => prevState + crypto.sums.difference);
       setTotalSumsInDifferentInCurrencies((prevState) => {
@@ -104,13 +113,22 @@ function Overview() {
         return prevState;
       });
     }
-  }, [cryptoStatus, dispatch, crypto]);
+  }, [cryptoStatus, dispatch, crypto, summaryStatus, summary]);
 
   useEffect(() => {
-    if (stocksStatus === 'idle') {
+    if (
+      stocksStatus === 'idle' &&
+      summaryStatus === 'succeeded' &&
+      summary.stats.length > 0 &&
+      summary.stats.find((item) => item.alias === 'stocks')
+    ) {
       dispatch(fetchStocks());
     }
-    if (stocksStatus === 'succeeded') {
+    if (
+      stocksStatus === 'succeeded' &&
+      summary.stats.length > 0 &&
+      summary.stats.find((item) => item.alias === 'stocks')
+    ) {
       setTotalBalance((prevState) => prevState + stocks.sums.holdingValue);
       setTotalDifference((prevState) => prevState + stocks.sums.difference);
       setTotalSumsInDifferentInCurrencies((prevState) => {
@@ -123,13 +141,22 @@ function Overview() {
         return prevState;
       });
     }
-  }, [stocksStatus, dispatch, stocks]);
+  }, [stocksStatus, dispatch, stocks, summaryStatus, summary]);
 
   useEffect(() => {
-    if (p2pStatus === 'idle') {
+    if (
+      p2pStatus === 'idle' &&
+      summaryStatus === 'succeeded' &&
+      summary.stats.length > 0 &&
+      summary.stats.find((item) => item.alias === 'p2p')
+    ) {
       dispatch(fetchP2P());
     }
-    if (p2pStatus === 'succeeded') {
+    if (
+      p2pStatus === 'succeeded' &&
+      summary.stats.length > 0 &&
+      summary.stats.find((item) => item.alias === 'p2p')
+    ) {
       setTotalBalance((prevState) => prevState + p2p.sums.holdingValue);
       setTotalDifference((prevState) => prevState + p2p.sums.difference);
       setTotalSumsInDifferentInCurrencies((prevState) => {
@@ -142,13 +169,22 @@ function Overview() {
         return prevState;
       });
     }
-  }, [p2pStatus, dispatch, p2p]);
+  }, [p2pStatus, dispatch, p2p, summaryStatus, summary]);
 
   useEffect(() => {
-    if (miscStatus === 'idle') {
+    if (
+      miscStatus === 'idle' &&
+      summaryStatus === 'succeeded' &&
+      summary.stats.length > 0 &&
+      summary.stats.find((item) => item.alias === 'misc')
+    ) {
       dispatch(fetchMisc());
     }
-    if (miscStatus === 'succeeded') {
+    if (
+      miscStatus === 'succeeded' &&
+      summary.stats.length > 0 &&
+      summary.stats.find((item) => item.alias === 'misc')
+    ) {
       setTotalBalance((prevState) => prevState + misc.sums.holdingValue);
       setTotalDifference((prevState) => prevState + misc.sums.difference);
       setTotalSumsInDifferentInCurrencies((prevState) => {
@@ -161,13 +197,22 @@ function Overview() {
         return prevState;
       });
     }
-  }, [miscStatus, dispatch, misc]);
+  }, [miscStatus, dispatch, misc, summaryStatus, summary]);
 
   useEffect(() => {
-    if (commoditiesStatus === 'idle') {
+    if (
+      commoditiesStatus === 'idle' &&
+      summaryStatus === 'succeeded' &&
+      summary.stats.length > 0 &&
+      summary.stats.find((item) => item.alias === 'commodities')
+    ) {
       dispatch(fetchCommodities());
     }
-    if (commoditiesStatus === 'succeeded') {
+    if (
+      commoditiesStatus === 'succeeded' &&
+      summary.stats.length > 0 &&
+      summary.stats.find((item) => item.alias === 'commodities')
+    ) {
       setTotalBalance((prevState) => prevState + commodities.sums.holdingValue);
       setTotalDifference(
         (prevState) => prevState + commodities.sums.difference
@@ -182,13 +227,22 @@ function Overview() {
         return prevState;
       });
     }
-  }, [commoditiesStatus, dispatch, commodities]);
+  }, [commoditiesStatus, dispatch, commodities, summaryStatus, summary]);
 
   useEffect(() => {
-    if (etfStatus === 'idle') {
+    if (
+      etfStatus === 'idle' &&
+      summaryStatus === 'succeeded' &&
+      summary.stats.length > 0 &&
+      summary.stats.find((item) => item.alias === 'etf')
+    ) {
       dispatch(fetchETFs());
     }
-    if (etfStatus === 'succeeded') {
+    if (
+      etfStatus === 'succeeded' &&
+      summary.stats.length > 0 &&
+      summary.stats.find((item) => item.alias === 'etf')
+    ) {
       setTotalBalance((prevState) => prevState + etf.sums.holdingValue);
       setTotalDifference((prevState) => prevState + etf.sums.difference);
       setTotalSumsInDifferentInCurrencies((prevState) => {
@@ -201,7 +255,7 @@ function Overview() {
         return prevState;
       });
     }
-  }, [etfStatus, dispatch, etf]);
+  }, [etfStatus, dispatch, etf, summaryStatus, summary]);
 
   return (
     <>
@@ -231,24 +285,26 @@ function Overview() {
               }
             />
           </Grid>
-          <Grid item xs={12}>
-            <WatchList
-              categories={summary.stats}
-              crypto={crypto.sums}
-              cryptoLoading={cryptoStatus}
-              stocks={stocks.sums}
-              stocksLoading={stocksStatus}
-              p2p={p2p.sums}
-              p2pLoading={p2pStatus}
-              etf={etf.sums}
-              etfLoading={etfStatus}
-              misc={misc.sums}
-              miscLoading={miscStatus}
-              commodities={commodities.sums}
-              commoditiesLoading={commoditiesStatus}
-              history={history}
-            />
-          </Grid>
+          {summary.stats.length > 0 && (
+            <Grid item xs={12}>
+              <WatchList
+                categories={summary.stats}
+                crypto={crypto.sums}
+                cryptoLoading={cryptoStatus}
+                stocks={stocks.sums}
+                stocksLoading={stocksStatus}
+                p2p={p2p.sums}
+                p2pLoading={p2pStatus}
+                etf={etf.sums}
+                etfLoading={etfStatus}
+                misc={misc.sums}
+                miscLoading={miscStatus}
+                commodities={commodities.sums}
+                commoditiesLoading={commoditiesStatus}
+                history={history}
+              />
+            </Grid>
+          )}
         </Grid>
       </Container>
       <Footer />

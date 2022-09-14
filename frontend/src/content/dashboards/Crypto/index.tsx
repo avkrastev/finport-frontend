@@ -46,13 +46,15 @@ function DashboardCrypto() {
               loading={cryptoStatus}
             />
           </Grid>
-          <Grid item xs={12}>
-            <CollapsibleTable
-              assets={crypto?.stats}
-              category="crypto"
-              loading={cryptoStatus}
-            />
-          </Grid>
+          {crypto.stats && (
+            <Grid item xs={12}>
+              <CollapsibleTable
+                assets={crypto.stats}
+                category="crypto"
+                loading={cryptoStatus}
+              />
+            </Grid>
+          )}
         </Grid>
       </Container>
       <Footer />

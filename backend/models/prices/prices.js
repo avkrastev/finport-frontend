@@ -2,17 +2,9 @@ const cacheProvider = require("../../utils/cache-provider");
 const axios = require("axios");
 
 class Prices {
-  constructor(category) {
+  constructor(category, creator) {
     this.category = category;
-  }
-
-  retrieveFromCache() {
-    let currentPrices = [];
-    if (cacheProvider.instance().has(this.category + "_prices")) {
-      currentPrices = cacheProvider.instance().get(this.category + "_prices");
-    }
-
-    return currentPrices;
+    this.creator = creator;
   }
 
   async fetchStockPrices(ttl) {
@@ -43,7 +35,7 @@ class Prices {
 
     cacheProvider
       .instance()
-      .set(this.category + "_prices", prices, ttl);
+      .set(this.category + "_prices_" + this.creator, prices, ttl);
 
     return prices;
   }

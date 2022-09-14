@@ -56,15 +56,22 @@ const getCryptoAsset = async (req, res, next) => {
       dataBuilder.getTotalSumsByCategoryAndAssetPipeline()
     ).exec();
 
-    const cryptoAssetStats = new CryptoAssetStats(statsResults, sumsResult);
-    const assets = await cryptoAssetStats.getAllData();
+    let assets = [];
+    if (statsResults.length > 0 && sumsResult.length > 0) {
+      const cryptoAssetStats = new CryptoAssetStats(
+        statsResults,
+        sumsResult,
+        creator
+      );
+      assets = await cryptoAssetStats.getAllData();
 
-    assets.sums.sumsInDifferentCurrencies = await sumsInSupportedCurrencies(
-      assets.sums.holdingValue,
-      assets.sums.totalSum
-    );
+      assets.sums.sumsInDifferentCurrencies = await sumsInSupportedCurrencies(
+        assets.sums.holdingValue,
+        assets.sums.totalSum
+      );
 
-    await addHistoryData('crypto', assets.sums.holdingValue, creator);
+      await addHistoryData("crypto", assets.sums.holdingValue, creator);
+    }
 
     res.json({ assets });
   } catch (err) {
@@ -86,15 +93,22 @@ const getStockAsset = async (req, res, next) => {
       dataBuilder.getTotalSumsByCategoryAndAssetPipeline()
     ).exec();
 
-    const stocksAssetStats = new StocksAssetStats(statsResults, sumsResult);
-    const assets = await stocksAssetStats.getAllData();
+    let assets = [];
+    if (statsResults.length > 0 && sumsResult.length > 0) {
+      const stocksAssetStats = new StocksAssetStats(
+        statsResults,
+        sumsResult,
+        creator
+      );
+      assets = await stocksAssetStats.getAllData();
 
-    assets.sums.sumsInDifferentCurrencies = await sumsInSupportedCurrencies(
-      assets.sums.holdingValue,
-      assets.sums.totalSum
-    );
+      assets.sums.sumsInDifferentCurrencies = await sumsInSupportedCurrencies(
+        assets.sums.holdingValue,
+        assets.sums.totalSum
+      );
 
-    await addHistoryData('stocks', assets.sums.holdingValue, creator);
+      await addHistoryData("stocks", assets.sums.holdingValue, creator);
+    }
 
     res.json({ assets });
   } catch (err) {
@@ -117,15 +131,22 @@ const getETFAsset = async (req, res, next) => {
       dataBuilder.getTotalSumsByCategoryAndAssetPipeline()
     ).exec();
 
-    const ETFsAssetStats = new ETFAssetStats(statsResults, sumsResult);
-    const assets = await ETFsAssetStats.getAllData();
+    let assets = [];
+    if (statsResults.length > 0 && sumsResult.length > 0) {
+      const ETFsAssetStats = new ETFAssetStats(
+        statsResults,
+        sumsResult,
+        creator
+      );
+      assets = await ETFsAssetStats.getAllData();
 
-    assets.sums.sumsInDifferentCurrencies = await sumsInSupportedCurrencies(
-      assets.sums.holdingValue,
-      assets.sums.totalSum
-    );
+      assets.sums.sumsInDifferentCurrencies = await sumsInSupportedCurrencies(
+        assets.sums.holdingValue,
+        assets.sums.totalSum
+      );
 
-    await addHistoryData('etf', assets.sums.holdingValue, creator);
+      await addHistoryData("etf", assets.sums.holdingValue, creator);
+    }
 
     res.json({ assets });
   } catch (err) {
@@ -148,18 +169,22 @@ const getCommodityAsset = async (req, res, next) => {
       dataBuilder.getTotalSumsByCategoryAndAssetPipeline()
     ).exec();
 
-    const commoditiesAssetStats = new CommoditiesAssetStats(
-      statsResults,
-      sumsResult
-    );
-    const assets = await commoditiesAssetStats.getAllData();
+    let assets = [];
+    if (statsResults.length > 0 && sumsResult.length > 0) {
+      const commoditiesAssetStats = new CommoditiesAssetStats(
+        statsResults,
+        sumsResult,
+        creator
+      );
+      assets = await commoditiesAssetStats.getAllData();
 
-    assets.sums.sumsInDifferentCurrencies = await sumsInSupportedCurrencies(
-      assets.sums.holdingValue,
-      assets.sums.totalSum
-    );
+      assets.sums.sumsInDifferentCurrencies = await sumsInSupportedCurrencies(
+        assets.sums.holdingValue,
+        assets.sums.totalSum
+      );
 
-    await addHistoryData('commodities', assets.sums.holdingValue, creator);
+      await addHistoryData("commodities", assets.sums.holdingValue, creator);
+    }
 
     res.json({ assets });
   } catch (err) {
@@ -182,16 +207,18 @@ const getMiscAsset = async (req, res, next) => {
       dataBuilder.getTotalSumsByCategoryAndAssetPipeline()
     ).exec();
 
-    const miscAssetStats = new MiscAssetStats(statsResults, sumsResult);
-    const assets = await miscAssetStats.getAllData();
+    let assets = [];
+    if (statsResults.length > 0 && sumsResult.length > 0) {
+      const miscAssetStats = new MiscAssetStats(statsResults, sumsResult, creator);
+      assets = await miscAssetStats.getAllData();
 
-    assets.sums.sumsInDifferentCurrencies = await sumsInSupportedCurrencies(
-      assets.sums.holdingValue,
-      assets.sums.totalSum
-    );
+      assets.sums.sumsInDifferentCurrencies = await sumsInSupportedCurrencies(
+        assets.sums.holdingValue,
+        assets.sums.totalSum
+      );
 
-    await addHistoryData('misc', assets.sums.holdingValue, creator);
-
+      await addHistoryData("misc", assets.sums.holdingValue, creator);
+    }
     res.json({ assets });
   } catch (err) {
     console.log(err);
@@ -221,72 +248,75 @@ const getP2PAsset = async (req, res, next) => {
       dataBuilder.getSoldItemsPerCategory()
     ).exec();
 
-    const percentages = await P2p.find({ creator });
+    let assets = [];
+    if (statsResults.length > 0 && sumsResult.length > 0) {
+      const percentages = await P2p.find({ creator });
 
-    const boughtPartsGrouped = boughtParts.reduce(function (prevArr, newArr) {
-      prevArr[newArr.name] = prevArr[newArr.name] || [];
-      prevArr[newArr.name].push(newArr);
-      return prevArr;
-    }, Object.create(null));
+      const boughtPartsGrouped = boughtParts.reduce(function (prevArr, newArr) {
+        prevArr[newArr.name] = prevArr[newArr.name] || [];
+        prevArr[newArr.name].push(newArr);
+        return prevArr;
+      }, Object.create(null));
 
-    let totalInterestPaid = [];
-    for (let item in boughtPartsGrouped) {
-      let amount = 0;
-      let apr = 0;
-      const totalSoldPerPlatform = soldParts.find(
-        (part) => part._id.name === item
-      );
-      if (totalSoldPerPlatform) amount = totalSoldPerPlatform.totalSum;
-      const platformHasAPR = percentages.find(
-        (percentage) => percentage.name === item
-      );
-      if (platformHasAPR) apr = platformHasAPR.apr;
+      let totalInterestPaid = [];
+      for (let item in boughtPartsGrouped) {
+        let amount = 0;
+        let apr = 0;
+        const totalSoldPerPlatform = soldParts.find(
+          (part) => part._id.name === item
+        );
+        if (totalSoldPerPlatform) amount = totalSoldPerPlatform.totalSum;
+        const platformHasAPR = percentages.find(
+          (percentage) => percentage.name === item
+        );
+        if (platformHasAPR) apr = platformHasAPR.apr;
 
-      let interestPerItem = {};
-      interestPerItem.name = item;
-      interestPerItem.interest = 0;
-      interestPerItem.totalInvested = 0;
-      for (let j in boughtPartsGrouped[item]) {
-        amount += boughtPartsGrouped[item][j].price;
-        const price = boughtPartsGrouped[item][j].price;
-        if (amount <= 0) {
-          const endDate = new Date(totalSoldPerPlatform.date);
-          const time = monthDiffFromToday(
-            boughtPartsGrouped[item][j].date,
-            endDate
-          );
-          boughtPartsGrouped[item][j].interest = compoundInterest(
-            price,
-            apr,
-            time
-          );
-        } else {
-          const time = monthDiffFromToday(boughtPartsGrouped[item][j].date);
-          boughtPartsGrouped[item][j].interest = compoundInterest(
-            price,
-            apr,
-            time
-          );
+        let interestPerItem = {};
+        interestPerItem.name = item;
+        interestPerItem.interest = 0;
+        interestPerItem.totalInvested = 0;
+        for (let j in boughtPartsGrouped[item]) {
+          amount += boughtPartsGrouped[item][j].price;
+          const price = boughtPartsGrouped[item][j].price;
+          if (amount <= 0) {
+            const endDate = new Date(totalSoldPerPlatform.date);
+            const time = monthDiffFromToday(
+              boughtPartsGrouped[item][j].date,
+              endDate
+            );
+            boughtPartsGrouped[item][j].interest = compoundInterest(
+              price,
+              apr,
+              time
+            );
+          } else {
+            const time = monthDiffFromToday(boughtPartsGrouped[item][j].date);
+            boughtPartsGrouped[item][j].interest = compoundInterest(
+              price,
+              apr,
+              time
+            );
+          }
+          interestPerItem.interest += boughtPartsGrouped[item][j].interest;
+          interestPerItem.totalInvested += price;
         }
-        interestPerItem.interest += boughtPartsGrouped[item][j].interest;
-        interestPerItem.totalInvested += price;
+        totalInterestPaid.push(interestPerItem);
       }
-      totalInterestPaid.push(interestPerItem);
+
+      const p2pAssetStats = new P2PAssetStats(statsResults, sumsResult, creator);
+      p2pAssetStats.setInterestPaid(totalInterestPaid);
+      assets = await p2pAssetStats.getAllData();
+
+      assets.sums.sumsInDifferentCurrencies = await sumsInSupportedCurrencies(
+        assets.sums.holdingValue,
+        assets.sums.totalSum,
+        "EUR"
+      );
+
+      assets.percentages = percentages;
+
+      await addHistoryData("p2p", assets.sums.holdingValue, creator);
     }
-
-    const p2pAssetStats = new P2PAssetStats(statsResults, sumsResult);
-    p2pAssetStats.setInterestPaid(totalInterestPaid);
-    const assets = await p2pAssetStats.getAllData();
-
-    assets.sums.sumsInDifferentCurrencies = await sumsInSupportedCurrencies(
-      assets.sums.holdingValue,
-      assets.sums.totalSum,
-      "EUR"
-    );
-
-    assets.percentages = percentages;
-
-    await addHistoryData('p2p', assets.sums.holdingValue, creator);
 
     res.json({ assets });
   } catch (err) {
@@ -310,7 +340,7 @@ const addHistoryData = async (category, price, user) => {
     console.log(err);
     new HttpError("Error storing history data!", 500);
   }
-}
+};
 
 const monthDiffFromToday = (date, date2 = new Date()) => {
   let months;
@@ -355,14 +385,13 @@ const getAssetsSummary = async (req, res, next) => {
     }
 
     const sumsInDifferentCurrencies = await sumsInSupportedCurrencies(
-      sumsResult[0].totalSum
+      sumsResult[0] ? sumsResult[0].totalSum : 0
     );
 
     res.json({
       assets: {
         sums: {
-          totalSum: sumsResult[0].totalSum,
-          holdingValue: sumsResult[0].totalSum,
+          totalSum: sumsResult[0] ? sumsResult[0].totalSum : 0,
           sumsInDifferentCurrencies,
         },
         stats: sumsSummary,

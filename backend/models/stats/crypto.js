@@ -2,17 +2,18 @@ const CryptoPrices = require("../prices/crypto");
 const AssetStats = require("./asset");
 
 class CryptoAssetStats extends AssetStats {
-  constructor(data, totals) {
+  constructor(data, totals, creator) {
     super();
     this.data = data;
     this.totals = totals;
     this.category = "crypto";
+    this.creator = creator;
   }
 
   async getPrices() {
     const ids = this.data.map((item) => item._id.assetId);
 
-    const cryptoPrices = new CryptoPrices(ids, "USD");
+    const cryptoPrices = new CryptoPrices(ids, "USD", this.creator);
     this.currentPrices = await cryptoPrices.getPricesPerAssets();
   }
 
@@ -47,7 +48,8 @@ class CryptoAssetStats extends AssetStats {
     await this.getPrices();
     this.getStats();
     this.getTotals();
-    this.sums.inBitcoin = this.balance / this.currentPrices["bitcoin"].usd;
+    //this.sums.inBitcoin = this.balance / this.currentPrices["bitcoin"].usd;
+
     return {
       sums: this.sums,
       stats: this.stats,

@@ -71,36 +71,42 @@ function AccountBalance({ assets, category, loading, ...rest }) {
     '#9b2226',
     '#ca6702'
   ];
+  let assetsBalance = {};
+  let assetsSlice = [];
 
-  for (let asset of assets.stats) {
-    const percent = (asset.holdingValue / assets.sums.holdingValue) * 100;
-    if (!isNaN(percent)) {
-      percentages.push(parseFloat(percent.toFixed(2)));
-    }
-    names.push(asset.name);
-  }
-  const assetsBalance = {
-    datasets: [
-      {
-        data: percentages,
-        backgroundColor: colors
+  if (assets.stats) {
+    for (let asset of assets.stats) {
+      const percent = (asset.holdingValue / assets.sums.totalSum) * 100;
+      if (!isNaN(percent)) {
+        percentages.push(parseFloat(percent.toFixed(2)));
       }
-    ],
-    labels: names
-  };
+      names.push(asset.name);
+    }
+    assetsBalance = {
+      datasets: [
+        {
+          data: percentages,
+          backgroundColor: colors
+        }
+      ],
+      labels: names
+    };
 
-  const assetsSlice = category === '' ? assets.stats : assets.stats.slice(0, 5);
+    assetsSlice = category === '' ? assets.stats : assets.stats.slice(0, 5);
+  }
 
   const difference = rest.totalDifference
     ? rest.totalDifference
     : assets?.sums?.difference;
 
-  let differenceInPercents = assets.sums.differenceInPercents;
+  let differenceInPercents = assets.sums ? assets.sums.differenceInPercents : 0;
   if (rest.totalDifference) {
     differenceInPercents = (rest.totalDifference / assets.sums.totalSum) * 100;
   }
 
-  let sumsInDifferentCurrencies = assets.sums.sumsInDifferentCurrencies;
+  let sumsInDifferentCurrencies = assets.sums
+    ? assets.sums.sumsInDifferentCurrencies
+    : [];
   if (rest.totalSumsInDifferentInCurrencies) {
     sumsInDifferentCurrencies = rest.totalSumsInDifferentInCurrencies;
   }
@@ -121,11 +127,11 @@ function AccountBalance({ assets, category, loading, ...rest }) {
               <Typography variant="h1" gutterBottom>
                 {rest.totalBalance
                   ? formatAmountAndCurrency(rest.totalBalance, 'USD')
-                  : formatAmountAndCurrency(assets.sums.holdingValue, 'USD')}
+                  : formatAmountAndCurrency(assets?.sums?.holdingValue, 'USD')}
                 &nbsp;/&nbsp;
-                {formatAmountAndCurrency(assets.sums.totalSum, 'USD')}
+                {formatAmountAndCurrency(assets?.sums?.totalSum, 'USD')}
               </Typography>
-              
+
               {sumsInDifferentCurrencies
                 .filter((item) => item.currency !== 'USD')
                 .map((item, i) => {
@@ -153,7 +159,7 @@ function AccountBalance({ assets, category, loading, ...rest }) {
                   fontWeight="normal"
                   color="text.secondary"
                 >
-                  {assets?.sums?.inBitcoin} BTC
+                  {assets?.sums?.inBitcoin} {assets.sums ? 'BTC' : ''}
                 </Typography>
               )}
               <Box display="flex" sx={{ py: 4 }} alignItems="center">
@@ -172,19 +178,21 @@ function AccountBalance({ assets, category, loading, ...rest }) {
                     <TrendingFlat fontSize="large" />
                   </AvatarEqual>
                 )}
-                <Box>
-                  <Typography variant="h4">
-                    {formatAmountAndCurrency(difference, 'USD')}
-                  </Typography>
-                  <Typography variant="subtitle2" noWrap align="right">
-                    {differenceInPercents !== null
-                      ? roundNumber(differenceInPercents)
-                      : 0}{' '}
-                    %
-                  </Typography>
-                </Box>
+                {rest.totalBalance > 0 && (
+                  <Box>
+                    <Typography variant="h4">
+                      {formatAmountAndCurrency(difference, 'USD')}
+                    </Typography>
+                    <Typography variant="subtitle2" noWrap align="right">
+                      {differenceInPercents !== null
+                        ? roundNumber(differenceInPercents)
+                        : 0}{' '}
+                      %
+                    </Typography>
+                  </Box>
+                )}
               </Box>
-              {category === 'p2p' && (
+              {assets.stats && category === 'p2p' && (
                 <Typography variant="h5">
                   * The compound interest calculations are based on the best
                   case scenario. Therefore the data is approximate.

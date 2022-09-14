@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { format } from 'date-fns';
 
 export async function autocompleteStocks(query) {
   try {
@@ -15,20 +14,15 @@ export async function autocompleteStocks(query) {
   }
 }
 
-export async function stocksHistoricalData(ticker, date) {
+export async function autocompleteStocks2(query) {
   try {
-    const today = format(new Date(), 'yyyy-MM-dd');
-    if (today === date) {
-      const yesterday = new Date();
-      yesterday.setDate(new Date().getDate() - 1);
-      date = format(new Date(yesterday), 'yyyy-MM-dd');
-    }
     const response = await axios.get(
-      'https://api.polygon.io/v1/open-close/' +
-        ticker +
-        '/' +
-        date +
-        '?adjusted=true&apiKey=vn3TiKHlBmtj5q8WebUeiNoy40E5BUUM'
+      'https://yfapi.net/v6/finance/autocomplete?lang=en&query=' + query,
+      {
+        headers: {
+          'x-api-key': 'cNOtBiw0pQ7jbOOJqcs6J6FDrVRuLKDo5H6fsUg8'
+        }
+      }
     );
 
     return response;

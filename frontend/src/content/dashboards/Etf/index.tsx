@@ -42,13 +42,15 @@ function DashboardCrypto() {
           <Grid item xs={12}>
             <AccountBalance assets={ETFs} category="etf" loading={etfStatus} />
           </Grid>
-          <Grid item xs={12}>
-            <CollapsibleTable
-              assets={ETFs?.stats}
-              category="etf"
-              loading={etfStatus}
-            />
-          </Grid>
+          {ETFs.stats && (
+            <Grid item xs={12}>
+              <CollapsibleTable
+                assets={ETFs.stats}
+                category="etf"
+                loading={etfStatus}
+              />
+            </Grid>
+          )}
         </Grid>
       </Container>
       <Footer />

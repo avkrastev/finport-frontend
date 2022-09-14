@@ -17,7 +17,7 @@ import {
 } from '@mui/material';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { autocompleteStocks } from '../../utils/api/stocksApiFunction';
+import { autocompleteStocks, autocompleteStocks2 } from '../../utils/api/stocksApiFunction';
 import { autocompleteCrypto } from '../../utils/api/cryptoApiFunction';
 import {
   p2pPlatforms,
@@ -108,11 +108,11 @@ function TransactionModal(props) {
         case 'stocks':
         case 'etf':
           if (currentVal.length > 2) {
-            const responseData = await autocompleteStocks(currentVal);
-            assets = responseData.data.bestMatches.map((item) => {
+            const responseData = await autocompleteStocks2(currentVal);
+            assets = responseData.data.ResultSet.Result.map((item) => {
               let newItems = {};
-              newItems.symbol = item['1. symbol'];
-              newItems.name = item['2. name'];
+              newItems.symbol = item.symbol;
+              newItems.name = item.name;
               return newItems;
             });
           }

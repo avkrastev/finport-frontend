@@ -96,14 +96,14 @@ function HeaderUserbox() {
         </MenuUserBox>
         <Divider sx={{ mb: 0 }} />
         <List sx={{ p: 1 }} component="nav">
-          <ListItem 
+          {/* <ListItem 
             button 
             to="/management/profile/details" 
             onClick={handleClose}
             component={NavLink}>
             <AccountBoxTwoToneIcon fontSize="small" />
             <ListItemText primary="My Profile" />
-          </ListItem>
+          </ListItem> */}
           <ListItem
             button
             to="/management/profile/settings"

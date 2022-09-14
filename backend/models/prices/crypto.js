@@ -1,22 +1,27 @@
 const CoinGecko = require("coingecko-api");
-const Prices = require('./prices');
+const Prices = require("./prices");
 const cacheProvider = require("../../utils/cache-provider");
 
 const cryptoCacheTTL = 1000;
 
 class CryptoPrices extends Prices {
-  constructor(assets, currency) {
+  constructor(assets, currency, creator) {
     super();
     this.assets = assets;
     this.currency = currency;
-    this.category = "crypto"
+    this.category = "crypto";
+    this.creator = creator;
   }
 
   async getPricesPerAssets() {
     let currentPrices;
 
-    if (cacheProvider.instance().has(this.category + "_prices")) {
-      currentPrices = cacheProvider.instance().get(this.category + "_prices");
+    if (
+      cacheProvider.instance().has(this.category + "_prices_" + this.creator)
+    ) {
+      currentPrices = cacheProvider
+        .instance()
+        .get(this.category + "_prices_" + this.creator);
     } else {
       const CoinGeckoClient = new CoinGecko();
       const result = await CoinGeckoClient.simple.price({
@@ -27,7 +32,11 @@ class CryptoPrices extends Prices {
       if (result.code === 200) {
         cacheProvider
           .instance()
-          .set(this.category + "_prices", result.data, cryptoCacheTTL);
+          .set(
+            this.category + "_prices_" + this.creator,
+            result.data,
+            cryptoCacheTTL
+          );
         currentPrices = result.data;
       } else {
         return new HttpError("Something went wrong!", 500);
