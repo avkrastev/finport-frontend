@@ -4,8 +4,8 @@
   "title": "My financial portfolio",
   "description": "My financial portfolio website.",
   "author": {
-    "name": "BloomUI.com",
-    "url": "https://bloomui.com"
+    "name": "Alexander Krastev",
+    "url": "https://telesto.dev"
   },
   "private": false,
   "dependencies": {

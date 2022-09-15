@@ -56,7 +56,7 @@ app.use((error, req, res, next) => {
 
 mongoose
   .connect(
-    "mongodb+srv://avkrastev:1q221q22@cluster0.e1w4v.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.e1w4v.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`
     //"mongodb://localhost:27017/finport"
   )
   .then(() => {

@@ -3,7 +3,7 @@ import axios from 'axios';
 export async function userLogin(email, password) {
 	try {
 		const response = await axios.post(
-			'http://localhost:3005/api/users/login',
+			process.env.REACT_APP_BACKEND_URL + '/users/login',
 			{
 				email, 
 				password
@@ -19,7 +19,7 @@ export async function userLogin(email, password) {
 export async function userSignUp(name, email, password) {
 	try {
 		const response = await axios.post(
-			'http://localhost:3005/api/users/signup',
+			process.env.REACT_APP_BACKEND_URL + '/users/signup',
 			{
 				name,
 				email, 
@@ -38,7 +38,7 @@ export async function getLoggedInUserData() {
 
 	try {
 		const response = await axios.get(
-			'http://localhost:3005/api/users/', {
+			process.env.REACT_APP_BACKEND_URL + '/users/', {
 				headers: {
 					'Authorization': `Basic ${token}` 
 				}
@@ -55,7 +55,7 @@ export async function updateUser(data, key) {
 	const token = JSON.parse(localStorage.getItem('userData')).token;
 	try {
 		const response = await axios.patch(
-			'http://localhost:3005/api/users/', 
+			process.env.REACT_APP_BACKEND_URL + '/users/', 
 			{
 				key, 
 				data,

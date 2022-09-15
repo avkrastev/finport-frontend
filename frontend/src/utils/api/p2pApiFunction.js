@@ -5,7 +5,7 @@ export async function addPlatformAPR(platformData) {
 
   try {
     const response = await axios.post(
-      'http://localhost:3005/api/p2p',
+      process.env.REACT_APP_BACKEND_URL + '/p2p',
       {
         ...platformData
       },
@@ -27,7 +27,7 @@ export async function updatePlatformAPR(platformData) {
 
   try {
     const response = await axios.patch(
-      `http://localhost:3005/api/p2p/${platformData.id}`,
+      `${process.env.REACT_APP_BACKEND_URL}/p2p/${platformData.id}`,
       {
         ...platformData
       },
@@ -49,7 +49,7 @@ export async function getAssetsByCategory(category) {
 
   try {
     const response = await axios.get(
-      'http://localhost:3005/api/assets/' + category,
+      process.env.REACT_APP_BACKEND_URL + '/assets/' + category,
       {
         headers: {
           Authorization: `Basic ${token}`
@@ -68,7 +68,7 @@ export async function getAssetsSummary() {
 
   try {
     const response = await axios.get(
-      'http://localhost:3005/api/assets/summary',
+      process.env.REACT_APP_BACKEND_URL + '/assets/summary',
       {
         headers: {
           Authorization: `Basic ${token}`
@@ -86,7 +86,7 @@ export async function addNewAsset(transaction) {
   const token = JSON.parse(localStorage.getItem('userData')).token;
   try {
     const response = await axios.post(
-      'http://localhost:3005/api/assets',
+      process.env.REACT_APP_BACKEND_URL + '/assets',
       {
         transaction
       },
@@ -107,7 +107,7 @@ export async function updateAsset(transaction) {
   const token = JSON.parse(localStorage.getItem('userData')).token;
   try {
     const response = await axios.patch(
-      `http://localhost:3005/api/assets/${transaction.id}`,
+      `${process.env.REACT_APP_BACKEND_URL}/assets/${transaction.id}`,
       {
         ...transaction
       },
@@ -128,7 +128,7 @@ export async function deleteAsset(id) {
   const token = JSON.parse(localStorage.getItem('userData')).token;
   try {
     const response = await axios.delete(
-      `http://localhost:3005/api/assets/${id}`,
+      `${process.env.REACT_APP_BACKEND_URL}/assets/${id}`,
       {
         headers: {
           Authorization: `Basic ${token}`
@@ -146,7 +146,7 @@ export async function deleteAssets(ids) {
   const token = JSON.parse(localStorage.getItem('userData')).token;
   try {
     const response = await axios.post(
-      'http://localhost:3005/api/assets/deleteMany',
+      process.env.REACT_APP_BACKEND_URL + '/assets/deleteMany',
       {
         ids
       },
@@ -166,7 +166,7 @@ export async function deleteAssets(ids) {
 export async function getAssetById(id) {
   const token = JSON.parse(localStorage.getItem('userData')).token;
   try {
-    const response = await axios.get(`http://localhost:3005/api/assets/${id}`, {
+    const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/assets/${id}`, {
       headers: {
         Authorization: `Basic ${token}`
       }

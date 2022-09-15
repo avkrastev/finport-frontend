@@ -5,7 +5,7 @@ export async function historyForAWeek() {
 
   try {
     const response = await axios.get(
-      'http://localhost:3005/api/history/historyForAWeek',
+      process.env.REACT_APP_BACKEND_URL + '/history/historyForAWeek',
       {
         headers: {
           Authorization: `Basic ${token}`
