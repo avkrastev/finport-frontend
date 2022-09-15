@@ -56,7 +56,11 @@ export const fetchStocks = createAsyncThunk('stocks/fetchStocks', async () => {
 const stocksSlice = createSlice({
   name: 'stocks',
   initialState,
-  reducers: {},
+  reducers: {
+    changeStocksStatus(state, action) {
+      state.status = action.payload;
+    }
+  },
   extraReducers(builder) {
     builder
       .addCase(fetchStocks.pending, (state) => {
@@ -80,6 +84,6 @@ export const selectAllStocks = (state: RootState) => state.stocks.stocks;
 export const getStocksStatus = (state: RootState) => state.stocks.status;
 export const getStocksError = (state: RootState) => state.stocks.error;
 
-//export const {} = stocksSlice.actions;
+export const { changeStocksStatus } = stocksSlice.actions;
 
 export default stocksSlice.reducer;

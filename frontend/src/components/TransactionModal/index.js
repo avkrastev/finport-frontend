@@ -35,6 +35,11 @@ import {
 import { MobileDateTimePicker } from '@mui/x-date-pickers';
 import { AuthContext } from 'src/utils/context/authContext';
 import { changeCryptoStatus } from 'src/content/dashboards/Crypto/cryptoSlice';
+import { changeStocksStatus } from 'src/content/dashboards/Stocks/stocksSlice';
+import { changeETFStatus } from 'src/content/dashboards/Etf/ETFsSlice';
+import { changeMiscStatus } from 'src/content/dashboards/Misc/miscSlice';
+import { changeCommoditiesStatus } from 'src/content/dashboards/Commodities/commoditiesSlice';
+import { changeP2PStatus } from 'src/content/dashboards/P2P/p2pSlice';
 
 function TransactionModal(props) {
   const autoC = useRef(null);
@@ -185,18 +190,32 @@ function TransactionModal(props) {
   const submitTransactionForm = async () => {
     try {
       if (isEditForm) {
-        dispatch(updateTransaction(transactionForm));
+        dispatch(updateTransaction(transactionForm)); 
       } else {
         dispatch(addNewTransaction(transactionForm));
       }
 
-      switch(transactionForm.category) {
+      switch (transactionForm.category) {
         case 'crypto':
           dispatch(changeCryptoStatus('idle'));
-        break;
+          break;
+        case 'stocks':
+          dispatch(changeStocksStatus('idle'));
+          break;
+        case 'etf':
+          dispatch(changeETFStatus('idle'));
+          break;
+        case 'misc':
+          dispatch(changeMiscStatus('idle'));
+          break;
+        case 'commodities':
+          dispatch(changeCommoditiesStatus('idle'));
+          break;
+        case 'p2p':
+          dispatch(changeP2PStatus('idle'));
+          break;
         default:
           break;
-
       }
 
       props.close();

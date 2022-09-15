@@ -56,7 +56,11 @@ export const fetchETFs = createAsyncThunk('stocks/fetchETFs', async () => {
 const ETFsSlice = createSlice({
   name: 'ETFs',
   initialState,
-  reducers: {},
+  reducers: {
+    changeETFStatus(state, action) {
+      state.status = action.payload;
+    }
+  },
   extraReducers(builder) {
     builder
       .addCase(fetchETFs.pending, (state) => {
@@ -77,6 +81,6 @@ export const selectAllETFs = (state: RootState) => state.ETFs.ETFs;
 export const getETFsStatus = (state: RootState) => state.ETFs.status;
 export const getETFsError = (state: RootState) => state.ETFs.error;
 
-//export const {} = stocksSlice.actions;
+export const { changeETFStatus } = ETFsSlice.actions;
 
 export default ETFsSlice.reducer;

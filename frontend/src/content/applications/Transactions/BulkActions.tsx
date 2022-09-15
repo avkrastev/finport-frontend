@@ -1,12 +1,9 @@
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { Box, Button, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
 import ConfirmDialog from './ConfirmDialog';
-import { AppDispatch } from 'src/app/store';
-import { deleteTransactions } from './transactionSlice';
 
 const ButtonError = styled(Button)(
   ({ theme }) => `
@@ -20,20 +17,9 @@ const ButtonError = styled(Button)(
 );
 
 function BulkActions({ selectedIds, cleanSelection }) {
-  const dispatch: AppDispatch = useDispatch();
   const [openConfirmModal, setOpenConfirmModal] = useState(false);
 
   const handleClose = (): void => setOpenConfirmModal(false);
-
-  const handleBulkDeleteButton = () => {
-    try {
-      dispatch(deleteTransactions(selectedIds)).unwrap();
-    } catch (err) {
-      console.error('Failed to delete the transaction', err);
-    }
-    setOpenConfirmModal(false);
-    cleanSelection();
-  };
 
   return (
     <>
@@ -54,10 +40,12 @@ function BulkActions({ selectedIds, cleanSelection }) {
           </ButtonError>
         </Box>
         <ConfirmDialog
-          click={handleBulkDeleteButton}
+          bulkDelete={true}
           open={openConfirmModal}
           close={handleClose}
           title="Are you sure you want to delete these transactions?"
+          selectedIds={selectedIds}
+          cleanSelection={cleanSelection}
         />
       </Box>
     </>

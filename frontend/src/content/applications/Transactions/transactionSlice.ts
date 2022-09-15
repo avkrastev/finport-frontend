@@ -1,4 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { useDispatch } from 'react-redux';
+import { changeStocksStatus } from 'src/content/dashboards/Stocks/stocksSlice';
 import type { RootState } from '../../../app/store';
 import {
   getAssets,
@@ -24,6 +26,7 @@ interface Transaction {
 interface TransactionState {
   transactions: Transaction[];
   filteredTransactions: Transaction[];
+  selectedTransaction: Transaction;
   status: string;
   addStatus: string;
   updateStatus: string;
@@ -34,6 +37,7 @@ interface TransactionState {
 const initialState: TransactionState = {
   transactions: [],
   filteredTransactions: [],
+  selectedTransaction: null,
   status: 'idle', //'idle' | 'loading' | 'succeeded' | 'failed',
   addStatus: 'idle', //'idle' | 'loading' | 'succeeded' | 'failed',
   updateStatus: 'idle', //'idle' | 'loading' | 'succeeded' | 'failed',
@@ -147,10 +151,10 @@ const transactionsSlice = createSlice({
         state.transactions.sort(
           (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
         );
+        state.selectedTransaction = action.payload;
       })
       .addCase(updateTransaction.rejected, (state, action) => {
         state.updateStatus = 'failed';
-        console.log(action);
         state.error = action.error.message;
       })
       .addCase(deleteTransaction.pending, (state) => {
@@ -160,6 +164,9 @@ const transactionsSlice = createSlice({
         deleteTransaction.fulfilled,
         (state, action: PayloadAction<string>) => {
           state.deleteStatus = 'succeeded';
+          state.selectedTransaction = state.transactions.find(
+            (transaction) => transaction.id === action.payload
+          );
           const transactions = state.transactions.filter(
             (transaction) => transaction.id !== action.payload
           );
@@ -197,6 +204,8 @@ export const selectAllTransactions = (state: RootState) =>
   state.transactions.transactions;
 export const selectFilteredTransactions = (state: RootState) =>
   state.transactions.filteredTransactions;
+export const getSelectedTransaction = (state: RootState) =>
+  state.transactions.selectedTransaction;
 export const getTransactionsStatus = (state: RootState) =>
   state.transactions.status;
 export const getTransactionAddStatus = (state: RootState) =>

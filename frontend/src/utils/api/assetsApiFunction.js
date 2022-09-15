@@ -2,7 +2,6 @@ import axios from 'axios';
 
 export async function getAssets(query = '') {
   const token = JSON.parse(localStorage.getItem('userData')).token;
-  console.log(process.env.REACT_APP_BACKEND_URL);
   try {
     const response = await axios.get(
       process.env.REACT_APP_BACKEND_URL + '/assets?' + query,

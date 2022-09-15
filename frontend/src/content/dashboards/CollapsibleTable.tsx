@@ -23,19 +23,18 @@ import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
 import ConfirmDialog from '../applications/Transactions/ConfirmDialog';
 import {
-  changeTransactionStatus,
-  deleteTransaction,
   fetchFilteredTransactions,
+  getSelectedTransaction,
   selectFilteredTransactions
 } from '../applications/Transactions/transactionSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from 'src/app/store';
 import TransactionModal from 'src/components/TransactionModal';
-import { changeCryptoStatus } from './Crypto/cryptoSlice';
 
 function Row(props: { row: any; category: string }) {
   const dispatch: AppDispatch = useDispatch();
   const historyData = useSelector(selectFilteredTransactions);
+  const lastSelectedTransaction = useSelector(getSelectedTransaction);
   const { row, category } = props;
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
@@ -46,38 +45,53 @@ function Row(props: { row: any; category: string }) {
 
   const handleCloseConfirmModal = () => setOpenConfirmModal(false);
 
+  React.useEffect(() => {
+    async function fetchHistory() {
+      await showHistory();
+    }
+
+    if (lastSelectedTransaction && lastSelectedTransaction.name === row.name) {
+      setOpen(true);
+      fetchHistory();
+    }
+  }, [lastSelectedTransaction, row.name]);
+
   const handleShowHistory = async (row) => {
     setOpen(!open);
     if (!open) {
-      let params;
-      switch (category) {
-        case 'crypto':
-          params = new URLSearchParams({
-            category,
-            asset_id: row.assetId
-          });
-          break;
-        case 'stocks':
-        case 'etf':
-          params = new URLSearchParams({
-            category,
-            symbol: row.symbol
-          });
-          break;
-        case 'commodities':
-        case 'misc':
-        case 'p2p':
-          params = new URLSearchParams({
-            category,
-            name: row.name
-          });
-          break;
-        default:
-          params = '';
-      }
-
-      dispatch(fetchFilteredTransactions(params.toString()));
+      await showHistory();
     }
+  };
+
+  const showHistory = async () => {
+    let params;
+    switch (category) {
+      case 'crypto':
+        params = new URLSearchParams({
+          category,
+          asset_id: row.assetId
+        });
+        break;
+      case 'stocks':
+      case 'etf':
+        params = new URLSearchParams({
+          category,
+          symbol: row.symbol
+        });
+        break;
+      case 'commodities':
+      case 'misc':
+      case 'p2p':
+        params = new URLSearchParams({
+          category,
+          name: row.name
+        });
+        break;
+      default:
+        params = '';
+    }
+
+    dispatch(fetchFilteredTransactions(params.toString()));
   };
 
   const handleCloseTransactionModal = () => {
@@ -92,21 +106,6 @@ function Row(props: { row: any; category: string }) {
   const openDeleteModal = (id) => {
     setClickedTransactionId(id);
     setOpenConfirmModal(true);
-  };
-
-  const handleDeleteTransaction = () => {
-    try {
-      if (clickedTransactionId)
-        dispatch(deleteTransaction(clickedTransactionId))
-          .unwrap()
-          .then(() => {
-            dispatch(changeTransactionStatus('idle'));
-            dispatch(changeCryptoStatus('idle'));
-          });
-      handleCloseConfirmModal();
-    } catch (err) {
-      console.error('Failed to delete the transaction', err);
-    }
   };
 
   return (
@@ -337,11 +336,12 @@ function Row(props: { row: any; category: string }) {
         tabs={true}
       />
       <ConfirmDialog
-        click={handleDeleteTransaction}
         open={openConfirmModal}
         close={handleCloseConfirmModal}
         title="Are you sure you want to delete this transaction?"
         transactionId={clickedTransactionId}
+        category={category}
+        refetchTransactions={true}
       />
     </React.Fragment>
   );

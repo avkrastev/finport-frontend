@@ -56,7 +56,11 @@ export const fetchMisc = createAsyncThunk('misc/fetchMisc', async () => {
 const miscSlice = createSlice({
   name: 'misc',
   initialState,
-  reducers: {},
+  reducers: {
+    changeMiscStatus(state, action) {
+      state.status = action.payload;
+    }
+  },
   extraReducers(builder) {
     builder
       .addCase(fetchMisc.pending, (state) => {
@@ -77,6 +81,6 @@ export const selectAllMisc = (state: RootState) => state.misc.misc;
 export const getMiscStatus = (state: RootState) => state.misc.status;
 export const getMiscError = (state: RootState) => state.misc.error;
 
-//export const {} = miscSlice.actions;
+export const { changeMiscStatus } = miscSlice.actions;
 
 export default miscSlice.reducer;

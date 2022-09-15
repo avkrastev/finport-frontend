@@ -59,7 +59,11 @@ export const fetchCommodities = createAsyncThunk(
 const commoditySlice = createSlice({
   name: 'commodities',
   initialState,
-  reducers: {},
+  reducers: {
+    changeCommoditiesStatus(state, action) {
+      state.status = action.payload;
+    }
+  },
   extraReducers(builder) {
     builder
       .addCase(fetchCommodities.pending, (state) => {
@@ -86,6 +90,6 @@ export const getCommoditiesStatus = (state: RootState) =>
 export const getCommoditiesError = (state: RootState) =>
   state.commodities.error;
 
-//export const {} = commoditySlice.actions;
+export const { changeCommoditiesStatus } = commoditySlice.actions;
 
 export default commoditySlice.reducer;

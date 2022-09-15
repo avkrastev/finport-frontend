@@ -8,7 +8,6 @@ import {
   selectAllTransactions,
   getTransactionsStatus,
   fetchTransactions,
-  deleteTransaction,
   getTransactionAddStatus,
   getTransactionUpdateStatus,
   getTransactionDeleteStatus,
@@ -17,7 +16,6 @@ import {
 } from './transactionSlice';
 import TransactionModal from 'src/components/TransactionModal';
 import SuspenseLoader from 'src/components/SuspenseLoader';
-import { changeCryptoStatus } from 'src/content/dashboards/Crypto/cryptoSlice';
 
 function RecentOrders() {
   const dispatch = useDispatch();
@@ -28,8 +26,6 @@ function RecentOrders() {
   const [showSuccessSnackbar, setShowSuccessSnackbar] = useState(false);
   const [showFailedSnackbar, setShowFailedSnackbar] = useState(false);
   const [operation, setOperation] = useState('');
-
-  const handleCloseConfirmModal = () => setOpenConfirmModal(false);
 
   const transactions = useSelector(selectAllTransactions);
   const transactionsStatus = useSelector(getTransactionsStatus);
@@ -87,19 +83,14 @@ function RecentOrders() {
 
   const openDeleteModal = (id) => {
     setClickedTransactionId(id);
+    setSelectedTransaction(
+      transactions.find((transaction) => transaction.id === id)
+    );
+
     setOpenConfirmModal(true);
   };
 
-  const handleDeleteTransaction = () => {
-    try {
-      if (clickedTransactionId)
-        dispatch(deleteTransaction(clickedTransactionId)).unwrap();
-        dispatch(changeCryptoStatus('idle'));
-      handleCloseConfirmModal();
-    } catch (err) {
-      console.error('Failed to delete the transaction', err);
-    }
-  };
+  const handleCloseConfirmModal = () => setOpenConfirmModal(false);
 
   const handleCloseTransactionModal = () => {
     setOpenTransactionModal(false);
@@ -143,11 +134,11 @@ function RecentOrders() {
         openEditModal={openEditModal}
       />
       <ConfirmDialog
-        click={handleDeleteTransaction}
         open={openConfirmModal}
-        close={handleCloseConfirmModal}
         title="Are you sure you want to delete this transaction?"
         transactionId={clickedTransactionId}
+        category={selectedTransaction.category}
+        close={handleCloseConfirmModal}
       />
       <TransactionModal
         transaction={selectedTransaction}
