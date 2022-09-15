@@ -60,7 +60,7 @@ mongoose
     //"mongodb://localhost:27017/finport"
   )
   .then(() => {
-    app.listen(3005);
+    app.listen(process.env.PORT || 3005);
   })
   .catch((err) => {
     console.log(err);
