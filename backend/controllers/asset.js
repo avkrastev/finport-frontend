@@ -649,6 +649,31 @@ const deleteAssetCommon = async (id, userId, sess) => {
   }
 };
 
+const getTransactionsPerMonths = async (req, res, next) => {
+  try {
+    const creator = req.userData.userId;
+    const dataBuilder = new DataBuilder("", creator);
+    const transactionsPerMonthsAndYears = await Asset.aggregate(
+      dataBuilder.getTransactionsPerMonths()
+    ).exec();
+
+    let historyByYears = transactionsPerMonthsAndYears.reduce((prevArr, newArr) => {
+      prevArr[newArr._id.year] = prevArr[newArr._id.year] || [];
+      prevArr[newArr._id.year].push(newArr);
+      return prevArr;
+    }, Object.create(null));
+
+
+    const history = Object.keys(historyByYears).reverse().map(year => ({ year, transactions: historyByYears[year] }));
+
+    res.status(200).json({ history });
+  } catch (err) {
+    console.log(err);
+    const error = new HttpError("Fetching history data failed, try again.", 500);
+    return next(error);
+  }
+};
+
 exports.getAsset = getAsset;
 exports.getAssetById = getAssetById;
 exports.addAsset = addAsset;
@@ -662,3 +687,4 @@ exports.getCommodityAsset = getCommodityAsset;
 exports.getMiscAsset = getMiscAsset;
 exports.getP2PAsset = getP2PAsset;
 exports.getAssetsSummary = getAssetsSummary;
+exports.getTransactionsPerMonths = getTransactionsPerMonths;

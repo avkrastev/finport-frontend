@@ -1,7 +1,7 @@
 const { ObjectId } = require("mongodb");
 
 class DataBuilder {
-  constructor(category, userId) {
+  constructor(category = "", userId = "") {
     this.category = category;
     this.userId = userId;
   }
@@ -145,6 +145,11 @@ class DataBuilder {
   getTransactionsPerMonths() {
     return [
       {
+        $match: {
+          creator: new ObjectId(this.userId),
+        },
+      },
+      {
         $group: {
           _id: {
             year: {
@@ -172,14 +177,17 @@ class DataBuilder {
           count: {
             $sum: 1,
           },
+          totalPriceInUSD: {
+            $sum: "$price_usd"
+          }
         },
       },
-      {
-        $sort: {
-          "_id.year": -1,
-          "_id.month": -1,
-        },
-      },
+      // {
+      //   $sort: {
+      //     "_id.year": -1,
+      //     "_id.month": -1,
+      //   },
+      // },
     ];
   }
 }

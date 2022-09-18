@@ -7,9 +7,19 @@ import Footer from 'src/components/Footer';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from 'src/app/store';
 import ReportsTable from '../../ReportsTable';
+import { useEffect } from 'react';
+import { fetchTransactionsPerMonth, getMontlyReportData, getMontlyReportStatus } from '../reportsSlice';
 
 function DashboardCrypto() {
-  //const dispatch: AppDispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
+  const montlyReport = useSelector(getMontlyReportData);
+  const montlyReportStatus = useSelector(getMontlyReportStatus);
+
+  useEffect(() => {
+    if (montlyReportStatus === 'idle') {
+      dispatch(fetchTransactionsPerMonth());
+    }
+  }, [montlyReportStatus, dispatch]);
 
   return (
     <>
@@ -28,7 +38,10 @@ function DashboardCrypto() {
           spacing={3}
         >
           <Grid item xs={12}>
-            <ReportsTable/>
+            {montlyReport.map(report => {
+              return <ReportsTable key={report.year} year={report.year} months={report.transactions} />;
+            })
+            }
           </Grid>
         </Grid>
       </Container>

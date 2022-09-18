@@ -7,6 +7,7 @@ import miscSlice from 'src/content/dashboards/Misc/miscSlice';
 import stocksSlice from 'src/content/dashboards/Stocks/stocksSlice';
 import p2pSlice from 'src/content/dashboards/P2P/p2pSlice';
 import summarySlice from 'src/content/overview/summarySlice';
+import reportsSlice from 'src/content/dashboards/Reports/reportsSlice';
 
 export const store = configureStore({
   reducer: {
@@ -17,7 +18,8 @@ export const store = configureStore({
     commodities: commoditiesSlice,
     misc: miscSlice,
     p2p: p2pSlice,
-    summary: summarySlice
+    summary: summarySlice,
+    reports: reportsSlice
   }
 });
 

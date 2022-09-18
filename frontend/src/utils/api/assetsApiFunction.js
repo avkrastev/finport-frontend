@@ -151,3 +151,22 @@ export async function getAssetById(id) {
     console.log(error);
   }
 }
+
+export async function getTransactionsPerMonths() {
+  const token = JSON.parse(localStorage.getItem('userData')).token;
+
+  try {
+    const response = await axios.get(
+      process.env.REACT_APP_BACKEND_URL + '/assets/getTransactionsPerMonths',
+      {
+        headers: {
+          Authorization: `Basic ${token}`
+        }
+      }
+    );
+
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+}
