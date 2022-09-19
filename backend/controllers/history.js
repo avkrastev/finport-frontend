@@ -56,7 +56,8 @@ const getHistoryForAWeek = async (req, res, next) => {
           categories: {
             $push: {
               category: "$category",
-              price: "$price",
+              balance: "$balance",
+              total: "$total",
             },
           },
         },
@@ -81,19 +82,19 @@ const getHistoryForAWeek = async (req, res, next) => {
 };
 
 const addHistory = async (data, creator) => {
-  const existingRecord = await History.aggregate([
-    {
-      $match: {
-        creator: new ObjectId(creator),
-        category: data.category,
-        date: data.date,
-      },
-    },
-  ]).exec();
+  // const existingRecord = await History.aggregate([
+  //   {
+  //     $match: {
+  //       creator: new ObjectId(creator),
+  //       category: data.category,
+  //       date: data.date,
+  //     },
+  //   },
+  // ]).exec();
 
-  if (existingRecord.length) {
-    return true;
-  }
+  // if (existingRecord.length) {
+  //   return true;
+  // }
 
   let user;
 
@@ -127,7 +128,7 @@ const updateHistory = async (req, res, next) => {
     return next(new HttpError("Error!", 422));
   }
 
-  const { category, price, currency, date, id } = req.body;
+  const { category, balance, total, currency, date, id } = req.body;
 
   let history;
   try {
@@ -149,7 +150,8 @@ const updateHistory = async (req, res, next) => {
   }
 
   if (category) history.category = category;
-  if (price) history.price = price;
+  if (balance) history.balance = balance;
+  if (total) history.total = total;
   if (currency) history.currency = currency;
   if (date) history.date = date;
 

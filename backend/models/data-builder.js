@@ -10,6 +10,43 @@ class DataBuilder {
     this.category = category;
   }
 
+  getAssetsPerUserAndCategory() {
+    return [
+      {
+        $group: {
+          _id: {
+            creator: "$creator",
+            category: "$category",
+            symbol: "$symbol",
+            name: "$name",
+            assetId: "$asset_id"
+          },
+          categories: {
+            $push: {
+              name: "$name",
+              symbol: "$symbol",
+              asset_id: "$asset_id",
+              price_usd: "$price_usd",
+              price: "$price",
+              currency: "$currency",
+              quantity: "$quantity",
+              creator: "$creator",
+            },
+          },
+          totalSum: {
+            $sum: "$price_usd",
+          },
+          totalQuantity: {
+            $sum: "$quantity",
+          },
+          totalSumInOriginalCurrency: {
+            $sum: "$price",
+          },
+        },
+      },
+    ];
+  }
+
   getTotalSumsByCategorySortedPipeline() {
     return [
       {

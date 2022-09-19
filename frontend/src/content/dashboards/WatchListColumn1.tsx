@@ -46,7 +46,7 @@ function WatchListColumn1({
       (item) => item.category === category.alias
     );
     if (categoryDate) {
-      prices.push(roundNumber(categoryDate.price));
+      prices.push(roundNumber(categoryDate.balance));
     }
 
     categories[category.alias] = padArrayStart(prices, 7, 0);

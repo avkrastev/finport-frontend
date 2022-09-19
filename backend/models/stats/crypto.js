@@ -14,7 +14,7 @@ class CryptoAssetStats extends AssetStats {
     const ids = this.data.map((item) => item._id.assetId);
     if (ids.indexOf("bitcoin") === -1) ids.push("bitcoin");
 
-    const cryptoPrices = new CryptoPrices(ids, "USD", this.creator);
+    const cryptoPrices = new CryptoPrices(ids, this.creator);
     this.currentPrices = await cryptoPrices.getPricesPerAssets();
   }
 

@@ -15,7 +15,7 @@ class ETFAssetStats extends AssetStats {
   async getPrices() {
     const ids = this.data.map((item) => item._id.symbol);
 
-    const stocksPrices = new ETFPrices(ids, "USD", this.creator);
+    const stocksPrices = new ETFPrices(ids, this.creator);
     this.currentPrices = await stocksPrices.getPricesPerAssets(this.apiKey);
     this.exchangeRatesList = await exchangeRatesBaseUSD(0, "", "", true);
   }
