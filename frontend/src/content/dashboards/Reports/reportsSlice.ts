@@ -5,6 +5,9 @@ import type { RootState } from '../../../app/store';
 interface Report {
     year: string;
     transactions: [];
+    totalInvested: number;
+    totalTransactions: number;
+    monthlySpent: [];
 }
 interface ReportsState {
     history: Report[];
@@ -48,9 +51,9 @@ const reportsSlice = createSlice({
     }
 });
 
-export const getMontlyReportData = (state: RootState) => state.reports.history;
-export const getMontlyReportStatus = (state: RootState) => state.reports.status;
-export const getMontlyReportError = (state: RootState) => state.reports.error;
+export const getMonthlyReportData = (state: RootState) => state.reports.history;
+export const getMonthlyReportStatus = (state: RootState) => state.reports.status;
+export const getMonthlyReportError = (state: RootState) => state.reports.error;
 
 //export const { } = cryptoSlice.actions;
 

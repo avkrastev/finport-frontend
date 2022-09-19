@@ -209,6 +209,7 @@ class DataBuilder {
               date: "$date",
               name: "$name",
               type: "$type",
+              price: "$price_usd",
             },
           },
           count: {
@@ -219,12 +220,12 @@ class DataBuilder {
           }
         },
       },
-      // {
-      //   $sort: {
-      //     "_id.year": -1,
-      //     "_id.month": -1,
-      //   },
-      // },
+      {
+        $sort: {
+          "_id.year": -1,
+          "_id.month": -1,
+        },
+      },
     ];
   }
 }

@@ -12,54 +12,39 @@ import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { monthNames } from 'src/constants/common';
+import { monthNames, transactionTypes } from 'src/constants/common';
+import { formatAmountAndCurrency } from 'src/utils/functions';
+import { format } from 'date-fns';
+import { useTheme } from '@mui/material';
 
-
-function createData(
-  name: string,
-  calories: number,
-  fat: number,
-  carbs: number,
-  protein: number,
-  price: number,
-) {
-  return {
-    name,
-    calories,
-    fat,
-    carbs,
-    protein,
-    price,
-    history: [
-      {
-        date: '2020-01-05',
-        customerId: '11091700',
-        amount: 3,
-      },
-      {
-        date: '2020-01-02',
-        customerId: 'Anonymous',
-        amount: 1,
-      },
-    ],
-  };
-}
-
-function Row(props: { row: ReturnType<typeof createData>, month: number }) {
-  const { row, month } = props;
+function Row(props) {
+  const { history, count, total, month } = props;
+  const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  console.log(row)
 
   return (
     <React.Fragment>
       <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
         <TableCell component="th" scope="row">
-          {monthNames[month-1]}
+          <Typography
+            variant="body1"
+            fontWeight="bold"
+            color="text.primary"
+            noWrap
+          >
+            {monthNames[month - 1]}
+          </Typography>
         </TableCell>
-        <TableCell align="right">{row.calories}</TableCell>
-        <TableCell align="right">{row.fat}</TableCell>
-        <TableCell align="right">{row.carbs}</TableCell>
-        <TableCell align="right">{row.protein}</TableCell>
+        <TableCell align="right">{count}</TableCell>
+        <TableCell align="right">
+          <Typography
+            variant="body1"
+            color="text.primary"
+            noWrap
+          >
+            {formatAmountAndCurrency(total, 'USD')}
+          </Typography>
+        </TableCell>
         <TableCell align="right">
           <IconButton
             aria-label="expand row"
@@ -81,25 +66,42 @@ function Row(props: { row: ReturnType<typeof createData>, month: number }) {
                 <TableHead>
                   <TableRow>
                     <TableCell>Date</TableCell>
-                    <TableCell>Customer</TableCell>
-                    <TableCell align="right">Amount</TableCell>
-                    <TableCell align="right">Total price ($)</TableCell>
+                    <TableCell>Name</TableCell>
+                    <TableCell>Type</TableCell>
+                    <TableCell align="right">Price ($)</TableCell>
                   </TableRow>
                 </TableHead>
-                {/* <TableBody>
-                  {row.history.map((historyRow) => (
-                    <TableRow key={historyRow.date}>
+                <TableBody>
+                  {history.map((row, i) => (
+                    <TableRow key={i}>
                       <TableCell component="th" scope="row">
-                        {historyRow.date}
+                        {format(new Date(row.date), 'dd MMM yyyy HH:ss')}
                       </TableCell>
-                      <TableCell>{historyRow.customerId}</TableCell>
-                      <TableCell align="right">{historyRow.amount}</TableCell>
+                      <TableCell>{row.name}</TableCell>
+                      <TableCell>
+                        <Typography
+                          variant="body2"
+                          noWrap
+                          color={
+                            row.type === 1 || row.type === 3
+                              ? theme.palette.error.main
+                              : theme.palette.primary.main
+                          }
+                          gutterBottom
+                        >
+                          {
+                            transactionTypes.find(
+                              (type) => type.value === row.type
+                            )?.label
+                          }
+                        </Typography>
+                      </TableCell>
                       <TableCell align="right">
-                        {Math.round(historyRow.amount * row.price * 100) / 100}
+                        {formatAmountAndCurrency(row.price, 'USD')}
                       </TableCell>
                     </TableRow>
                   ))}
-                </TableBody> */}
+                </TableBody>
               </Table>
             </Box>
           </Collapse>
@@ -109,31 +111,27 @@ function Row(props: { row: ReturnType<typeof createData>, month: number }) {
   );
 }
 
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0, 3.99),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3, 4.99),
-  createData('Eclair', 262, 16.0, 24, 6.0, 3.79),
-  createData('Cupcake', 305, 3.7, 67, 4.3, 2.5),
-  createData('Gingerbread', 356, 16.0, 49, 3.9, 1.5),
-];
-
 export default function ReportsTable(props) {
   return (
     <TableContainer component={Paper}>
-      <Table aria-label="collapsible table">
+      <Table aria-label="collapsible table" size="small">
         <TableHead>
-          <TableRow> 
-            <TableCell>{props.year}</TableCell>
-            <TableCell align="right">Calories</TableCell>
-            <TableCell align="right">Fat&nbsp;(g)</TableCell>
-            <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-            <TableCell align="right">Protein&nbsp;(g)</TableCell>
-            <TableCell align="right"/>
+          <TableRow>
+            <TableCell>Year {props.year}</TableCell>
+            <TableCell align="right">Number of Transactions</TableCell>
+            <TableCell align="right">Total Spent ($)</TableCell>
+            <TableCell align="right" />
           </TableRow>
         </TableHead>
         <TableBody>
           {props.months.map((row) => (
-            <Row key={row._id.month} month={row._id.month} row={row.transactions} />
+            <Row
+              key={row._id.month}
+              month={row._id.month}
+              count={row.count}
+              total={row.totalPriceInUSD}
+              history={row.transactions}
+            />
           ))}
         </TableBody>
       </Table>

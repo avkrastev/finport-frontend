@@ -1,16 +1,12 @@
-import { Card, Box, Typography, Avatar } from '@mui/material';
+import { Card, Box, Typography, Icon } from '@mui/material';
 
 import { styled } from '@mui/material/styles';
 import Label from 'src/components/Label';
 import Text from 'src/components/Text';
+import { formatAmountAndCurrency } from 'src/utils/functions';
 import WatchListColumn1Chart from './WatchListColumn1Chart';
-
-const AvatarWrapper = styled(Avatar)(
-  ({ theme }) => `
-        background: transparent;
-        margin-right: ${theme.spacing(0.5)};
-`
-);
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import { monthNames } from 'src/constants/common';
 
 const WatchListColumn1ChartWrapper = styled(WatchListColumn1Chart)(
   () => `
@@ -18,39 +14,17 @@ const WatchListColumn1ChartWrapper = styled(WatchListColumn1Chart)(
 `
 );
 
-function WatchListColumn2() {
-
-  const price = {
-    week: {
-      labels: [
-        'Monday',
-        'Tueday',
-        'Wednesday',
-        'Thursday',
-        'Friday',
-        'Saturday',
-        'Sunday'
-      ],
-      data: [1.854, 1.773, 2.092, 2.009, 1.909, 1.842, 1.884]
-    }
-  };
+function WatchListColumn2(props) {
+  const { year, totalInvested, totalTransactions, monthlySpent } = props;
 
   return (
     <Card>
       <Box sx={{ p: 3 }}>
         <Box display="flex" alignItems="center">
-          <AvatarWrapper>
-            <img
-              alt="ETH"
-              src="/static/images/placeholders/logo/ethereum.png"
-            />
-          </AvatarWrapper>
+          <Icon sx={{ mr: 1 }} component={CalendarMonthIcon} />
           <Box>
             <Typography variant="h4" noWrap>
-              Ethereum
-            </Typography>
-            <Typography variant="subtitle1" noWrap>
-              ETH
+              {year}
             </Typography>
           </Box>
         </Box>
@@ -63,11 +37,9 @@ function WatchListColumn2() {
           }}
         >
           <Typography variant="h2" sx={{ pr: 1, mb: 1 }}>
-            $1,968.00
+            {formatAmountAndCurrency(totalInvested, 'USD')}
           </Typography>
-          <Text color="error">
-            <b>-3.24%</b>
-          </Text>
+          <Text color="black">total invested</Text>
         </Box>
         <Box
           sx={{
@@ -76,16 +48,16 @@ function WatchListColumn2() {
             justifyContent: 'flex-start'
           }}
         >
-          <Label color="error">-$90</Label>
+          <Label color="info">{totalTransactions}</Label>
           <Typography variant="body2" color="text.secondary" sx={{ pl: 1 }}>
-            last 24h
+            transactions
           </Typography>
         </Box>
       </Box>
       <Box height={130} sx={{ ml: -1.5 }}>
         <WatchListColumn1ChartWrapper
-          data={price.week.data}
-          labels={price.week.labels}
+          data={[...monthlySpent]}
+          labels={monthNames}
         />
       </Box>
     </Card>

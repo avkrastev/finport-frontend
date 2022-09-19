@@ -173,7 +173,6 @@ function WatchListColumn1({
         <WatchListColumn1ChartWrapper
           data={categories[category.alias]}
           labels={labels}
-          skeleton={true}
         />
       </Box>
     </Card>

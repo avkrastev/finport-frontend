@@ -19,7 +19,6 @@ const CommoditiesAssetStats = require("../models/stats/commodities");
 const MiscAssetStats = require("../models/stats/misc");
 const { CATEGORIES } = require("../utils/categories");
 const P2PAssetStats = require("../models/stats/p2p");
-const { addHistory } = require("./history");
 
 const getAsset = async (req, res, next) => {
   let assets;
@@ -69,8 +68,6 @@ const getCryptoAsset = async (req, res, next) => {
         assets.sums.holdingValue,
         assets.sums.totalSum
       );
-
-      await addHistoryData("crypto", assets.sums.holdingValue, creator);
     }
 
     res.json({ assets });
@@ -106,8 +103,6 @@ const getStockAsset = async (req, res, next) => {
         assets.sums.holdingValue,
         assets.sums.totalSum
       );
-
-      await addHistoryData("stocks", assets.sums.holdingValue, creator);
     }
 
     res.json({ assets });
@@ -144,8 +139,6 @@ const getETFAsset = async (req, res, next) => {
         assets.sums.holdingValue,
         assets.sums.totalSum
       );
-
-      await addHistoryData("etf", assets.sums.holdingValue, creator);
     }
 
     res.json({ assets });
@@ -182,8 +175,6 @@ const getCommodityAsset = async (req, res, next) => {
         assets.sums.holdingValue,
         assets.sums.totalSum
       );
-
-      await addHistoryData("commodities", assets.sums.holdingValue, creator);
     }
 
     res.json({ assets });
@@ -209,15 +200,17 @@ const getMiscAsset = async (req, res, next) => {
 
     let assets = [];
     if (statsResults.length > 0 && sumsResult.length > 0) {
-      const miscAssetStats = new MiscAssetStats(statsResults, sumsResult, creator);
+      const miscAssetStats = new MiscAssetStats(
+        statsResults,
+        sumsResult,
+        creator
+      );
       assets = await miscAssetStats.getAllData();
 
       assets.sums.sumsInDifferentCurrencies = await sumsInSupportedCurrencies(
         assets.sums.holdingValue,
         assets.sums.totalSum
       );
-
-      await addHistoryData("misc", assets.sums.holdingValue, creator);
     }
     res.json({ assets });
   } catch (err) {
@@ -303,7 +296,11 @@ const getP2PAsset = async (req, res, next) => {
         totalInterestPaid.push(interestPerItem);
       }
 
-      const p2pAssetStats = new P2PAssetStats(statsResults, sumsResult, creator);
+      const p2pAssetStats = new P2PAssetStats(
+        statsResults,
+        sumsResult,
+        creator
+      );
       p2pAssetStats.setInterestPaid(totalInterestPaid);
       assets = await p2pAssetStats.getAllData();
 
@@ -314,8 +311,6 @@ const getP2PAsset = async (req, res, next) => {
       );
 
       assets.percentages = percentages;
-
-      await addHistoryData("p2p", assets.sums.holdingValue, creator);
     }
 
     res.json({ assets });
@@ -323,22 +318,6 @@ const getP2PAsset = async (req, res, next) => {
     console.log(err);
     const error = new HttpError("Something went wrong!", 500);
     return next(error);
-  }
-};
-
-const addHistoryData = async (category, price, user) => {
-  try {
-    await addHistory(
-      {
-        date: fns.format(new Date(), "yyyy-MM-dd"),
-        category,
-        price,
-      },
-      user
-    );
-  } catch (err) {
-    console.log(err);
-    new HttpError("Error storing history data!", 500);
   }
 };
 
@@ -657,19 +636,48 @@ const getTransactionsPerMonths = async (req, res, next) => {
       dataBuilder.getTransactionsPerMonths()
     ).exec();
 
-    let historyByYears = transactionsPerMonthsAndYears.reduce((prevArr, newArr) => {
-      prevArr[newArr._id.year] = prevArr[newArr._id.year] || [];
-      prevArr[newArr._id.year].push(newArr);
-      return prevArr;
-    }, Object.create(null));
+    let historyByYears = transactionsPerMonthsAndYears.reduce(
+      (prevArr, newArr) => {
+        prevArr[newArr._id.year] = prevArr[newArr._id.year] || [];
+        prevArr[newArr._id.year].push(newArr);
+        return prevArr;
+      },
+      Object.create(null)
+    );
 
+    const history = Object.keys(historyByYears)
+      .reverse()
+      .map((year) => {
+        const totalInvested = historyByYears[year].reduce((total, record) => {
+          return total + record.totalPriceInUSD;
+        }, 0);
+        const totalTransactions = historyByYears[year].reduce(
+          (total, record) => {
+            return total + record.count;
+          },
+          0
+        );
+        let monthlySpent = Array(12).fill(0);
+        for (let rec of historyByYears[year]) {
+          monthlySpent[rec._id.month - 1] = roundNumber(rec.totalPriceInUSD);
+        }
 
-    const history = Object.keys(historyByYears).reverse().map(year => ({ year, transactions: historyByYears[year] }));
+        return {
+          year,
+          transactions: historyByYears[year],
+          totalInvested,
+          totalTransactions,
+          monthlySpent
+        };
+      });
 
     res.status(200).json({ history });
   } catch (err) {
     console.log(err);
-    const error = new HttpError("Fetching history data failed, try again.", 500);
+    const error = new HttpError(
+      "Fetching history data failed, try again.",
+      500
+    );
     return next(error);
   }
 };

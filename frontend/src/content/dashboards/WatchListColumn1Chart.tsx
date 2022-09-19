@@ -21,7 +21,7 @@ const WatchListColumn1Chart: FC<WatchListColumn1ChartProps> = ({
     const ctx = canvas.getContext('2d');
     const primaryGradient = ctx.createLinearGradient(6, 6, 6, 150);
 
-    const gradientMainColor = !skeleton ? '#e3e3e3' : theme.colors.primary.light;
+    const gradientMainColor = skeleton ? '#e3e3e3' : theme.colors.primary.light;
 
     primaryGradient.addColorStop(0, alpha(gradientMainColor, 0.8));
     primaryGradient.addColorStop(0.8, theme.colors.alpha.white[10]);

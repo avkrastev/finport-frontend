@@ -1,35 +1,81 @@
 import { Helmet } from 'react-helmet-async';
-import PageHeader from '../../PageHeader';
-import PageTitleWrapper from 'src/components/PageTitleWrapper';
-import { Grid, Container } from '@mui/material';
+import {
+  Grid,
+  Container,
+  CardContent,
+  Box,
+  Tabs,
+  Tab,
+  Typography
+} from '@mui/material';
 import Footer from 'src/components/Footer';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from 'src/app/store';
 import ReportsTable from '../../ReportsTable';
-import { useEffect } from 'react';
-import { fetchTransactionsPerMonth, getMontlyReportData, getMontlyReportStatus } from '../reportsSlice';
+import { useEffect, useState, SyntheticEvent } from 'react';
+import {
+  fetchTransactionsPerMonth,
+  getMonthlyReportData,
+  getMonthlyReportStatus
+} from '../reportsSlice';
+import WatchListColumn2 from '../../WatchListColumn2';
+
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+function a11yProps(index: number) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`
+  };
+}
 
 function DashboardCrypto() {
   const dispatch: AppDispatch = useDispatch();
-  const montlyReport = useSelector(getMontlyReportData);
-  const montlyReportStatus = useSelector(getMontlyReportStatus);
+  const monthlyReport = useSelector(getMonthlyReportData);
+  const monthlyReportStatus = useSelector(getMonthlyReportStatus);
+  const [yearTab, setYearTab] = useState(0);
 
   useEffect(() => {
-    if (montlyReportStatus === 'idle') {
+    if (monthlyReportStatus === 'idle') {
       dispatch(fetchTransactionsPerMonth());
     }
-  }, [montlyReportStatus, dispatch]);
+  }, [monthlyReportStatus, dispatch]);
+
+  const handleTabChange = (event: SyntheticEvent, newValue: number) => {
+    setYearTab(newValue);
+  };
 
   return (
     <>
       <Helmet>
         <title>Monthly Report</title>
       </Helmet>
-      <PageTitleWrapper>
-        <PageHeader title="Monthly Report" />
-      </PageTitleWrapper>
-      <Container maxWidth="lg">
+      <Container maxWidth="lg" sx={{ p: 5 }}>
         <Grid
           container
           direction="row"
@@ -38,10 +84,42 @@ function DashboardCrypto() {
           spacing={3}
         >
           <Grid item xs={12}>
-            {montlyReport.map(report => {
-              return <ReportsTable key={report.year} year={report.year} months={report.transactions} />;
-            })
-            }
+            <CardContent>
+              <Box sx={{ width: '100%' }}>
+                <Tabs
+                  centered
+                  variant="standard"
+                  scrollButtons="auto"
+                  textColor="primary"
+                  indicatorColor="primary"
+                  value={yearTab}
+                  onChange={handleTabChange}
+                  aria-label="basic tabs example"
+                >
+                  {monthlyReport.map((report, i) => (
+                    <Tab key={i} label={report.year} {...a11yProps(i)} />
+                  ))}
+                </Tabs>
+                {monthlyReport[yearTab] && (
+                  <TabPanel value={yearTab} index={yearTab}>
+                    <WatchListColumn2
+                      year={monthlyReport[yearTab].year}
+                      totalInvested={monthlyReport[yearTab].totalInvested}
+                      totalTransactions={
+                        monthlyReport[yearTab].totalTransactions
+                      }
+                      monthlySpent= {monthlyReport[yearTab].monthlySpent}
+                    />
+                    <br />
+                    <br />
+                    <ReportsTable
+                      year={monthlyReport[yearTab].year}
+                      months={monthlyReport[yearTab].transactions}
+                    />
+                  </TabPanel>
+                )}
+              </Box>
+            </CardContent>
           </Grid>
         </Grid>
       </Container>

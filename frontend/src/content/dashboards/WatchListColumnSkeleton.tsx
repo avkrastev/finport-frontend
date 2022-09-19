@@ -61,6 +61,7 @@ export default function WatchListColumnSkeleton() {
       <WatchListColumn1ChartWrapper
           data={price.week.data}
           labels={price.week.labels}
+          skeleton
         />
       </Box>
     </Card>

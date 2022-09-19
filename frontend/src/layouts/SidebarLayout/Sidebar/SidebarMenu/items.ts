@@ -111,6 +111,11 @@ const menuItems: MenuItems[] = [
         link: '/management/transactions',
         show: true
       },
+    ]
+  },
+  {
+    heading: 'History',
+    items: [
       {
         name: 'Reports',
         icon: AssessmentTwoToneIcon,
