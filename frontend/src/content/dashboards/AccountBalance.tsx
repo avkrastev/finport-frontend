@@ -74,9 +74,14 @@ function AccountBalance({ assets, category, loading, ...rest }) {
   let assetsBalance = {};
   let assetsSlice = [];
 
+  const holdingValue =
+    rest && rest.totalBalance && rest.totalDifference
+      ? rest.totalBalance - rest.totalDifference
+      : assets.sums.holdingValue;
+
   if (assets.stats) {
     for (let asset of assets.stats) {
-      const percent = (asset.holdingValue / assets.sums.totalSum) * 100;
+      const percent = (asset.holdingValue / holdingValue) * 100;
       if (!isNaN(percent)) {
         percentages.push(parseFloat(percent.toFixed(2)));
       }

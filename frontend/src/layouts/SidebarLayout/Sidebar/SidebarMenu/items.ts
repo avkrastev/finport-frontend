@@ -13,6 +13,7 @@ import GroupTwoToneIcon from '@mui/icons-material/GroupTwoTone';
 import ShowChartTwoToneIcon from '@mui/icons-material/ShowChartTwoTone';
 import TableChartTwoToneIcon from '@mui/icons-material/TableChartTwoTone';
 import AccountBalanceWalletTwoToneIcon from '@mui/icons-material/AccountBalanceWalletTwoTone';
+import SavingsIcon from '@mui/icons-material/Savings';
 
 export interface MenuItem {
   link?: string;
@@ -111,6 +112,23 @@ const menuItems: MenuItems[] = [
         link: '/management/transactions',
         show: true
       },
+      {
+        name: 'Savings',
+        icon: SavingsIcon,
+        link: '/management/transactions',
+        show: true
+      },
+    ]
+  },
+  {
+    heading: 'Expenses',
+    items: [
+      {
+        name: 'Balances',
+        icon: AccountBalanceWalletTwoToneIcon,
+        link: '/expenses/balances',
+        show: true
+      }
     ]
   },
   {
@@ -131,6 +149,11 @@ const menuItems: MenuItems[] = [
             name: 'Yearly',
             link: '/management/reports/yearly',
             show: true
+          },
+          {
+            name: 'To Be Taxed',
+            link: '/management/reports/taxes',
+            show: true
           }
         ]
       },
@@ -138,17 +161,6 @@ const menuItems: MenuItems[] = [
         name: 'Snapshots',
         icon: AddAPhotoTwoToneIcon,
         link: '/management/snapshots',
-        show: true
-      }
-    ]
-  },
-  {
-    heading: 'Expenses',
-    items: [
-      {
-        name: 'Balances',
-        icon: AccountBalanceWalletTwoToneIcon,
-        link: '/expenses/balances',
         show: true
       }
     ]

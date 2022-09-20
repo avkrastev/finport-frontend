@@ -89,6 +89,25 @@ const sumsInSupportedCurrencies = async (
   );
 };
 
+const monthDiffFromToday = (date, date2 = new Date()) => {
+  let months;
+  date = new Date(date);
+  months = (date2.getFullYear() - date.getFullYear()) * 12;
+  months -= date.getMonth();
+  months += date2.getMonth();
+
+  const result = months <= 0 ? 0 : months;
+  return result / 12;
+};
+
+const compoundInterest = (principal, rate, time) => {
+  const r = rate / 100;
+  const a = principal * Math.pow(1 + r / 12, 12 * time);
+  return a - principal;
+};
+
 exports.exchangeRatesBaseUSD = exchangeRatesBaseUSD;
 exports.roundNumber = roundNumber;
+exports.monthDiffFromToday = monthDiffFromToday;
+exports.compoundInterest = compoundInterest;
 exports.sumsInSupportedCurrencies = sumsInSupportedCurrencies;

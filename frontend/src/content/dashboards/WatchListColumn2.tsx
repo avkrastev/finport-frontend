@@ -39,7 +39,7 @@ function WatchListColumn2(props) {
           <Typography variant="h2" sx={{ pr: 1, mb: 1 }}>
             {formatAmountAndCurrency(totalInvested, 'USD')}
           </Typography>
-          <Text color="black">total invested</Text>
+          <Text color="black">invested</Text>
         </Box>
         <Box
           sx={{

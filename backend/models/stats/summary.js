@@ -5,6 +5,7 @@ const { exchangeRatesBaseUSD } = require("../../utils/functions");
 const Asset = require("../asset");
 const { addHistory } = require("../../controllers/history");
 const fns = require("date-fns");
+const P2PAssetStats = require("./p2p");
 
 class SummaryAssetsStats {
   async processHistoryData() {
@@ -92,6 +93,11 @@ class SummaryAssetsStats {
             },
             0
           );
+        }
+        if (category === "p2p") {
+          const p2pAssetsStats = new P2PAssetStats(user);
+          const p2pProfitStats = await p2pAssetsStats.getProfitPerAssets();
+          balance = p2pProfitStats.sums.holdingValue;
         }
 
         groupedByUserAndCategory[user][category].push({

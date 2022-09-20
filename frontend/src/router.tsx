@@ -154,6 +154,10 @@ const routes = (isLoggedIn: any) => [
             element: <Transactions />
           },
           {
+            path: 'savings',
+            element: <Transactions />
+          },
+          {
             path: 'reports',
             children: [
               {
@@ -162,6 +166,10 @@ const routes = (isLoggedIn: any) => [
               },
               {
                 path: 'yearly',
+                element: <Yearly />
+              },
+              {
+                path: 'declare',
                 element: <Yearly />
               },
             ]

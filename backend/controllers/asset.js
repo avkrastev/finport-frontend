@@ -224,118 +224,14 @@ const getP2PAsset = async (req, res, next) => {
   const creator = req.userData.userId;
 
   try {
-    const dataBuilder = new DataBuilder("p2p", creator);
-    const sumsResult = await Asset.aggregate(
-      dataBuilder.getTotalSumByCategoryPipeline()
-    ).exec();
-
-    const statsResults = await Asset.aggregate(
-      dataBuilder.getTotalSumsByCategoryAndAssetPipeline()
-    ).exec();
-
-    const boughtParts = await Asset.aggregate(
-      dataBuilder.getBoughtItemsPerCategory()
-    ).exec();
-
-    const soldParts = await Asset.aggregate(
-      dataBuilder.getSoldItemsPerCategory()
-    ).exec();
-
-    let assets = [];
-    if (statsResults.length > 0 && sumsResult.length > 0) {
-      const percentages = await P2p.find({ creator });
-
-      const boughtPartsGrouped = boughtParts.reduce(function (prevArr, newArr) {
-        prevArr[newArr.name] = prevArr[newArr.name] || [];
-        prevArr[newArr.name].push(newArr);
-        return prevArr;
-      }, Object.create(null));
-
-      let totalInterestPaid = [];
-      for (let item in boughtPartsGrouped) {
-        let amount = 0;
-        let apr = 0;
-        const totalSoldPerPlatform = soldParts.find(
-          (part) => part._id.name === item
-        );
-        if (totalSoldPerPlatform) amount = totalSoldPerPlatform.totalSum;
-        const platformHasAPR = percentages.find(
-          (percentage) => percentage.name === item
-        );
-        if (platformHasAPR) apr = platformHasAPR.apr;
-
-        let interestPerItem = {};
-        interestPerItem.name = item;
-        interestPerItem.interest = 0;
-        interestPerItem.totalInvested = 0;
-        for (let j in boughtPartsGrouped[item]) {
-          amount += boughtPartsGrouped[item][j].price;
-          const price = boughtPartsGrouped[item][j].price;
-          if (amount <= 0) {
-            const endDate = new Date(totalSoldPerPlatform.date);
-            const time = monthDiffFromToday(
-              boughtPartsGrouped[item][j].date,
-              endDate
-            );
-            boughtPartsGrouped[item][j].interest = compoundInterest(
-              price,
-              apr,
-              time
-            );
-          } else {
-            const time = monthDiffFromToday(boughtPartsGrouped[item][j].date);
-            boughtPartsGrouped[item][j].interest = compoundInterest(
-              price,
-              apr,
-              time
-            );
-          }
-          interestPerItem.interest += boughtPartsGrouped[item][j].interest;
-          interestPerItem.totalInvested += price;
-        }
-        totalInterestPaid.push(interestPerItem);
-      }
-
-      const p2pAssetStats = new P2PAssetStats(
-        statsResults,
-        sumsResult,
-        creator
-      );
-      p2pAssetStats.setInterestPaid(totalInterestPaid);
-      assets = await p2pAssetStats.getAllData();
-
-      assets.sums.sumsInDifferentCurrencies = await sumsInSupportedCurrencies(
-        assets.sums.holdingValue,
-        assets.sums.totalSum,
-        "EUR"
-      );
-
-      assets.percentages = percentages;
-    }
-
+    const p2pAssetStats = new P2PAssetStats(creator);
+    const assets = await p2pAssetStats.getProfitPerAssets();
     res.json({ assets });
   } catch (err) {
     console.log(err);
     const error = new HttpError("Something went wrong!", 500);
     return next(error);
   }
-};
-
-const monthDiffFromToday = (date, date2 = new Date()) => {
-  let months;
-  date = new Date(date);
-  months = (date2.getFullYear() - date.getFullYear()) * 12;
-  months -= date.getMonth();
-  months += date2.getMonth();
-
-  const result = months <= 0 ? 0 : months;
-  return result / 12;
-};
-
-const compoundInterest = (principal, rate, time) => {
-  const r = rate / 100;
-  const a = principal * Math.pow(1 + r / 12, 12 * time);
-  return a - principal;
 };
 
 const getAssetsSummary = async (req, res, next) => {
@@ -667,7 +563,7 @@ const getTransactionsPerMonths = async (req, res, next) => {
           transactions: historyByYears[year],
           totalInvested,
           totalTransactions,
-          monthlySpent
+          monthlySpent,
         };
       });
 
