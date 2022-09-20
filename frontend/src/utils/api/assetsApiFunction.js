@@ -140,11 +140,14 @@ export async function deleteAssets(ids) {
 export async function getAssetById(id) {
   const token = JSON.parse(localStorage.getItem('userData')).token;
   try {
-    const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/assets/${id}`, {
-      headers: {
-        Authorization: `Basic ${token}`
+    const response = await axios.get(
+      `${process.env.REACT_APP_BACKEND_URL}/assets/${id}`,
+      {
+        headers: {
+          Authorization: `Basic ${token}`
+        }
       }
-    });
+    );
 
     return response;
   } catch (error) {
@@ -152,12 +155,12 @@ export async function getAssetById(id) {
   }
 }
 
-export async function getTransactionsPerMonths() {
+export async function getTransactionsReport(period) {
   const token = JSON.parse(localStorage.getItem('userData')).token;
 
   try {
     const response = await axios.get(
-      process.env.REACT_APP_BACKEND_URL + '/assets/getTransactionsPerMonths',
+      process.env.REACT_APP_BACKEND_URL + '/assets/report?period=' + period,
       {
         headers: {
           Authorization: `Basic ${token}`

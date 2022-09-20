@@ -151,8 +151,8 @@ const menuItems: MenuItems[] = [
             show: true
           },
           {
-            name: 'To Be Taxed',
-            link: '/management/reports/taxes',
+            name: 'Taxable',
+            link: '/management/reports/taxable',
             show: true
           }
         ]

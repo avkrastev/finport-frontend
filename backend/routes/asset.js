@@ -13,7 +13,7 @@ const {
   getMiscAsset,
   getP2PAsset,
   getAssetsSummary,
-  getTransactionsPerMonths
+  getTransactionsReport,
 } = require("../controllers/asset");
 const checkAuth = require("../middleware/auth");
 
@@ -53,8 +53,8 @@ router.get("/summary", (req, res, next) => {
   getAssetsSummary(req, res, next);
 });
 
-router.get("/getTransactionsPerMonths", (req, res, next) => {
-  getTransactionsPerMonths(req, res, next);
+router.get("/report", (req, res, next) => {
+  getTransactionsReport(req, res, next);
 });
 
 router.get("/:id", (req, res, next) => {

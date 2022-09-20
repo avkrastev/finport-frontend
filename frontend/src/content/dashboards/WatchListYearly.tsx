@@ -1,12 +1,10 @@
-import { Card, Box, Typography, Icon } from '@mui/material';
+import { Card, Box, Typography } from '@mui/material';
 
 import { styled } from '@mui/material/styles';
 import Label from 'src/components/Label';
 import Text from 'src/components/Text';
 import { formatAmountAndCurrency } from 'src/utils/functions';
 import WatchListColumn1Chart from './WatchListColumn1Chart';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import { monthNames } from 'src/constants/common';
 
 const WatchListColumn1ChartWrapper = styled(WatchListColumn1Chart)(
   () => `
@@ -14,20 +12,12 @@ const WatchListColumn1ChartWrapper = styled(WatchListColumn1Chart)(
 `
 );
 
-function WatchListColumn2(props) {
-  const { year, totalInvested, totalTransactions, monthlySpent } = props;
+function WatchListYearly(props) {
+  const { totalInvested, totalTransactions, yearlySpent, yearsLabels } = props;
 
   return (
     <Card>
       <Box sx={{ p: 3 }}>
-        <Box display="flex" alignItems="center">
-          <Icon sx={{ mr: 1 }} component={CalendarMonthIcon} />
-          <Box>
-            <Typography variant="h4" noWrap>
-              {year}
-            </Typography>
-          </Box>
-        </Box>
         <Box
           sx={{
             display: 'flex',
@@ -55,13 +45,10 @@ function WatchListColumn2(props) {
         </Box>
       </Box>
       <Box height={130} sx={{ ml: -1.5 }}>
-        <WatchListColumn1ChartWrapper
-          data={[...monthlySpent]}
-          labels={monthNames}
-        />
+        <WatchListColumn1ChartWrapper data={[...yearlySpent]} labels={yearsLabels} />
       </Box>
     </Card>
   );
 }
 
-export default WatchListColumn2;
+export default WatchListYearly;

@@ -8,11 +8,10 @@ import {
   Button
 } from '@mui/material';
 import { useState, MouseEvent } from 'react';
-import WatchListColumn1 from './WatchListColumn1';
 import ViewWeekTwoToneIcon from '@mui/icons-material/ViewWeekTwoTone';
 import TableRowsTwoToneIcon from '@mui/icons-material/TableRowsTwoTone';
 import WatchListRow from './WatchListRow';
-import WatchListColumn2 from './WatchListColumn2';
+import WatchListColumn3 from './WatchListColumn3';
 import { styled } from '@mui/material/styles';
 
 const EmptyResultsWrapper = styled('img')(
@@ -65,13 +64,13 @@ function WatchListWithChart() {
         {tabs === 'watch_list_columns' && (
           <>
             <Grid item lg={12} xs={12}>
-              <WatchListColumn2 />
+              <WatchListColumn3 />
             </Grid>
             <Grid item lg={12} xs={12}>
-              <WatchListColumn2 />
+              <WatchListColumn3 />
             </Grid>
             <Grid item lg={12} xs={12}>
-              <WatchListColumn2 />
+              <WatchListColumn3 />
             </Grid>
           </>
         )}

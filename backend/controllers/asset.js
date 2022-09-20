@@ -524,49 +524,83 @@ const deleteAssetCommon = async (id, userId, sess) => {
   }
 };
 
-const getTransactionsPerMonths = async (req, res, next) => {
+const getTransactionsReport = async (req, res, next) => {
+  const queryObject = url.parse(req.url, true).query;
+
   try {
     const creator = req.userData.userId;
     const dataBuilder = new DataBuilder("", creator);
-    const transactionsPerMonthsAndYears = await Asset.aggregate(
-      dataBuilder.getTransactionsPerMonths()
-    ).exec();
+    let history = [];
+    let transactions = [];
+    if (queryObject.period === "monthly") {
+      transactions = await Asset.aggregate(
+        dataBuilder.getTransactionsPerMonths()
+      ).exec();
 
-    let historyByYears = transactionsPerMonthsAndYears.reduce(
-      (prevArr, newArr) => {
+      let historyByYears = transactions.reduce((prevArr, newArr) => {
         prevArr[newArr._id.year] = prevArr[newArr._id.year] || [];
         prevArr[newArr._id.year].push(newArr);
         return prevArr;
-      },
-      Object.create(null)
-    );
+      }, Object.create(null));
 
-    const history = Object.keys(historyByYears)
-      .reverse()
-      .map((year) => {
-        const totalInvested = historyByYears[year].reduce((total, record) => {
-          return total + record.totalPriceInUSD;
-        }, 0);
-        const totalTransactions = historyByYears[year].reduce(
-          (total, record) => {
-            return total + record.count;
-          },
-          0
+      history = Object.keys(historyByYears)
+        .reverse()
+        .map((year) => {
+          const totalInvested = historyByYears[year].reduce((total, record) => {
+            return total + record.totalPriceInUSD;
+          }, 0);
+          const totalTransactions = historyByYears[year].reduce(
+            (total, record) => {
+              return total + record.count;
+            },
+            0
+          );
+          let monthlySpent = Array(12).fill(0);
+          for (let rec of historyByYears[year]) {
+            monthlySpent[rec._id.month - 1] = roundNumber(rec.totalPriceInUSD);
+          }
+
+          return {
+            year,
+            transactions: historyByYears[year],
+            totalInvested,
+            totalTransactions,
+            monthlySpent,
+          };
+        });
+    }
+    if (queryObject.period === "yearly") {
+      transactions = await Asset.aggregate(
+        dataBuilder.getTransactionsPerYear()
+      ).exec();
+      const firstYear = transactions[transactions.length - 1]._id.year;
+      const lastYear = transactions[0]._id.year;
+
+      let yearsLabels = [];
+      for (var i = lastYear; i >= firstYear; i--) {
+        yearsLabels.push(i);
+      }
+
+      let yearlySpent = Array(yearsLabels.length).fill(0);
+
+      let totalInvested = 0;
+      let totalTransactions = 0;
+      for (let transaction of transactions) {
+        yearlySpent[transaction._id.year - firstYear] = roundNumber(
+          transaction.totalPriceInUSD
         );
-        let monthlySpent = Array(12).fill(0);
-        for (let rec of historyByYears[year]) {
-          monthlySpent[rec._id.month - 1] = roundNumber(rec.totalPriceInUSD);
-        }
+        totalInvested += roundNumber(transaction.totalPriceInUSD);
+        totalTransactions += transaction.count;
+      }
 
-        return {
-          year,
-          transactions: historyByYears[year],
-          totalInvested,
-          totalTransactions,
-          monthlySpent,
-        };
-      });
-
+      history = {
+        yearsLabels,
+        transactions,
+        yearlySpent,
+        totalInvested,
+        totalTransactions,
+      };
+    }
     res.status(200).json({ history });
   } catch (err) {
     console.log(err);
@@ -591,4 +625,4 @@ exports.getCommodityAsset = getCommodityAsset;
 exports.getMiscAsset = getMiscAsset;
 exports.getP2PAsset = getP2PAsset;
 exports.getAssetsSummary = getAssetsSummary;
-exports.getTransactionsPerMonths = getTransactionsPerMonths;
+exports.getTransactionsReport = getTransactionsReport;

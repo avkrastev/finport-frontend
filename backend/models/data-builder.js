@@ -19,7 +19,7 @@ class DataBuilder {
             category: "$category",
             symbol: "$symbol",
             name: "$name",
-            assetId: "$asset_id"
+            assetId: "$asset_id",
           },
           categories: {
             $push: {
@@ -209,6 +209,7 @@ class DataBuilder {
               date: "$date",
               name: "$name",
               type: "$type",
+              quantity: "$quantity",
               price: "$price_usd",
             },
           },
@@ -216,14 +217,57 @@ class DataBuilder {
             $sum: 1,
           },
           totalPriceInUSD: {
-            $sum: "$price_usd"
-          }
+            $sum: "$price_usd",
+          },
         },
       },
       {
         $sort: {
           "_id.year": -1,
           "_id.month": -1,
+        },
+      },
+    ];
+  }
+
+  getTransactionsPerYear() {
+    return [
+      {
+        $match: {
+          creator: new ObjectId(this.userId),
+        },
+      },
+      {
+        $group: {
+          _id: {
+            year: {
+              $year: {
+                $dateFromString: {
+                  dateString: "$date",
+                },
+              },
+            },
+          },
+          transactions: {
+            $push: {
+              date: "$date",
+              name: "$name",
+              type: "$type",
+              quantity: "$quantity",
+              price: "$price_usd",
+            },
+          },
+          count: {
+            $sum: 1,
+          },
+          totalPriceInUSD: {
+            $sum: "$price_usd",
+          },
+        },
+      },
+      {
+        $sort: {
+          "_id.year": -1,
         },
       },
     ];

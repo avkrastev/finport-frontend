@@ -18,7 +18,7 @@ import { format } from 'date-fns';
 import { useTheme } from '@mui/material';
 
 function Row(props) {
-  const { history, count, total, month } = props;
+  const { history, count, total, month, year } = props;
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 
@@ -32,7 +32,7 @@ function Row(props) {
             color="text.primary"
             noWrap
           >
-            {monthNames[month - 1]}
+            {month ? monthNames[month - 1] : year}
           </Typography>
         </TableCell>
         <TableCell align="right">{count}</TableCell>
@@ -68,6 +68,7 @@ function Row(props) {
                     <TableCell>Date</TableCell>
                     <TableCell>Name</TableCell>
                     <TableCell>Type</TableCell>
+                    <TableCell align="right">Quantity</TableCell>
                     <TableCell align="right">Price ($)</TableCell>
                   </TableRow>
                 </TableHead>
@@ -96,6 +97,7 @@ function Row(props) {
                           }
                         </Typography>
                       </TableCell>
+                      <TableCell align="right">{row.quantity}</TableCell>
                       <TableCell align="right">
                         {formatAmountAndCurrency(row.price, 'USD')}
                       </TableCell>
@@ -124,10 +126,11 @@ export default function ReportsTable(props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {props.months.map((row) => (
+          {props.months && props.months.map((row, i) => (
             <Row
-              key={row._id.month}
+              key={i}
               month={row._id.month}
+              year={row._id.year}
               count={row.count}
               total={row.totalPriceInUSD}
               history={row.transactions}

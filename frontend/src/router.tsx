@@ -169,8 +169,8 @@ const routes = (isLoggedIn: any) => [
                 element: <Yearly />
               },
               {
-                path: 'declare',
-                element: <Yearly />
+                path: 'taxable',
+                element: <StatusComingSoon />
               },
             ]
           },

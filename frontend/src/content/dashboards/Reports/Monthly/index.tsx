@@ -15,11 +15,11 @@ import { AppDispatch } from 'src/app/store';
 import ReportsTable from '../../ReportsTable';
 import { useEffect, useState, SyntheticEvent } from 'react';
 import {
-  fetchTransactionsPerMonth,
-  getMonthlyReportData,
+  fetchTransactionsPerMonths,
+  getMonthlyReportsData,
   getMonthlyReportStatus
 } from '../reportsSlice';
-import WatchListColumn2 from '../../WatchListColumn2';
+import WatchListMonthly from '../../WatchListMonthly';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -56,13 +56,13 @@ function a11yProps(index: number) {
 
 function DashboardCrypto() {
   const dispatch: AppDispatch = useDispatch();
-  const monthlyReport = useSelector(getMonthlyReportData);
+  const monthlyReport = useSelector(getMonthlyReportsData);
   const monthlyReportStatus = useSelector(getMonthlyReportStatus);
   const [yearTab, setYearTab] = useState(0);
 
   useEffect(() => {
     if (monthlyReportStatus === 'idle') {
-      dispatch(fetchTransactionsPerMonth());
+      dispatch(fetchTransactionsPerMonths());
     }
   }, [monthlyReportStatus, dispatch]);
 
@@ -102,13 +102,13 @@ function DashboardCrypto() {
                 </Tabs>
                 {monthlyReport[yearTab] && (
                   <TabPanel value={yearTab} index={yearTab}>
-                    <WatchListColumn2
+                    <WatchListMonthly
                       year={monthlyReport[yearTab].year}
                       totalInvested={monthlyReport[yearTab].totalInvested}
                       totalTransactions={
                         monthlyReport[yearTab].totalTransactions
                       }
-                      monthlySpent= {monthlyReport[yearTab].monthlySpent}
+                      monthlySpent={monthlyReport[yearTab].monthlySpent}
                     />
                     <br />
                     <br />
