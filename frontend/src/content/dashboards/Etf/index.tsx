@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import PageHeader from '../PageHeader';
 import PageTitleWrapper from 'src/components/PageTitleWrapper';
-import { Grid, Container, Alert } from '@mui/material';
+import { Grid, Container, Alert, Link } from '@mui/material';
 import Footer from 'src/components/Footer';
 
 import AccountBalance from '../AccountBalance';
@@ -12,6 +12,7 @@ import { AppDispatch } from 'src/app/store';
 import { fetchETFs, getETFsStatus, selectAllETFs } from './ETFsSlice';
 import CollapsibleTable from '../CollapsibleTable';
 import { AuthContext } from 'src/utils/context/authContext';
+import MissingApiKeyMessage from '../MissingApiKeyMessage';
 
 function DashboardCrypto() {
   const { authUserData } = useContext(AuthContext);
@@ -34,6 +35,9 @@ function DashboardCrypto() {
         <PageHeader title="ETFs Portfolio" />
       </PageTitleWrapper>
       <Container maxWidth="lg">
+        {!authUserData.stocks_api_key && (
+          <MissingApiKeyMessage text="To be able to see ETF prices in real time please add an API key" />
+        )}
         <Grid
           container
           direction="row"
@@ -41,13 +45,6 @@ function DashboardCrypto() {
           alignItems="stretch"
           spacing={3}
         >
-          {!authUserData.stocks_api_key &&
-            ETFs.stats &&
-            etfStatus === 'succeeded' && (
-              <Alert sx={{ mb: 3 }} variant="outlined" severity="info">
-                To be able to see stock data prices please add an API key here.
-              </Alert>
-            )}
           <Grid item xs={12}>
             <AccountBalance assets={ETFs} category="etf" loading={etfStatus} />
           </Grid>

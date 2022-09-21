@@ -20,6 +20,7 @@ import {
   getMonthlyReportStatus
 } from '../reportsSlice';
 import WatchListMonthly from '../../WatchListMonthly';
+import ReportSkeleton from '../../ReportSkeleton';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -70,6 +71,10 @@ function DashboardCrypto() {
     setYearTab(newValue);
   };
 
+  if (monthlyReportStatus !== 'succeeded') {
+    return <ReportSkeleton tabs={true}/>;
+  }
+
   return (
     <>
       <Helmet>
@@ -94,9 +99,8 @@ function DashboardCrypto() {
                   indicatorColor="primary"
                   value={yearTab}
                   onChange={handleTabChange}
-                  aria-label="basic tabs example"
                 >
-                  {monthlyReport &&
+                  {
                     monthlyReport.map((report, i) => (
                       <Tab key={i} label={report.year} {...a11yProps(i)} />
                     ))}

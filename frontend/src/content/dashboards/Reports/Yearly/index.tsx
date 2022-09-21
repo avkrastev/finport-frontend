@@ -1,7 +1,5 @@
 import { Helmet } from 'react-helmet-async';
-import PageHeader from '../../PageHeader';
-import PageTitleWrapper from 'src/components/PageTitleWrapper';
-import { Grid, Container } from '@mui/material';
+import { Grid, Container, CardContent, Box } from '@mui/material';
 import Footer from 'src/components/Footer';
 
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,6 +12,7 @@ import {
 } from '../reportsSlice';
 import { useEffect } from 'react';
 import WatchListYearly from '../../WatchListYearly';
+import ReportSkeleton from '../../ReportSkeleton';
 
 function DashboardCrypto() {
   const dispatch: AppDispatch = useDispatch();
@@ -26,15 +25,16 @@ function DashboardCrypto() {
     }
   }, [reportStatus, dispatch]);
 
+  if (reportStatus !== 'succeeded') {
+    return <ReportSkeleton />;
+  }
+
   return (
     <>
       <Helmet>
         <title>Yearly Report</title>
       </Helmet>
-      <PageTitleWrapper>
-        <PageHeader title="Yearly Report" />
-      </PageTitleWrapper>
-      <Container maxWidth="lg">
+      <Container maxWidth="lg" sx={{ pt: 5 }}>
         <Grid
           container
           direction="row"
@@ -43,8 +43,8 @@ function DashboardCrypto() {
           spacing={3}
         >
           <Grid item xs={12}>
-            {report && (
-              <>
+            <CardContent sx={{ml: 3, mr: 3}}>
+              <Box sx={{ width: '100%' }}>
                 <WatchListYearly
                   totalInvested={report.totalInvested}
                   yearlySpent={report.yearlySpent}
@@ -54,8 +54,8 @@ function DashboardCrypto() {
                 <br />
                 <br />
                 <ReportsTable year={report.year} months={report.transactions} />
-              </>
-            )}
+              </Box>
+            </CardContent>
           </Grid>
         </Grid>
       </Container>

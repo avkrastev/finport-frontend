@@ -79,7 +79,7 @@ function LoginForm() {
   }, [formState.isValid]);
 
   const switchModeHandler = () => {
-    if (isLogin) {
+    if (!isLogin) {
       setFormData(
         {
           ...formState.inputs,

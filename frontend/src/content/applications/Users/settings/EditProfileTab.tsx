@@ -163,6 +163,7 @@ function EditProfileTab() {
             display="flex"
             alignItems="center"
             justifyContent="space-between"
+            id="stocks-api-key"
           >
             <Box>
               <Typography variant="h4" gutterBottom>

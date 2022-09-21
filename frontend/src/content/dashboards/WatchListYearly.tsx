@@ -46,7 +46,10 @@ function WatchListYearly(props) {
         </Box>
       </Box>
       <Box height={180}>
-        <WatchListColumn1ChartWrapper data={[...yearlySpent]} labels={[...yearsLabels].reverse()} />
+        <WatchListColumn1ChartWrapper
+          data={[...yearlySpent]}
+          labels={[...yearsLabels].reverse()}
+        />
       </Box>
     </Card>
   );
