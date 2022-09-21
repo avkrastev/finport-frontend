@@ -115,7 +115,7 @@ const menuItems: MenuItems[] = [
       {
         name: 'Savings',
         icon: SavingsIcon,
-        link: '/management/transactions',
+        link: '/management/savings',
         show: true
       },
     ]

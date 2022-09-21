@@ -1,9 +1,13 @@
-import { Card, Box, Typography, Avatar, SvgIcon } from '@mui/material';
+import { Card, Box, Typography, Avatar, SvgIcon, Link } from '@mui/material';
 
 import { styled } from '@mui/material/styles';
 import Label from 'src/components/Label';
 import Text from 'src/components/Text';
-import { formatAmountAndCurrency, padArrayStart, roundNumber } from 'src/utils/functions';
+import {
+  formatAmountAndCurrency,
+  padArrayStart,
+  roundNumber
+} from 'src/utils/functions';
 import WatchListColumn1Chart from './WatchListColumn1Chart';
 import WatchListColumnSkeleton from './WatchListColumnSkeleton';
 import CurrencyBitcoinTwoToneIcon from '@mui/icons-material/CurrencyBitcoinTwoTone';
@@ -12,6 +16,7 @@ import AutoGraphTwoToneIcon from '@mui/icons-material/AutoGraphTwoTone';
 import AddchartTwoToneIcon from '@mui/icons-material/AddchartTwoTone';
 import GroupTwoToneIcon from '@mui/icons-material/GroupTwoTone';
 import ShowChartTwoToneIcon from '@mui/icons-material/ShowChartTwoTone';
+import { shortDayNames } from 'src/constants/common';
 
 const AvatarWrapper = styled(Avatar)(
   ({ theme }) => `
@@ -22,25 +27,15 @@ const AvatarWrapper = styled(Avatar)(
 
 const WatchListColumn1ChartWrapper = styled(WatchListColumn1Chart)(
   ({ theme }) => `
-        height: 130px;
+        height: 150px;
+        padding: 0 20px 10px;
 `
 );
 
-function WatchListColumn1({
-  category,
-  ...rest
-}) {
+function WatchListColumn1({ category, ...rest }) {
   let prices = [];
   let categories = {};
-  const labels = [
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-    'Sunday'
-  ];
+
   for (let date of rest.history) {
     const categoryDate = date.categories.find(
       (item) => item.category === category.alias
@@ -115,67 +110,69 @@ function WatchListColumn1({
   }
 
   return (
-    <Card>
-      <Box sx={{ p: 3 }}>
-        <Box display="flex" alignItems="center">
-          <AvatarWrapper>
-            <SvgIcon color="primary" fontSize="large" component={icon} />
-          </AvatarWrapper>
-          <Box>
-            <Typography variant="h4" noWrap>
-              {category.name}
+    <Link href={`/dashboards/${category.alias}`} underline="none">
+      <Card>
+        <Box sx={{ p: 3 }}>
+          <Box display="flex" alignItems="center">
+            <AvatarWrapper>
+              <SvgIcon color="primary" fontSize="large" component={icon} />
+            </AvatarWrapper>
+            <Box>
+              <Typography variant="h4" noWrap>
+                {category.name}
+              </Typography>
+            </Box>
+          </Box>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-start',
+              pt: 3
+            }}
+          >
+            <Typography variant="h2" sx={{ pr: 1, mb: 1 }}>
+              {formatAmountAndCurrency(holdingValue, 'USD')}
+            </Typography>
+            {parseInt(differenceInPercents) >= 0 ? (
+              <Text color="success">
+                <b>+{differenceInPercents}%</b>
+              </Text>
+            ) : (
+              <Text color="error">
+                <b>{differenceInPercents}%</b>
+              </Text>
+            )}
+          </Box>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-start'
+            }}
+          >
+            {parseInt(difference) >= 0 ? (
+              <Label color="success">
+                +{formatAmountAndCurrency(difference, 'USD')}
+              </Label>
+            ) : (
+              <Label color="error">
+                {formatAmountAndCurrency(difference, 'USD')}
+              </Label>
+            )}
+            <Typography variant="body2" color="text.secondary" sx={{ pl: 1 }}>
+              since start
             </Typography>
           </Box>
         </Box>
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-start',
-            pt: 3
-          }}
-        >
-          <Typography variant="h2" sx={{ pr: 1, mb: 1 }}>
-            {formatAmountAndCurrency(holdingValue, 'USD')}
-          </Typography>
-          {parseInt(differenceInPercents) >= 0 ? (
-            <Text color="success">
-              <b>+{differenceInPercents}%</b>
-            </Text>
-          ) : (
-            <Text color="error">
-              <b>{differenceInPercents}%</b>
-            </Text>
-          )}
+        <Box height={150}>
+          <WatchListColumn1ChartWrapper
+            data={categories[category.alias]}
+            labels={shortDayNames}
+          />
         </Box>
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-start'
-          }}
-        >
-          {parseInt(difference) >= 0 ? (
-            <Label color="success">
-              +{formatAmountAndCurrency(difference, 'USD')}
-            </Label>
-          ) : (
-            <Label color="error">
-              {formatAmountAndCurrency(difference, 'USD')}
-            </Label>
-          )}
-          <Typography variant="body2" color="text.secondary" sx={{ pl: 1 }}>
-            since start
-          </Typography>
-        </Box>
-      </Box>
-      <Box height={130} sx={{ ml: -1.5 }}>
-        <WatchListColumn1ChartWrapper
-          data={categories[category.alias]}
-          labels={labels}
-        />
-      </Box>
-    </Card>
+      </Card>
+    </Link>
   );
 }
 

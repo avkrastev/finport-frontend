@@ -6,11 +6,12 @@ import Text from 'src/components/Text';
 import { formatAmountAndCurrency } from 'src/utils/functions';
 import WatchListColumn1Chart from './WatchListColumn1Chart';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import { monthNames } from 'src/constants/common';
+import { shortMonthNames } from 'src/constants/common';
 
 const WatchListColumn1ChartWrapper = styled(WatchListColumn1Chart)(
   () => `
         height: 130px;
+        padding: 0 20px 10px;
 `
 );
 
@@ -54,10 +55,10 @@ function WatchListMonthly(props) {
           </Typography>
         </Box>
       </Box>
-      <Box height={130} sx={{ ml: -1.5 }}>
+      <Box height={130}>
         <WatchListColumn1ChartWrapper
           data={[...monthlySpent]}
-          labels={monthNames}
+          labels={shortMonthNames}
         />
       </Box>
     </Card>

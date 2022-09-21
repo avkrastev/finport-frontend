@@ -568,13 +568,29 @@ const getTransactionsReport = async (req, res, next) => {
             monthlySpent,
           };
         });
+      if (history.length === 0) {
+        history = [
+          {
+            year: new Date().getFullYear(),
+            monthlySpent: [],
+            totalInvested: 0,
+            totalTransactions: 0,
+            transactions: [],
+          },
+        ];
+      }
     }
     if (queryObject.period === "yearly") {
       transactions = await Asset.aggregate(
         dataBuilder.getTransactionsPerYear()
       ).exec();
-      const firstYear = transactions[transactions.length - 1]._id.year;
-      const lastYear = transactions[0]._id.year;
+      const firstYear =
+        (transactions[transactions.length - 1] &&
+          transactions[transactions.length - 1]._id.year) ||
+        new Date().getFullYear();
+      const lastYear =
+        (transactions[0] && transactions[0]._id.year) ||
+        new Date().getFullYear();
 
       let yearsLabels = [];
       for (var i = lastYear; i >= firstYear; i--) {

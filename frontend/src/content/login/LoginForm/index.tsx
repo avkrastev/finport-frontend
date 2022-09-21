@@ -14,6 +14,12 @@ import { useForm } from '../../../utils/hooks/form-hook';
 import { AuthContext } from '../../../utils/context/authContext';
 import { useDispatch } from 'react-redux';
 import { changeTransactionStatus } from 'src/content/applications/Transactions/transactionSlice';
+import { changeCryptoStatus } from 'src/content/dashboards/Crypto/cryptoSlice';
+import { changeStocksStatus } from 'src/content/dashboards/Stocks/stocksSlice';
+import { changeETFStatus } from 'src/content/dashboards/Etf/ETFsSlice';
+import { changeMiscStatus } from 'src/content/dashboards/Misc/miscSlice';
+import { changeCommoditiesStatus } from 'src/content/dashboards/Commodities/commoditiesSlice';
+import { changeP2PStatus } from 'src/content/dashboards/P2P/p2pSlice';
 
 const TypographyH1 = experimentalStyled(Typography)(
   ({ theme }) => `
@@ -138,6 +144,12 @@ function LoginForm() {
     }
 
     dispatch(changeTransactionStatus('idle'));
+    dispatch(changeCryptoStatus('idle'));
+    dispatch(changeStocksStatus('idle'));
+    dispatch(changeETFStatus('idle'));
+    dispatch(changeMiscStatus('idle'));
+    dispatch(changeCommoditiesStatus('idle'));
+    dispatch(changeP2PStatus('idle'));
   };
 
   return (

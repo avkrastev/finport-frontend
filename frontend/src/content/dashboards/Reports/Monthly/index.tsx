@@ -96,9 +96,10 @@ function DashboardCrypto() {
                   onChange={handleTabChange}
                   aria-label="basic tabs example"
                 >
-                  {monthlyReport.map((report, i) => (
-                    <Tab key={i} label={report.year} {...a11yProps(i)} />
-                  ))}
+                  {monthlyReport &&
+                    monthlyReport.map((report, i) => (
+                      <Tab key={i} label={report.year} {...a11yProps(i)} />
+                    ))}
                 </Tabs>
                 {monthlyReport[yearTab] && (
                   <TabPanel value={yearTab} index={yearTab}>

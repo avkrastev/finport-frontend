@@ -22,7 +22,7 @@ class ETFPrices extends Prices {
       return currentPrices;
     }
 
-    currentPrices = this.fetchStockPrices(apiKey);
+    currentPrices = await this.fetchStockPrices(apiKey);
     this.storeInCache(currentPrices, etfCacheTTL);
     return currentPrices;
   }

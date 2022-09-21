@@ -155,7 +155,7 @@ const routes = (isLoggedIn: any) => [
           },
           {
             path: 'savings',
-            element: <Transactions />
+            element: <StatusComingSoon />
           },
           {
             path: 'reports',

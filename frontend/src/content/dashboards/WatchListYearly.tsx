@@ -8,7 +8,8 @@ import WatchListColumn1Chart from './WatchListColumn1Chart';
 
 const WatchListColumn1ChartWrapper = styled(WatchListColumn1Chart)(
   () => `
-        height: 130px;
+        height: 180px;
+        padding: 0 20px 10px;
 `
 );
 
@@ -44,8 +45,8 @@ function WatchListYearly(props) {
           </Typography>
         </Box>
       </Box>
-      <Box height={130} sx={{ ml: -1.5 }}>
-        <WatchListColumn1ChartWrapper data={[...yearlySpent]} labels={yearsLabels} />
+      <Box height={180}>
+        <WatchListColumn1ChartWrapper data={[...yearlySpent]} labels={[...yearsLabels].reverse()} />
       </Box>
     </Card>
   );

@@ -1,10 +1,7 @@
 import { Box, Grid, Typography } from '@mui/material';
 import WatchListColumn1 from './WatchListColumn1';
 
-function WatchList({
-  categories,
-  ...rest
-}) {
+function WatchList({ categories, ...rest }) {
 
   return (
     <>

@@ -77,7 +77,7 @@ function AccountBalance({ assets, category, loading, ...rest }) {
   const holdingValue =
     rest && rest.totalBalance && rest.totalDifference
       ? rest.totalBalance - rest.totalDifference
-      : assets.sums.holdingValue;
+      : assets?.sums?.holdingValue;
 
   if (assets.stats) {
     for (let asset of assets.stats) {

@@ -21,7 +21,7 @@ class StockPrices extends Prices {
       return currentPrices;
     }
 
-    currentPrices = this.fetchStockPrices(apiKey);
+    currentPrices = await this.fetchStockPrices(apiKey);
     this.storeInCache(currentPrices, stocksCacheTTL);
     return currentPrices;
   }

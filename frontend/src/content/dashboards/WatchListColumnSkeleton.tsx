@@ -3,25 +3,19 @@ import Skeleton from '@mui/material/Skeleton';
 import { Box, Card } from '@mui/material';
 import styled from '@emotion/styled';
 import WatchListColumn1Chart from './WatchListColumn1Chart';
+import { shortDayNames } from 'src/constants/common';
 
 const WatchListColumn1ChartWrapper = styled(WatchListColumn1Chart)(
   ({ theme }) => `
         height: 130px;
+        padding: 0 20px 10px;
 `
 );
 
 export default function WatchListColumnSkeleton() {
   const price = {
     week: {
-      labels: [
-        'Monday',
-        'Tuesday',
-        'Wednesday',
-        'Thursday',
-        'Friday',
-        'Saturday',
-        'Sunday'
-      ],
+      labels: shortDayNames,
       data: [55.701, 57.598, 48.607, 46.439, 58.755, 46.978, 58.16]
     }
   };
@@ -57,7 +51,7 @@ export default function WatchListColumnSkeleton() {
           <Skeleton variant="text" width={40} style={{ fontSize: '0.5rem', marginLeft: '10px' }} />
         </Box>
       </Box>
-      <Box height={130} sx={{ ml: -1.5 }}>
+      <Box height={130}>
       <WatchListColumn1ChartWrapper
           data={price.week.data}
           labels={price.week.labels}

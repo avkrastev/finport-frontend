@@ -15,6 +15,7 @@ const AvatarWrapper = styled(Avatar)(
 const WatchListColumn1ChartWrapper = styled(WatchListColumn1Chart)(
   ({ theme }) => `
         height: 130px;
+        padding: 0 20px 10px;
 `
 );
 
@@ -24,7 +25,7 @@ function WatchListColumn3() {
     week: {
       labels: [
         'Monday',
-        'Tueday',
+        'Tuesday',
         'Wednesday',
         'Thursday',
         'Friday',
@@ -79,7 +80,7 @@ function WatchListColumn3() {
           </Typography>
         </Box>
       </Box>
-      <Box height={130} sx={{ ml: -1.5 }}>
+      <Box height={130}>
         <WatchListColumn1ChartWrapper
           data={price.week.data}
           labels={price.week.labels}

@@ -52,6 +52,26 @@ export const commodities = [
   }
 ];
 
+export const dayNames = [
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+  'Sunday'
+];
+
+export const shortDayNames = [
+  'Mon',
+  'Tue',
+  'Wed',
+  'Thu',
+  'Fri',
+  'Sat',
+  'Sun'
+];
+
 export const monthNames = [
   'January',
   'February',
@@ -65,6 +85,21 @@ export const monthNames = [
   'October',
   'November',
   'December'
+];
+
+export const shortMonthNames = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec'
 ];
 
 export const p2pPlatforms = [

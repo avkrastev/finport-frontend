@@ -57,10 +57,10 @@ const WatchListColumn1Chart: FC<WatchListColumn1ChartProps> = ({
         {
           gridLines: {
             display: false,
-            drawBorder: false
+            drawBorder: true
           },
           ticks: {
-            display: false
+            display: true
           }
         }
       ],
@@ -90,7 +90,7 @@ const WatchListColumn1Chart: FC<WatchListColumn1ChartProps> = ({
       bodyFontColor: theme.palette.common.white,
       footerFontColor: theme.palette.common.white,
       callbacks: {
-        title: () => { },
+        title: () => {},
         label: (tooltipItem: any) => {
           return `Price: $${tooltipItem.yLabel}`;
         }
