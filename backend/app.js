@@ -64,10 +64,9 @@ mongoose
   )
   .then(() => {
     app.listen(process.env.PORT || 3005);
-    cron.schedule("0 11 * * *", async () => {
+    cron.schedule("0 4 * * *", async () => {
       const summaryAssetsStats = new SummaryAssetsStats();
       await summaryAssetsStats.processHistoryData();
-      console.log("minah w tozi moment " + new Date());
     });
   })
   .catch((err) => {
