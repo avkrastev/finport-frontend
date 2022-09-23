@@ -22,13 +22,19 @@ const Overview = Loader(lazy(() => import('src/content/overview')));
 const Crypto = Loader(lazy(() => import('src/content/dashboards/Crypto')));
 const Stocks = Loader(lazy(() => import('src/content/dashboards/Stocks')));
 const Etf = Loader(lazy(() => import('src/content/dashboards/Etf')));
-const Commodities = Loader(lazy(() => import('src/content/dashboards/Commodities')));
+const Commodities = Loader(
+  lazy(() => import('src/content/dashboards/Commodities'))
+);
 const Misc = Loader(lazy(() => import('src/content/dashboards/Misc')));
 const P2P = Loader(lazy(() => import('src/content/dashboards/P2P')));
 
 // Reports
-const Monthly = Loader(lazy(() => import('src/content/dashboards/Reports/Monthly')));
-const Yearly = Loader(lazy(() => import('src/content/dashboards/Reports/Yearly')));
+const Monthly = Loader(
+  lazy(() => import('src/content/dashboards/Reports/Monthly'))
+);
+const Yearly = Loader(
+  lazy(() => import('src/content/dashboards/Reports/Yearly'))
+);
 
 // Applications
 const Transactions = Loader(
@@ -138,7 +144,7 @@ const routes = (isLoggedIn: any) => [
           {
             path: 'realestate',
             element: <StatusComingSoon />
-          },
+          }
         ]
       },
       {
@@ -158,24 +164,7 @@ const routes = (isLoggedIn: any) => [
             element: <StatusComingSoon />
           },
           {
-            path: 'reports',
-            children: [
-              {
-                path: 'monthly',
-                element: <Monthly />
-              },
-              {
-                path: 'yearly',
-                element: <Yearly />
-              },
-              {
-                path: 'taxable',
-                element: <StatusComingSoon />
-              },
-            ]
-          },
-          {
-            path: 'snapshots',
+            path: 'balances',
             element: <StatusComingSoon />
           },
           {
@@ -198,15 +187,32 @@ const routes = (isLoggedIn: any) => [
         ]
       },
       {
-        path: 'expenses',
+        path: 'history',
         element: isLoggedIn ? <SidebarLayout /> : <Login />,
         children: [
           {
-            path: '/',
-            element: <Navigate to="/expenses/balances" replace />
+            path: 'reports',
+            children: [
+              {
+                path: '/',
+                element: <Navigate to="/reports/monthly" replace />
+              },
+              {
+                path: 'monthly',
+                element: <Monthly />
+              },
+              {
+                path: 'yearly',
+                element: <Yearly />
+              },
+              {
+                path: 'taxable',
+                element: <StatusComingSoon />
+              }
+            ]
           },
           {
-            path: 'balances',
+            path: 'snapshots',
             element: <StatusComingSoon />
           }
         ]

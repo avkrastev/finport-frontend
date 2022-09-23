@@ -144,12 +144,12 @@ function LoginForm() {
     }
 
     dispatch(changeTransactionStatus('idle'));
-    dispatch(changeCryptoStatus('idle'));
-    dispatch(changeStocksStatus('idle'));
-    dispatch(changeETFStatus('idle'));
-    dispatch(changeMiscStatus('idle'));
-    dispatch(changeCommoditiesStatus('idle'));
-    dispatch(changeP2PStatus('idle'));
+    // dispatch(changeCryptoStatus('idle'));
+    // dispatch(changeStocksStatus('idle'));
+    // dispatch(changeETFStatus('idle'));
+    // dispatch(changeMiscStatus('idle'));
+    // dispatch(changeCommoditiesStatus('idle'));
+    // dispatch(changeP2PStatus('idle'));
   };
 
   return (

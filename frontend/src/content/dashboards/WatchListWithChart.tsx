@@ -7,30 +7,44 @@ import {
   Card,
   Button
 } from '@mui/material';
-import { useState, MouseEvent } from 'react';
-import ViewWeekTwoToneIcon from '@mui/icons-material/ViewWeekTwoTone';
-import TableRowsTwoToneIcon from '@mui/icons-material/TableRowsTwoTone';
-import WatchListRow from './WatchListRow';
-import WatchListColumn3 from './WatchListColumn3';
+import { useState, MouseEvent, useEffect } from 'react';
+import DataSaverOffIcon from '@mui/icons-material/DataSaverOff';
+import QueryStatsIcon from '@mui/icons-material/QueryStats';
+import BalanceChart from './BalanceChart';
 import { styled } from '@mui/material/styles';
+import AccountBalance from './AccountBalance';
+import { AppDispatch } from 'src/app/store';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  fetchHistorySinceStart,
+  selectAllHistorySinceStart
+} from '../overview/summarySlice';
+import { HistoryOutlined } from '@mui/icons-material';
 
 const EmptyResultsWrapper = styled('img')(
-    ({ theme }) => `
+  ({ theme }) => `
         max-width: 100%;
         width: ${theme.spacing(66)};
         height: ${theme.spacing(34)};
   `
-  );
+);
 
-function WatchListWithChart() {
+function WatchListWithChart(props) {
   const [tabs, setTab] = useState<string | null>('watch_list_columns');
-
+  const dispatch: AppDispatch = useDispatch();
+  const history = useSelector(selectAllHistorySinceStart);
   const handleViewOrientation = (
     event: MouseEvent<HTMLElement>,
     newValue: string | null
   ) => {
     setTab(newValue);
   };
+
+  useEffect(() => {
+    if (tabs === 'watch_list_rows') {
+      dispatch(fetchHistorySinceStart(props.category));
+    }
+  }, [tabs, dispatch, props.category]);
 
   return (
     <>
@@ -40,17 +54,17 @@ function WatchListWithChart() {
         justifyContent="space-between"
         sx={{ pb: 3 }}
       >
-        <Typography variant="h3">Watch List</Typography>
+        <Typography variant="h3"></Typography>
         <ToggleButtonGroup
           value={tabs}
           exclusive
           onChange={handleViewOrientation}
         >
           <ToggleButton disableRipple value="watch_list_columns">
-            <ViewWeekTwoToneIcon />
+            <DataSaverOffIcon />
           </ToggleButton>
           <ToggleButton disableRipple value="watch_list_rows">
-            <TableRowsTwoToneIcon />
+            <QueryStatsIcon />
           </ToggleButton>
         </ToggleButtonGroup>
       </Box>
@@ -62,22 +76,18 @@ function WatchListWithChart() {
         spacing={3}
       >
         {tabs === 'watch_list_columns' && (
-          <>
-            <Grid item lg={12} xs={12}>
-              <WatchListColumn3 />
-            </Grid>
-            <Grid item lg={12} xs={12}>
-              <WatchListColumn3 />
-            </Grid>
-            <Grid item lg={12} xs={12}>
-              <WatchListColumn3 />
-            </Grid>
-          </>
+          <Grid item lg={12} xs={12}>
+            <AccountBalance {...props} />
+          </Grid>
         )}
 
-        {tabs === 'watch_list_rows' && (
+        {tabs === 'watch_list_rows' && props?.category === history?.category && (
           <Grid item xs={12}>
-            <WatchListRow />
+            <BalanceChart
+              assets={props.assets}
+              category={props.category}
+              history={history}
+            />
           </Grid>
         )}
 

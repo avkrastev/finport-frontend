@@ -272,6 +272,61 @@ class DataBuilder {
       },
     ];
   }
+
+  getHistoryDataPerCategory() {
+    return [
+      {
+        $match: {
+          creator: new ObjectId(this.userId),
+          category: this.category,
+        },
+      },
+      {
+        $group: {
+          _id: {
+            date: "$date",
+          },
+          categories: {
+            $push: {
+              balance: "$balance",
+              total: "$total",
+            },
+          },
+        },
+      },
+      {
+        $sort: {
+          _id: 1,
+        },
+      },
+    ];
+  }
+
+  getHistoryDataSummary() {
+    return [
+      {
+        $match: {
+          creator: new ObjectId(this.userId),
+        },
+      },
+      {
+        $group: {
+          _id: { date: "$date", category: "category" },
+          balance: {
+            $sum: "$balance",
+          },
+          total: {
+            $sum: "$total",
+          },
+        },
+      },
+      {
+        $sort: {
+          _id: 1,
+        },
+      },
+    ];
+  }
 }
 
 module.exports = DataBuilder;

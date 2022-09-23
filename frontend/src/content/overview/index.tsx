@@ -4,7 +4,6 @@ import PageTitleWrapper from 'src/components/PageTitleWrapper';
 import { Grid, Container } from '@mui/material';
 import Footer from 'src/components/Footer';
 import WatchList from '../dashboards/WatchList';
-import AccountBalance from '../dashboards/AccountBalance';
 import { AppDispatch } from 'src/app/store';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -46,6 +45,7 @@ import {
   selectAllETFs
 } from '../dashboards/Etf/ETFsSlice';
 import { currencies } from 'src/constants/common';
+import WatchListWithChart from '../dashboards/WatchListWithChart';
 
 function Overview() {
   const dispatch: AppDispatch = useDispatch();
@@ -274,7 +274,7 @@ function Overview() {
           spacing={3}
         >
           <Grid item xs={12}>
-            <AccountBalance
+            <WatchListWithChart
               assets={summary}
               category=""
               loading={summaryStatus}
@@ -283,6 +283,12 @@ function Overview() {
               totalSumsInDifferentInCurrencies={
                 totalSumsInDifferentInCurrencies
               }
+              crypto={crypto.sums}
+              stocks={stocks.sums}
+              p2p={p2p.sums}
+              etf={etf.sums}
+              misc={misc.sums}
+              commodities={commodities.sums}
             />
           </Grid>
           {summary.stats.length > 0 && (

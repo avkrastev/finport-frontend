@@ -4,15 +4,15 @@ import PageTitleWrapper from 'src/components/PageTitleWrapper';
 import { Grid, Container } from '@mui/material';
 import Footer from 'src/components/Footer';
 
-import AccountBalance from '../AccountBalance';
 import { useDispatch, useSelector } from 'react-redux';
 import {} from 'src/content/applications/Transactions/transactionSlice';
 import { useEffect } from 'react';
 import { AppDispatch } from 'src/app/store';
 import { fetchMisc, getMiscStatus, selectAllMisc } from './miscSlice';
 import CollapsibleTable from '../CollapsibleTable';
+import WatchListWithChart from '../WatchListWithChart';
 
-function DashboardCrypto() {
+function DashboardMisc() {
   const dispatch: AppDispatch = useDispatch();
   const misc = useSelector(selectAllMisc);
   const miscStatus = useSelector(getMiscStatus);
@@ -40,7 +40,7 @@ function DashboardCrypto() {
           spacing={3}
         >
           <Grid item xs={12}>
-            <AccountBalance
+            <WatchListWithChart
               assets={misc}
               category="misc"
               loading={miscStatus}
@@ -62,4 +62,4 @@ function DashboardCrypto() {
   );
 }
 
-export default DashboardCrypto;
+export default DashboardMisc;

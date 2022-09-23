@@ -55,7 +55,7 @@ function a11yProps(index: number) {
   };
 }
 
-function DashboardCrypto() {
+function ReportMonthly() {
   const dispatch: AppDispatch = useDispatch();
   const monthlyReport = useSelector(getMonthlyReportsData);
   const monthlyReportStatus = useSelector(getMonthlyReportStatus);
@@ -133,4 +133,4 @@ function DashboardCrypto() {
   );
 }
 
-export default DashboardCrypto;
+export default ReportMonthly;

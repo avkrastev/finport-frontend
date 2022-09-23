@@ -5,6 +5,9 @@ const User = require("../models/user");
 const mongoose = require("mongoose");
 const { ObjectId } = require("mongodb");
 const fns = require("date-fns");
+const url = require("url");
+const DataBuilder = require("../models/data-builder");
+const { roundNumber } = require("../utils/functions");
 
 const getHistory = async (req, res, next) => {
   let history;
@@ -47,7 +50,7 @@ const getHistoryForAWeek = async (req, res, next) => {
     const history = await History.aggregate([
       {
         $match: {
-          creator: new ObjectId(req.userData.userId)
+          creator: new ObjectId(req.userData.userId),
         },
       },
       {
@@ -64,7 +67,7 @@ const getHistoryForAWeek = async (req, res, next) => {
       },
       {
         $sort: {
-          date: 1,
+          _id: 1,
         },
       },
       {
@@ -73,12 +76,66 @@ const getHistoryForAWeek = async (req, res, next) => {
     ]).exec();
 
     res.status(200).json({ history });
-  } catch(err) {
+  } catch (err) {
     console.log(err);
-    const error = new HttpError("Fetching history data failed, try again.", 500);
+    const error = new HttpError(
+      "Fetching history data failed, try again.",
+      500
+    );
     return next(error);
   }
+};
 
+const getHistorySinceStart = async (req, res, next) => {
+  const queryObject = url.parse(req.url, true).query;
+
+  try {
+    const dataBuilder = new DataBuilder(
+      queryObject.category,
+      req.userData.userId
+    );
+    let historyData;
+    let todayData;
+    let yesterdayData;
+
+    if (queryObject.category !== "") {
+      historyData = await History.aggregate(
+        dataBuilder.getHistoryDataPerCategory()
+      ).exec();
+
+      todayData = historyData[historyData.length - 1].categories[0];
+      yesterdayData = historyData[historyData.length - 2].categories[0];
+    } else {
+      historyData = await History.aggregate(
+        dataBuilder.getHistoryDataSummary()
+      ).exec();
+
+      todayData = historyData[historyData.length - 1];
+      yesterdayData = historyData[historyData.length - 2];
+    }
+
+    const difference = roundNumber(todayData.balance - yesterdayData.balance);
+    const differenceInPercents =
+      todayData.balance > 0
+        ? roundNumber((difference / todayData.balance) * 100)
+        : 0;
+
+    const historySinceStart = {
+      historyData,
+      difference,
+      differenceInPercents,
+      category: queryObject.category,
+    };
+
+    res.status(200).json({ historySinceStart });
+  } catch (err) {
+    console.log(err);
+    const error = new HttpError(
+      "Fetching history data failed, try again.",
+      500
+    );
+    return next(error);
+  }
 };
 
 const addHistory = async (data, creator) => {
@@ -229,3 +286,4 @@ exports.addHistory = addHistory;
 exports.updateHistory = updateHistory;
 exports.deleteHistory = deleteHistory;
 exports.getHistoryForAWeek = getHistoryForAWeek;
+exports.getHistorySinceStart = getHistorySinceStart;

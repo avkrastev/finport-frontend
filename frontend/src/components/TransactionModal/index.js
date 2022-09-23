@@ -190,7 +190,7 @@ function TransactionModal(props) {
   const submitTransactionForm = async () => {
     try {
       if (isEditForm) {
-        dispatch(updateTransaction(transactionForm)); 
+        dispatch(updateTransaction(transactionForm));
       } else {
         dispatch(addNewTransaction(transactionForm));
       }
@@ -254,11 +254,14 @@ function TransactionModal(props) {
               >
                 <Tab label="Buy" {...a11yProps(0)} />
                 <Tab label="Sell" {...a11yProps(1)} />
-                <Tab label="Transfer" {...a11yProps(2)} />
+                {transactionForm.category !== 'p2p' && (
+                  <Tab label="Transfer" {...a11yProps(2)} />
+                )}
               </Tabs>
             )}
             {!isEditForm && (
               <Autocomplete
+                disableClearable
                 id="category"
                 sx={{ mt: 2, mb: 1 }}
                 options={props.categories ?? []}

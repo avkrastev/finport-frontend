@@ -14,7 +14,7 @@ import { useEffect } from 'react';
 import WatchListYearly from '../../WatchListYearly';
 import ReportSkeleton from '../../ReportSkeleton';
 
-function DashboardCrypto() {
+function ReportYearly() {
   const dispatch: AppDispatch = useDispatch();
   const report = useSelector(getYearlyReportsData);
   const reportStatus = useSelector(getYearlyReportStatus);
@@ -64,4 +64,4 @@ function DashboardCrypto() {
   );
 }
 
-export default DashboardCrypto;
+export default ReportYearly;

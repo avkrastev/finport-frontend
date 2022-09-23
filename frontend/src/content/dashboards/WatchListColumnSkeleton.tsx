@@ -13,9 +13,14 @@ const WatchListColumn1ChartWrapper = styled(WatchListColumn1Chart)(
 );
 
 export default function WatchListColumnSkeleton() {
+  const todayDayName = new Date().getDay();
+  const labels = shortDayNames
+    .slice(todayDayName)
+    .concat(shortDayNames.slice(0, todayDayName));
+
   const price = {
     week: {
-      labels: shortDayNames,
+      labels,
       data: [55.701, 57.598, 48.607, 46.439, 58.755, 46.978, 58.16]
     }
   };
@@ -26,7 +31,11 @@ export default function WatchListColumnSkeleton() {
         <Box display="flex" alignItems="center">
           <Skeleton variant="circular" width={30} height={30} />
           <Box>
-            <Skeleton variant="text" width={80} style={{ fontSize: '1rem', marginLeft: '10px' }} />
+            <Skeleton
+              variant="text"
+              width={80}
+              style={{ fontSize: '1rem', marginLeft: '10px' }}
+            />
           </Box>
         </Box>
         <Box
@@ -38,7 +47,11 @@ export default function WatchListColumnSkeleton() {
           }}
         >
           <Skeleton variant="text" width={100} sx={{ fontSize: '1.5rem' }} />
-          <Skeleton variant="text" width={40} style={{ fontSize: '0.5rem', marginLeft: '10px' }} />
+          <Skeleton
+            variant="text"
+            width={40}
+            style={{ fontSize: '0.5rem', marginLeft: '10px' }}
+          />
         </Box>
         <Box
           sx={{
@@ -48,11 +61,15 @@ export default function WatchListColumnSkeleton() {
           }}
         >
           <Skeleton variant="text" width={40} sx={{ fontSize: '1.5rem' }} />
-          <Skeleton variant="text" width={40} style={{ fontSize: '0.5rem', marginLeft: '10px' }} />
+          <Skeleton
+            variant="text"
+            width={40}
+            style={{ fontSize: '0.5rem', marginLeft: '10px' }}
+          />
         </Box>
       </Box>
       <Box height={130}>
-      <WatchListColumn1ChartWrapper
+        <WatchListColumn1ChartWrapper
           data={price.week.data}
           labels={price.week.labels}
           skeleton

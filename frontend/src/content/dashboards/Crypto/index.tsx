@@ -4,13 +4,13 @@ import PageTitleWrapper from 'src/components/PageTitleWrapper';
 import { Grid, Container } from '@mui/material';
 import Footer from 'src/components/Footer';
 
-import AccountBalance from '../AccountBalance';
 import { useDispatch, useSelector } from 'react-redux';
 import {} from 'src/content/applications/Transactions/transactionSlice';
 import { useEffect } from 'react';
 import { AppDispatch } from 'src/app/store';
 import { fetchCrypto, getCryptoStatus, selectAllCrypto } from './cryptoSlice';
 import CollapsibleTable from '../CollapsibleTable';
+import WatchListWithChart from '../WatchListWithChart';
 
 function DashboardCrypto() {
   const dispatch: AppDispatch = useDispatch();
@@ -40,7 +40,7 @@ function DashboardCrypto() {
           spacing={3}
         >
           <Grid item xs={12}>
-            <AccountBalance
+            <WatchListWithChart
               assets={crypto}
               category="crypto"
               loading={cryptoStatus}

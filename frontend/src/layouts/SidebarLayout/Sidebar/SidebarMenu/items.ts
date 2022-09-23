@@ -118,17 +118,12 @@ const menuItems: MenuItems[] = [
         link: '/management/savings',
         show: true
       },
-    ]
-  },
-  {
-    heading: 'Expenses',
-    items: [
       {
         name: 'Balances',
         icon: AccountBalanceWalletTwoToneIcon,
-        link: '/expenses/balances',
+        link: '/management/balances',
         show: true
-      }
+      },
     ]
   },
   {
@@ -137,22 +132,22 @@ const menuItems: MenuItems[] = [
       {
         name: 'Reports',
         icon: AssessmentTwoToneIcon,
-        link: '/management/reports',
+        link: '/history/reports',
         show: true,
         items: [
           {
             name: 'Monthly',
-            link: '/management/reports/monthly',
+            link: '/history/reports/monthly',
             show: true
           },
           {
             name: 'Yearly',
-            link: '/management/reports/yearly',
+            link: '/history/reports/yearly',
             show: true
           },
           {
             name: 'Taxable',
-            link: '/management/reports/taxable',
+            link: '/history/reports/taxable',
             show: true
           }
         ]
@@ -160,7 +155,7 @@ const menuItems: MenuItems[] = [
       {
         name: 'Snapshots',
         icon: AddAPhotoTwoToneIcon,
-        link: '/management/snapshots',
+        link: '/history/snapshots',
         show: true
       }
     ]

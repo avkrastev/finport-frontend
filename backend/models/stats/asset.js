@@ -65,7 +65,9 @@ class AssetStats {
     this.sums.holdingValue = this.balance;
     this.sums.difference = (this.sums.totalSum - this.sums.holdingValue) * -1;
     this.sums.differenceInPercents =
-      (this.balance / this.sums.totalSum - 1) * 100;
+      this.sums.totalSum > 0
+        ? (this.balance / this.sums.totalSum - 1) * 100
+        : 0;
   }
 }
 

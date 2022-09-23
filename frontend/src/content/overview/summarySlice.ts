@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { historyForAWeek } from 'src/utils/api/historyApiFunction';
+import { historyForAWeek, historySinceStart } from 'src/utils/api/historyApiFunction';
 import type { RootState } from '../../app/store';
 import { getAssetsSummary } from '../../utils/api/assetsApiFunction';
 
@@ -22,7 +22,9 @@ interface Summary {
 interface SummaryState {
   summary: Summary;
   history: History[];
+  historySinceStart: HistorySinceStart;
   status: string;
+  historyStatus: string;
   error: string;
 }
 
@@ -32,10 +34,35 @@ interface History {
   price: number;
 }
 
+interface HistorySinceStart {
+  historyData: historyData[];
+  differenceInPercents: number;
+  difference: number;
+  category: string;
+}
+
+interface historyData {
+  _id: GroupData;
+  categories: Categories[];
+  balance: number;
+  total: number;
+}
+
+interface Categories {
+  balance: number;
+  total: number;
+}
+
+interface GroupData {
+  date: string;
+}
+
 const initialState: SummaryState = {
   summary: { sums: { totalSum: 0 }, stats: [] },
   history: [],
+  historySinceStart: null,
   status: 'idle', //'idle' | 'loading' | 'succeeded' | 'failed',
+  historyStatus: 'idle', //'idle' | 'loading' | 'succeeded' | 'failed',
   error: null
 };
 
@@ -52,6 +79,14 @@ export const fetchHistory = createAsyncThunk(
   async () => {
     const response = await historyForAWeek();
     return response.data.history as History[];
+  }
+);
+
+export const fetchHistorySinceStart = createAsyncThunk(
+  'summary/fetchHistorySinceStart',
+  async (category: string) => {
+    const response = await historySinceStart(category);
+    return response.data.historySinceStart as HistorySinceStart;
   }
 );
 
@@ -78,8 +113,13 @@ const summarySlice = createSlice({
       .addCase(
         fetchHistory.fulfilled,
         (state, action: PayloadAction<History[]>) => {
-          state.status = 'succeeded';
           state.history = action.payload;
+        }
+      )
+      .addCase(
+        fetchHistorySinceStart.fulfilled,
+        (state, action: PayloadAction<HistorySinceStart>) => {
+          state.historySinceStart = action.payload;
         }
       );
   }
@@ -87,6 +127,7 @@ const summarySlice = createSlice({
 
 export const selectAllSummary = (state: RootState) => state.summary.summary;
 export const selectAllHistory = (state: RootState) => state.summary.history;
+export const selectAllHistorySinceStart = (state: RootState) => state.summary.historySinceStart;
 export const getSummaryStatus = (state: RootState) => state.summary.status;
 export const getSummaryError = (state: RootState) => state.summary.error;
 

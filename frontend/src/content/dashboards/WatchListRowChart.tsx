@@ -49,7 +49,7 @@ const WatchListRowChart: FC<WatchListRowChartProps> = ({
             drawBorder: false
           },
           ticks: {
-            display: false
+            display: true
           }
         }
       ],

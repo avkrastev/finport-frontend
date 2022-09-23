@@ -4,7 +4,6 @@ import PageTitleWrapper from 'src/components/PageTitleWrapper';
 import { Grid, Container } from '@mui/material';
 import Footer from 'src/components/Footer';
 
-import AccountBalance from '../AccountBalance';
 import Wallets from '../Wallets';
 import { useDispatch, useSelector } from 'react-redux';
 import {} from 'src/content/applications/Transactions/transactionSlice';
@@ -12,8 +11,9 @@ import { useEffect } from 'react';
 import { AppDispatch } from 'src/app/store';
 import { fetchP2P, getP2PStatus, selectAllP2P } from './p2pSlice';
 import CollapsibleTable from '../CollapsibleTable';
+import WatchListWithChart from '../WatchListWithChart';
 
-function DashboardCrypto() {
+function DashboardP2P() {
   const dispatch: AppDispatch = useDispatch();
   const p2p = useSelector(selectAllP2P);
   const p2pStatus = useSelector(getP2PStatus);
@@ -41,7 +41,7 @@ function DashboardCrypto() {
           spacing={3}
         >
           <Grid item xs={12}>
-            <AccountBalance assets={p2p} category="p2p" loading={p2pStatus} />
+            <WatchListWithChart assets={p2p} category="p2p" loading={p2pStatus} />
           </Grid>
           {p2p && (
             <Grid item lg={12} xs={12}>
@@ -64,4 +64,4 @@ function DashboardCrypto() {
   );
 }
 
-export default DashboardCrypto;
+export default DashboardP2P;

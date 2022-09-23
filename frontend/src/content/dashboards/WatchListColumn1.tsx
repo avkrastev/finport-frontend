@@ -35,6 +35,8 @@ const WatchListColumn1ChartWrapper = styled(WatchListColumn1Chart)(
 function WatchListColumn1({ category, ...rest }) {
   let prices = [];
   let categories = {};
+  const todayDayName = new Date().getDay();
+  const labels = shortDayNames.slice(todayDayName).concat(shortDayNames.slice(0, todayDayName));
 
   for (let date of rest.history) {
     const categoryDate = date.categories.find(
@@ -168,7 +170,7 @@ function WatchListColumn1({ category, ...rest }) {
         <Box height={150}>
           <WatchListColumn1ChartWrapper
             data={categories[category.alias]}
-            labels={shortDayNames}
+            labels={[...labels]}
           />
         </Box>
       </Card>

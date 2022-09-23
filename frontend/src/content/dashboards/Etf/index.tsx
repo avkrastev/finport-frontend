@@ -1,10 +1,9 @@
 import { Helmet } from 'react-helmet-async';
 import PageHeader from '../PageHeader';
 import PageTitleWrapper from 'src/components/PageTitleWrapper';
-import { Grid, Container, Alert, Link } from '@mui/material';
+import { Grid, Container } from '@mui/material';
 import Footer from 'src/components/Footer';
 
-import AccountBalance from '../AccountBalance';
 import { useDispatch, useSelector } from 'react-redux';
 import {} from 'src/content/applications/Transactions/transactionSlice';
 import { useContext, useEffect } from 'react';
@@ -13,8 +12,9 @@ import { fetchETFs, getETFsStatus, selectAllETFs } from './ETFsSlice';
 import CollapsibleTable from '../CollapsibleTable';
 import { AuthContext } from 'src/utils/context/authContext';
 import MissingApiKeyMessage from '../MissingApiKeyMessage';
+import WatchListWithChart from '../WatchListWithChart';
 
-function DashboardCrypto() {
+function DashboardETF() {
   const { authUserData } = useContext(AuthContext);
   const dispatch: AppDispatch = useDispatch();
   const ETFs = useSelector(selectAllETFs);
@@ -46,7 +46,7 @@ function DashboardCrypto() {
           spacing={3}
         >
           <Grid item xs={12}>
-            <AccountBalance assets={ETFs} category="etf" loading={etfStatus} />
+            <WatchListWithChart assets={ETFs} category="etf" loading={etfStatus} />
           </Grid>
           {ETFs.stats && (
             <Grid item xs={12}>
@@ -64,4 +64,4 @@ function DashboardCrypto() {
   );
 }
 
-export default DashboardCrypto;
+export default DashboardETF;
