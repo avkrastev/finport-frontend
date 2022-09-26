@@ -3,27 +3,22 @@
   "background_color": "#f2f5f9",
   "display": "standalone",
   "start_url": ".",
-  "short_name": "Tokyo Free White",
-  "name": "Tokyo Free White React Admin Dashboard",
+  "short_name": "finport",
+  "name": "My financial portfolio",
   "icons": [
     {
-      "src": "/icon-192x192.png",
-      "sizes": "192x192",
+      "src": "/icons8-money-box-16.png",
+      "sizes": "16x16",
       "type": "image/png"
     },
     {
-      "src": "/icon-256x256.png",
-      "sizes": "256x256",
+      "src": "/icons8-money-box-32.png",
+      "sizes": "32x32",
       "type": "image/png"
     },
     {
-      "src": "/icon-384x384.png",
-      "sizes": "384x384",
-      "type": "image/png"
-    },
-    {
-      "src": "/icon-512x512.png",
-      "sizes": "512x512",
+      "src": "/icons8-money-box-96.png",
+      "sizes": "96x96",
       "type": "image/png"
     }
   ]
