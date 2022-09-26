@@ -7,12 +7,14 @@ interface WatchListColumn1ChartProps {
   data: any[];
   labels: string[];
   skeleton?: boolean;
+  labelsForTooltip?: string[];
 }
 
 const WatchListColumn1Chart: FC<WatchListColumn1ChartProps> = ({
   data: dataProp,
   labels,
   skeleton,
+  labelsForTooltip,
   ...rest
 }) => {
   const theme = useTheme();
@@ -90,7 +92,11 @@ const WatchListColumn1Chart: FC<WatchListColumn1ChartProps> = ({
       bodyFontColor: theme.palette.common.white,
       footerFontColor: theme.palette.common.white,
       callbacks: {
-        title: () => {},
+        title: (tooltipItem: any) => {
+          if (labelsForTooltip && labelsForTooltip[tooltipItem[0].index]) {
+            return labelsForTooltip[tooltipItem[0].index];
+          }
+        },
         label: (tooltipItem: any) => {
           return `Price: $${tooltipItem.yLabel}`;
         }

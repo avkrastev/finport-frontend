@@ -27,13 +27,22 @@ function BalanceChart(props) {
     }
   }
 
+  let labelsForTooltip = [];
+  for (
+    let dt = new Date(props.history.historyData[0]._id.date);
+    dt <= new Date();
+    dt.setDate(dt.getDate() + 1)
+  ) {
+    labelsForTooltip.push(format(new Date(dt), 'dd MMM yyyy'));
+  }
+
   let labels = Array(prices.length).fill('');
   if (labels.length > 0) {
     labels[0] = format(
       new Date(props.history.historyData[0]._id.date),
-      'dd MMM yyyy'
+      'MMM yyyy'
     );
-    labels[labels.length - 1] = format(new Date(), 'dd MMM yyyy');
+    labels[labels.length - 1] = 'Today';
   }
 
   return (
@@ -82,7 +91,11 @@ function BalanceChart(props) {
         </Box>
       </Box>
       <Box height={220}>
-        <WatchListColumn1ChartWrapper data={prices} labels={labels} />
+        <WatchListColumn1ChartWrapper
+          data={prices}
+          labels={labels}
+          labelsForTooltip={labelsForTooltip}
+        />
       </Box>
     </Card>
   );

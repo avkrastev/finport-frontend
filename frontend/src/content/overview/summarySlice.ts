@@ -116,12 +116,19 @@ const summarySlice = createSlice({
           state.history = action.payload;
         }
       )
+      .addCase(fetchHistorySinceStart.pending, (state) => {
+        state.historyStatus = 'loading';
+      })
       .addCase(
         fetchHistorySinceStart.fulfilled,
         (state, action: PayloadAction<HistorySinceStart>) => {
+          state.historyStatus = 'succeeded';
           state.historySinceStart = action.payload;
         }
-      );
+      )
+      .addCase(fetchHistorySinceStart.rejected, (state, action) => {
+        state.historyStatus = 'failed';
+      });
   }
 });
 
@@ -129,6 +136,7 @@ export const selectAllSummary = (state: RootState) => state.summary.summary;
 export const selectAllHistory = (state: RootState) => state.summary.history;
 export const selectAllHistorySinceStart = (state: RootState) => state.summary.historySinceStart;
 export const getSummaryStatus = (state: RootState) => state.summary.status;
+export const getHistoryStatus = (state: RootState) => state.summary.historyStatus;
 export const getSummaryError = (state: RootState) => state.summary.error;
 
 //export const {} = summarySlice.actions;

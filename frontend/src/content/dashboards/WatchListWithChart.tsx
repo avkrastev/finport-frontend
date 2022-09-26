@@ -17,9 +17,11 @@ import { AppDispatch } from 'src/app/store';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   fetchHistorySinceStart,
+  getHistoryStatus,
   selectAllHistorySinceStart
 } from '../overview/summarySlice';
 import { HistoryOutlined } from '@mui/icons-material';
+import BalanceSkeleton from './BalanceSkeleton';
 
 const EmptyResultsWrapper = styled('img')(
   ({ theme }) => `
@@ -33,6 +35,7 @@ function WatchListWithChart(props) {
   const [tabs, setTab] = useState<string | null>('watch_list_columns');
   const dispatch: AppDispatch = useDispatch();
   const history = useSelector(selectAllHistorySinceStart);
+  const historyStatus = useSelector(getHistoryStatus);
   const handleViewOrientation = (
     event: MouseEvent<HTMLElement>,
     newValue: string | null
@@ -81,12 +84,17 @@ function WatchListWithChart(props) {
           </Grid>
         )}
 
+        {tabs === 'watch_list_rows' && historyStatus !== 'succeeded' && (
+          <BalanceSkeleton />
+        )}
+
         {tabs === 'watch_list_rows' && props?.category === history?.category && (
           <Grid item xs={12}>
             <BalanceChart
               assets={props.assets}
               category={props.category}
               history={history}
+              loading={historyStatus}
             />
           </Grid>
         )}
