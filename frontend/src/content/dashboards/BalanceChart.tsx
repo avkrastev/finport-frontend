@@ -17,7 +17,7 @@ const WatchListColumn1ChartWrapper = styled(WatchListColumn1Chart)(
 function BalanceChart(props) {
   let prices = [];
   let labelsForTooltip = [];
-  let labels = Array(prices.length).fill('');
+  let labels = [];
   const differenceInPercents =
     props.history && props.history.differenceInPercents
       ? props.history.differenceInPercents
@@ -43,7 +43,7 @@ function BalanceChart(props) {
     ) {
       labelsForTooltip.push(format(new Date(dt), 'dd MMM yyyy'));
     }
-
+    labels = Array(prices.length).fill('');
     if (labels.length > 0) {
       labels[0] = format(
         new Date(props.history.historyData[0]._id.date),
