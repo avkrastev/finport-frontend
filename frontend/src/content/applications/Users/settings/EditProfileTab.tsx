@@ -15,7 +15,8 @@ import {
   TextField,
   Stack,
   Snackbar,
-  Alert
+  Alert,
+  MenuItem
 } from '@mui/material';
 
 import DoneTwoToneIcon from '@mui/icons-material/DoneTwoTone';
@@ -23,6 +24,7 @@ import CloseTwoToneIcon from '@mui/icons-material/CloseTwoTone';
 import Label from 'src/components/Label';
 import { AuthContext } from '../../../../utils/context/authContext';
 import { updateUser } from '../../../../utils/api/userApiFunction';
+import { currencies } from 'src/constants/common';
 
 function EditProfileTab() {
   const { authUserData, setUserData } = useContext(AuthContext);
@@ -69,7 +71,8 @@ function EditProfileTab() {
         event.target.name
       );
       if (responseData.data) {
-        if (event.target.name === 'categories') setDashboard(responseData.data.categories);
+        if (event.target.name === 'categories')
+          setDashboard(responseData.data.categories);
         setUserData(responseData.data, Object.keys(responseData.data)[0]);
         setShowSuccessSnackbar(true);
       }
@@ -120,7 +123,11 @@ function EditProfileTab() {
                   <Box style={{ lineHeight: '2.3rem' }}>E-mail:</Box>
                 </Grid>
                 <Grid item xs={12} sm={12} md={10}>
-                  <Typography style={{ lineHeight: '2.3rem' }} variant="h5">
+                  <Typography
+                    style={{ lineHeight: '2.3rem' }}
+                    sx={{ mb: 2 }}
+                    variant="h5"
+                  >
                     <span style={{ display: 'inline-block' }}>
                       {authUserData.email}
                     </span>
@@ -150,6 +157,28 @@ function EditProfileTab() {
                       </Label>
                     </span>
                   </Typography>
+                </Grid>
+                <Grid item xs={12} sm={12} md={2}>
+                  <Box style={{ lineHeight: '2.3rem' }}>
+                    Preferred currency:
+                  </Box>
+                </Grid>
+                <Grid item xs={12} sm={12} md={10}>
+                  <TextField
+                    name="currency"
+                    fullWidth
+                    size="small"
+                    id="outlined-select-currency"
+                    select
+                    value={authUserData.currency}
+                    onChange={(event) => handleUserSettingsChange(event)}
+                  >
+                    {currencies.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.value} - {option.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
                 </Grid>
               </Grid>
             </Typography>

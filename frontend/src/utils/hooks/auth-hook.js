@@ -1,10 +1,19 @@
 import { useState, useCallback, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { resetCommoditiesState } from 'src/content/dashboards/Commodities/commoditiesSlice';
+import { resetCryptoState } from 'src/content/dashboards/Crypto/cryptoSlice';
+import { resetETFState } from 'src/content/dashboards/Etf/ETFsSlice';
+import { resetMiscState } from 'src/content/dashboards/Misc/miscSlice';
+import { resetP2PState } from 'src/content/dashboards/P2P/p2pSlice';
+import { resetStocksState } from 'src/content/dashboards/Stocks/stocksSlice';
+import { resetSummaryState } from 'src/content/overview/summarySlice';
 
 let logoutTimer;
 
 export const useAuth = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [token, setToken] = useState(null);
   const [tokenExpirationDate, setTokenExpirationDate] = useState();
   const [authUserData, setAuthUserData] = useState(null);
@@ -60,6 +69,15 @@ export const useAuth = () => {
     setTokenExpirationDate(null);
     setAuthUserData(null);
     localStorage.removeItem('userData');
+
+    dispatch(resetSummaryState());
+    dispatch(resetCommoditiesState());
+    dispatch(resetCryptoState());
+    dispatch(resetETFState());
+    dispatch(resetP2PState());
+    dispatch(resetMiscState());
+    dispatch(resetStocksState());
+
     navigate('/');
   }, []);
 

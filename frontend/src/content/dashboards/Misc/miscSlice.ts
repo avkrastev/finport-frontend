@@ -59,7 +59,8 @@ const miscSlice = createSlice({
   reducers: {
     changeMiscStatus(state, action) {
       state.status = action.payload;
-    }
+    },
+    resetMiscState: () => initialState
   },
   extraReducers(builder) {
     builder
@@ -81,6 +82,6 @@ export const selectAllMisc = (state: RootState) => state.misc.misc;
 export const getMiscStatus = (state: RootState) => state.misc.status;
 export const getMiscError = (state: RootState) => state.misc.error;
 
-export const { changeMiscStatus } = miscSlice.actions;
+export const { changeMiscStatus, resetMiscState } = miscSlice.actions;
 
 export default miscSlice.reducer;

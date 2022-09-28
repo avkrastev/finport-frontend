@@ -14,12 +14,9 @@ import { useForm } from '../../../utils/hooks/form-hook';
 import { AuthContext } from '../../../utils/context/authContext';
 import { useDispatch } from 'react-redux';
 import { changeTransactionStatus } from 'src/content/applications/Transactions/transactionSlice';
-import { changeCryptoStatus } from 'src/content/dashboards/Crypto/cryptoSlice';
-import { changeStocksStatus } from 'src/content/dashboards/Stocks/stocksSlice';
-import { changeETFStatus } from 'src/content/dashboards/Etf/ETFsSlice';
-import { changeMiscStatus } from 'src/content/dashboards/Misc/miscSlice';
-import { changeCommoditiesStatus } from 'src/content/dashboards/Commodities/commoditiesSlice';
-import { changeP2PStatus } from 'src/content/dashboards/P2P/p2pSlice';
+import LoadingButton from '@mui/lab/LoadingButton';
+import LoginIcon from '@mui/icons-material/Login';
+import { changeSummaryStatus } from 'src/content/overview/summarySlice';
 
 const TypographyH1 = experimentalStyled(Typography)(
   ({ theme }) => `
@@ -57,6 +54,7 @@ function LoginForm() {
   const auth = useContext(AuthContext);
   const dispatch = useDispatch();
   const [isLogin, setIsLogin] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const [formState, inputHandler, setFormData] = useForm({
     email: { value: '', isValid: false },
@@ -108,6 +106,7 @@ function LoginForm() {
   };
 
   const loginOrSignUp = async () => {
+    setLoading(true);
     if (isLogin) {
       try {
         const responseData = await userLogin(
@@ -120,9 +119,11 @@ function LoginForm() {
             responseData.data.token,
             responseData.data.userData
           );
+          setLoading(false);
         }
       } catch (err) {
         // TODO catch error
+        setLoading(false);
       }
     } else {
       try {
@@ -137,19 +138,16 @@ function LoginForm() {
             responseData.data.token,
             responseData.data.userData
           );
+          setLoading(false);
         }
       } catch (err) {
         // TODO catch error
+        setLoading(false);
       }
     }
 
     dispatch(changeTransactionStatus('idle'));
-    // dispatch(changeCryptoStatus('idle'));
-    // dispatch(changeStocksStatus('idle'));
-    // dispatch(changeETFStatus('idle'));
-    // dispatch(changeMiscStatus('idle'));
-    // dispatch(changeCommoditiesStatus('idle'));
-    // dispatch(changeP2PStatus('idle'));
+    dispatch(changeSummaryStatus('idle'));
   };
 
   return (
@@ -220,7 +218,10 @@ function LoginForm() {
                 />
               )}
             </div>
-            <Button
+            <LoadingButton
+              loading={loading}
+              loadingPosition="end"
+              endIcon={<LoginIcon />}
               sx={{ marginTop: 2 }}
               component={RouterLink}
               to="/"
@@ -230,7 +231,7 @@ function LoginForm() {
               onClick={() => loginOrSignUp()}
             >
               {isLogin ? 'Login' : 'Sign Up'}
-            </Button>
+            </LoadingButton>
           </Box>
           {isLogin ? (
             <TypographyH2 mt={2}>

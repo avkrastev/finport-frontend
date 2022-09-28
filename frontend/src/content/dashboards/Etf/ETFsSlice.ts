@@ -59,7 +59,8 @@ const ETFsSlice = createSlice({
   reducers: {
     changeETFStatus(state, action) {
       state.status = action.payload;
-    }
+    },
+    resetETFState: () => initialState
   },
   extraReducers(builder) {
     builder
@@ -81,6 +82,6 @@ export const selectAllETFs = (state: RootState) => state.ETFs.ETFs;
 export const getETFsStatus = (state: RootState) => state.ETFs.status;
 export const getETFsError = (state: RootState) => state.ETFs.error;
 
-export const { changeETFStatus } = ETFsSlice.actions;
+export const { changeETFStatus, resetETFState } = ETFsSlice.actions;
 
 export default ETFsSlice.reducer;

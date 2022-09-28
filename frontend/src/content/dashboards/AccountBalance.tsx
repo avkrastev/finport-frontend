@@ -126,14 +126,14 @@ function AccountBalance({ assets, category, loading, ...rest }) {
         <Grid item xs={12} md={6}>
           <Box p={4}>
             <Typography sx={{ pb: 3 }} variant="h4">
-              Account Balance / Total Invested
+              Account Balance | Total Invested
             </Typography>
             <Box>
               <Typography variant="h1" gutterBottom>
                 {rest.totalBalance
                   ? formatAmountAndCurrency(rest.totalBalance, 'USD')
                   : formatAmountAndCurrency(assets?.sums?.holdingValue, 'USD')}
-                &nbsp;/&nbsp;
+                &nbsp;|&nbsp;
                 {formatAmountAndCurrency(assets?.sums?.totalSum, 'USD')}
               </Typography>
 
@@ -152,7 +152,7 @@ function AccountBalance({ assets, category, loading, ...rest }) {
                         item.holdingAmount,
                         item.currency
                       )}
-                      &nbsp;/&nbsp;
+                      &nbsp;|&nbsp;
                       {formatAmountAndCurrency(item.totalAmount, item.currency)}
                     </Typography>
                   );

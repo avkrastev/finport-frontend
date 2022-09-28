@@ -58,7 +58,8 @@ const cryptoSlice = createSlice({
   reducers: {
     changeCryptoStatus(state, action) {
       state.status = action.payload;
-    }
+    },
+    resetCryptoState: () => initialState
   },
   extraReducers(builder) {
     builder
@@ -83,6 +84,6 @@ export const selectAllCrypto = (state: RootState) => state.crypto.crypto;
 export const getCryptoStatus = (state: RootState) => state.crypto.status;
 export const getCryptoError = (state: RootState) => state.crypto.error;
 
-export const { changeCryptoStatus } = cryptoSlice.actions;
+export const { changeCryptoStatus, resetCryptoState } = cryptoSlice.actions;
 
 export default cryptoSlice.reducer;

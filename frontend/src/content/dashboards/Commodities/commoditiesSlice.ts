@@ -62,7 +62,8 @@ const commoditySlice = createSlice({
   reducers: {
     changeCommoditiesStatus(state, action) {
       state.status = action.payload;
-    }
+    },
+    resetCommoditiesState: () => initialState
   },
   extraReducers(builder) {
     builder
@@ -90,6 +91,7 @@ export const getCommoditiesStatus = (state: RootState) =>
 export const getCommoditiesError = (state: RootState) =>
   state.commodities.error;
 
-export const { changeCommoditiesStatus } = commoditySlice.actions;
+export const { changeCommoditiesStatus, resetCommoditiesState } =
+  commoditySlice.actions;
 
 export default commoditySlice.reducer;

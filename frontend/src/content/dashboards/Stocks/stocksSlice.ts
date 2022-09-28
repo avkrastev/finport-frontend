@@ -59,7 +59,8 @@ const stocksSlice = createSlice({
   reducers: {
     changeStocksStatus(state, action) {
       state.status = action.payload;
-    }
+    },
+    resetStocksState: () => initialState
   },
   extraReducers(builder) {
     builder
@@ -84,6 +85,6 @@ export const selectAllStocks = (state: RootState) => state.stocks.stocks;
 export const getStocksStatus = (state: RootState) => state.stocks.status;
 export const getStocksError = (state: RootState) => state.stocks.error;
 
-export const { changeStocksStatus } = stocksSlice.actions;
+export const { changeStocksStatus, resetStocksState } = stocksSlice.actions;
 
 export default stocksSlice.reducer;

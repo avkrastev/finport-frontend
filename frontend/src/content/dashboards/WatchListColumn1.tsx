@@ -36,18 +36,20 @@ function WatchListColumn1({ category, ...rest }) {
   let prices = [];
   let categories = {};
   const todayDayName = new Date().getDay();
-  const labels = shortDayNames.slice(todayDayName).concat(shortDayNames.slice(0, todayDayName));
+  const labels = shortDayNames
+    .slice(todayDayName)
+    .concat(shortDayNames.slice(0, todayDayName));
 
-  for (let date of rest.history) {
-    const categoryDate = date.categories.find(
+  for (let i = rest.history.length - 1; i >= 0; i--) {
+    const categoryDate = rest.history[i].categories.find(
       (item) => item.category === category.alias
     );
     if (categoryDate) {
       prices.push(roundNumber(categoryDate.balance));
     }
-
-    categories[category.alias] = padArrayStart(prices, 7, 0);
   }
+
+  categories[category.alias] = padArrayStart(prices, 7, 0);
 
   let holdingValue;
   let difference;

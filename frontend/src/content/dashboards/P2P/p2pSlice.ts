@@ -88,7 +88,8 @@ const p2pSlice = createSlice({
   reducers: {
     changeP2PStatus(state, action) {
       state.status = action.payload;
-    }
+    },
+    resetP2PState: () => initialState
   },
   extraReducers(builder) {
     builder
@@ -127,6 +128,6 @@ export const selectAllP2P = (state: RootState) => state.p2p.p2p;
 export const getP2PStatus = (state: RootState) => state.p2p.status;
 export const getP2PError = (state: RootState) => state.p2p.error;
 
-export const { changeP2PStatus } = p2pSlice.actions;
+export const { changeP2PStatus, resetP2PState } = p2pSlice.actions;
 
 export default p2pSlice.reducer;

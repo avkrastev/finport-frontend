@@ -1,5 +1,8 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { historyForAWeek, historySinceStart } from 'src/utils/api/historyApiFunction';
+import {
+  historyForAWeek,
+  historySinceStart
+} from 'src/utils/api/historyApiFunction';
 import type { RootState } from '../../app/store';
 import { getAssetsSummary } from '../../utils/api/assetsApiFunction';
 
@@ -93,7 +96,12 @@ export const fetchHistorySinceStart = createAsyncThunk(
 const summarySlice = createSlice({
   name: 'summary',
   initialState,
-  reducers: {},
+  reducers: {
+    changeSummaryStatus(state, action) {
+      state.status = action.payload;
+    },
+    resetSummaryState: () => initialState
+  },
   extraReducers(builder) {
     builder
       .addCase(fetchSummary.pending, (state) => {
@@ -134,11 +142,13 @@ const summarySlice = createSlice({
 
 export const selectAllSummary = (state: RootState) => state.summary.summary;
 export const selectAllHistory = (state: RootState) => state.summary.history;
-export const selectAllHistorySinceStart = (state: RootState) => state.summary.historySinceStart;
+export const selectAllHistorySinceStart = (state: RootState) =>
+  state.summary.historySinceStart;
 export const getSummaryStatus = (state: RootState) => state.summary.status;
-export const getHistoryStatus = (state: RootState) => state.summary.historyStatus;
+export const getHistoryStatus = (state: RootState) =>
+  state.summary.historyStatus;
 export const getSummaryError = (state: RootState) => state.summary.error;
 
-//export const {} = summarySlice.actions;
+export const { changeSummaryStatus, resetSummaryState } = summarySlice.actions;
 
 export default summarySlice.reducer;

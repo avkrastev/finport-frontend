@@ -88,16 +88,21 @@ function WatchListWithChart(props) {
           <BalanceSkeleton />
         )}
 
-        {tabs === 'watch_list_rows' && props?.category === history?.category && (
-          <Grid item xs={12}>
-            <BalanceChart
-              assets={props.assets}
-              category={props.category}
-              history={history}
-              loading={historyStatus}
-            />
-          </Grid>
-        )}
+        {tabs === 'watch_list_rows' &&
+          (props?.category === history?.category ? (
+            <Grid item xs={12}>
+              <BalanceChart
+                assets={props.assets}
+                category={props.category}
+                history={history}
+                loading={historyStatus}
+              />
+            </Grid>
+          ) : (
+            <Grid item xs={12}>
+              <BalanceChart assets={props.assets} category={props.category} />
+            </Grid>
+          ))}
 
         {!tabs && (
           <Grid item xs={12}>

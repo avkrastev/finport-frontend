@@ -16,33 +16,41 @@ const WatchListColumn1ChartWrapper = styled(WatchListColumn1Chart)(
 
 function BalanceChart(props) {
   let prices = [];
-
-  for (let date in props.history.historyData) {
-    if (props.category !== '') {
-      prices.push(
-        roundNumber(props.history.historyData[date].categories[0].balance)
-      );
-    } else {
-      prices.push(roundNumber(props.history.historyData[date].balance));
-    }
-  }
-
   let labelsForTooltip = [];
-  for (
-    let dt = new Date(props.history.historyData[0]._id.date);
-    dt <= new Date();
-    dt.setDate(dt.getDate() + 1)
-  ) {
-    labelsForTooltip.push(format(new Date(dt), 'dd MMM yyyy'));
-  }
-
   let labels = Array(prices.length).fill('');
-  if (labels.length > 0) {
-    labels[0] = format(
-      new Date(props.history.historyData[0]._id.date),
-      'MMM yyyy'
-    );
-    labels[labels.length - 1] = 'Today';
+  const differenceInPercents =
+    props.history && props.history.differenceInPercents
+      ? props.history.differenceInPercents
+      : 0;
+  const difference =
+    props.history && props.history.difference ? props.history.difference : 0;
+
+  if (props.history) {
+    for (let date in props.history.historyData) {
+      if (props.category !== '') {
+        prices.push(
+          roundNumber(props.history.historyData[date].categories[0].balance)
+        );
+      } else {
+        prices.push(roundNumber(props.history.historyData[date].balance));
+      }
+    }
+
+    for (
+      let dt = new Date(props.history.historyData[0]._id.date);
+      dt <= new Date();
+      dt.setDate(dt.getDate() + 1)
+    ) {
+      labelsForTooltip.push(format(new Date(dt), 'dd MMM yyyy'));
+    }
+
+    if (labels.length > 0) {
+      labels[0] = format(
+        new Date(props.history.historyData[0]._id.date),
+        'MMM yyyy'
+      );
+      labels[labels.length - 1] = 'Today';
+    }
   }
 
   return (
@@ -58,14 +66,10 @@ function BalanceChart(props) {
           <Typography variant="h2" sx={{ pr: 1, mb: 1 }}>
             {formatAmountAndCurrency(prices[prices.length - 1], 'USD')}
           </Typography>
-          {props.history.differenceInPercents >= 0 ? (
-            <Text color="success">
-              {roundNumber(props.history.differenceInPercents)}%
-            </Text>
+          {differenceInPercents >= 0 ? (
+            <Text color="success">{roundNumber(differenceInPercents)}%</Text>
           ) : (
-            <Text color="error">
-              {roundNumber(props.history.differenceInPercents)}%
-            </Text>
+            <Text color="error">{roundNumber(differenceInPercents)}%</Text>
           )}
         </Box>
         <Box
@@ -75,13 +79,13 @@ function BalanceChart(props) {
             justifyContent: 'flex-start'
           }}
         >
-          {props.history.difference >= 0 ? (
+          {difference >= 0 ? (
             <Label color="success">
-              {formatAmountAndCurrency(props.history.difference, 'USD')}
+              {formatAmountAndCurrency(difference, 'USD')}
             </Label>
           ) : (
             <Label color="error">
-              {formatAmountAndCurrency(props.history.difference, 'USD')}
+              {formatAmountAndCurrency(difference, 'USD')}
             </Label>
           )}
 
