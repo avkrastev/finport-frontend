@@ -73,20 +73,28 @@ function AccountBalance({ assets, category, loading, ...rest }) {
   ];
   let assetsBalance = {};
   let assetsSlice = [];
+  let onlyExpense = false;
 
-  const holdingValue =
+  let holdingValue =
     rest && rest.totalBalance && rest.totalDifference
       ? rest.totalBalance - rest.totalDifference
       : assets?.sums?.holdingValue;
 
+  if (holdingValue === 0) {
+    holdingValue = assets?.sums?.totalSum;
+    onlyExpense = true;
+  }
+
   if (assets.stats) {
     for (let asset of assets.stats) {
-      const percent = (asset.holdingValue / holdingValue) * 100;
+      let percent = (asset.holdingValue / holdingValue) * 100;
+      percent = onlyExpense ? percent * -1 : percent;
       if (!isNaN(percent)) {
         percentages.push(parseFloat(percent.toFixed(2)));
       }
       names.push(asset.name);
     }
+
     assetsBalance = {
       datasets: [
         {
@@ -183,7 +191,8 @@ function AccountBalance({ assets, category, loading, ...rest }) {
                     <TrendingFlat fontSize="large" />
                   </AvatarEqual>
                 )}
-                {(assets?.sums?.holdingValue > 0 || rest.totalBalance > 0) && (
+                {(assets?.sums?.holdingValue >= 0 ||
+                  rest.totalBalance >= 0) && (
                   <Box>
                     <Typography variant="h4">
                       {formatAmountAndCurrency(difference, 'USD')}
@@ -268,7 +277,7 @@ function AccountBalance({ assets, category, loading, ...rest }) {
                               <Typography align="right" variant="h4" noWrap>
                                 {percentages[i]}%
                               </Typography>
-                              {category !== '' && (
+                              {category !== '' && !onlyExpense && (
                                 <Typography
                                   align="right"
                                   variant="subtitle2"

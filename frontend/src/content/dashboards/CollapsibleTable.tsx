@@ -144,15 +144,15 @@ function Row(props: { row: any; category: string }) {
         {category !== 'p2p' && (
           <TableCell align="right">
             <Typography variant="body1" color="text.primary" noWrap>
-              {formatAmountAndCurrency(row.currentPrice, 'USD')}
+              {formatAmountAndCurrency(row.currentPrice, row.currency)}
             </Typography>
           </TableCell>
         )}
         <TableCell align="right">
           <Typography variant="body1" color="text.primary" noWrap>
             {category !== 'p2p'
-              ? formatAmountAndCurrency(row.averageNetCost, 'USD')
-              : formatAmountAndCurrency(row.totalInvested, 'EUR')}
+              ? formatAmountAndCurrency(row.averageNetCost, row.currency)
+              : formatAmountAndCurrency(row.totalInvested, row.currency)}
           </Typography>
         </TableCell>
         <TableCell align="right">
@@ -163,8 +163,11 @@ function Row(props: { row: any; category: string }) {
             noWrap
           >
             {category !== 'p2p'
-              ? formatAmountAndCurrency(row.holdingValue, 'USD')
-              : formatAmountAndCurrency(row.totalSumInOriginalCurrency, 'EUR')}
+              ? formatAmountAndCurrency(row.holdingValue, row.currency)
+              : formatAmountAndCurrency(
+                  row.totalSumInOriginalCurrency,
+                  row.currency
+                )}
           </Typography>
           {category !== 'p2p' && (
             <Typography variant="body2" noWrap gutterBottom>
@@ -179,9 +182,13 @@ function Row(props: { row: any; category: string }) {
             color="text.primary"
             noWrap
           >
-            {formatAmountAndCurrency(row.difference, 'USD')}
+            {formatAmountAndCurrency(row.difference, row.currency)}
           </Typography>
-
+          {row.currency !== 'USD' && (
+            <Typography variant="subtitle1">
+              ({formatAmountAndCurrency(row.differenceInUSD, 'USD')})
+            </Typography>
+          )}
           <Typography variant="body2" noWrap gutterBottom>
             {row.differenceInPercents >= 0 ? (
               <Text color="success">
@@ -262,7 +269,7 @@ function Row(props: { row: any; category: string }) {
                               {formatAmountAndCurrency(
                                 historyRow.price_usd /
                                   Math.abs(historyRow.quantity),
-                                'USD'
+                                row.currency
                               )}
                             </Typography>
                           ) : (
@@ -282,12 +289,10 @@ function Row(props: { row: any; category: string }) {
                         </TableCell>
                       )}
                       <TableCell align="right">
-                        {category !== 'p2p'
-                          ? formatAmountAndCurrency(historyRow.price_usd, 'USD')
-                          : formatAmountAndCurrency(
-                              historyRow.price,
-                              historyRow.currency
-                            )}
+                        {formatAmountAndCurrency(
+                          historyRow.price,
+                          historyRow.currency
+                        )}
                       </TableCell>
                       <TableCell align="right">
                         <Tooltip title="Edit Transaction" arrow>

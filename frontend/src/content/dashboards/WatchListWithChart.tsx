@@ -84,7 +84,7 @@ function WatchListWithChart(props) {
           </Grid>
         )}
 
-        {tabs === 'watch_list_rows' && historyStatus !== 'succeeded' && (
+        {tabs === 'watch_list_rows' && history && historyStatus !== 'succeeded' && (
           <BalanceSkeleton />
         )}
 
