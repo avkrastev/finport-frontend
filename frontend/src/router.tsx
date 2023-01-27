@@ -96,6 +96,19 @@ const routes = (isLoggedIn: any) => [
         ]
       },
       {
+        path: 'reset-password',
+        children: [
+          {
+            path: '/',
+            element: <Login />
+          },
+          {
+            path: '/:token',
+            element: <StatusComingSoon />
+          },
+        ]
+      },
+      {
         path: 'overview',
         element: isLoggedIn ? <SidebarLayout /> : <Login />,
         children: [

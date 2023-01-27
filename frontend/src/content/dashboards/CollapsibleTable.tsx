@@ -31,82 +31,27 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from 'src/app/store';
 import TransactionModal from 'src/components/TransactionModal';
 
-function Row(props: { row: any; category: string }) {
-  const dispatch: AppDispatch = useDispatch();
-  const historyData = useSelector(selectFilteredTransactions);
-  const lastSelectedTransaction = useSelector(getSelectedTransaction);
-  const { row, category } = props;
+function Row(props: {
+  row: any;
+  category: string;
+  identifier: string;
+  openedRows: any;
+  handleShowHistory: any;
+  openEditModal: any;
+  openDeleteModal: any;
+}) {
+  const {
+    row,
+    category,
+    identifier,
+    openedRows,
+    handleShowHistory,
+    openEditModal,
+    openDeleteModal
+  } = props;
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
-  const [openTransactionModal, setOpenTransactionModal] = React.useState(false);
-  const [selectedTransaction, setSelectedTransaction] = React.useState({});
-  const [openConfirmModal, setOpenConfirmModal] = React.useState(false);
-  const [clickedTransactionId, setClickedTransactionId] = React.useState(null);
 
-  const handleCloseConfirmModal = () => setOpenConfirmModal(false);
-
-  React.useEffect(() => {
-    async function fetchHistory() {
-      await showHistory();
-    }
-
-    if (lastSelectedTransaction && lastSelectedTransaction.name === row.name) {
-      setOpen(true);
-      fetchHistory();
-    }
-  }, [lastSelectedTransaction, row.name]);
-
-  const handleShowHistory = async (row) => {
-    setOpen(!open);
-    if (!open) {
-      await showHistory();
-    }
-  };
-
-  const showHistory = async () => {
-    let params;
-    switch (category) {
-      case 'crypto':
-        params = new URLSearchParams({
-          category,
-          asset_id: row.assetId
-        });
-        break;
-      case 'stocks':
-      case 'etf':
-        params = new URLSearchParams({
-          category,
-          symbol: row.symbol
-        });
-        break;
-      case 'commodities':
-      case 'misc':
-      case 'p2p':
-        params = new URLSearchParams({
-          category,
-          name: row.name
-        });
-        break;
-      default:
-        params = '';
-    }
-
-    dispatch(fetchFilteredTransactions(params.toString()));
-  };
-
-  const handleCloseTransactionModal = () => {
-    setOpenTransactionModal(false);
-  };
-
-  const openEditModal = (row) => {
-    setSelectedTransaction({ ...row });
-    setOpenTransactionModal(true);
-  };
-
-  const openDeleteModal = (id) => {
-    setClickedTransactionId(id);
-    setOpenConfirmModal(true);
-  };
+  const open = Object.keys(openedRows).includes(row[identifier]);
 
   return (
     <React.Fragment>
@@ -234,7 +179,7 @@ function Row(props: { row: any; category: string }) {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {historyData.map((historyRow) => (
+                  {openedRows[row[identifier]]?.map((historyRow) => (
                     <TableRow key={historyRow.id}>
                       <TableCell component="th" scope="row">
                         {format(new Date(historyRow.date), 'dd MMM yyyy HH:ss')}
@@ -334,28 +279,112 @@ function Row(props: { row: any; category: string }) {
           </Collapse>
         </TableCell>
       </TableRow>
-      <TransactionModal
-        transaction={selectedTransaction}
-        open={openTransactionModal}
-        close={handleCloseTransactionModal}
-        tabs={true}
-      />
-      <ConfirmDialog
-        open={openConfirmModal}
-        close={handleCloseConfirmModal}
-        title="Are you sure you want to delete this transaction?"
-        transactionId={clickedTransactionId}
-        category={category}
-        refetchTransactions={true}
-      />
     </React.Fragment>
   );
 }
 
 export default function CollapsibleTable({ assets, category, loading }) {
+  const dispatch: AppDispatch = useDispatch();
+  const historyData = useSelector(selectFilteredTransactions);
+  const [openedRows, setOpenedRows] = React.useState({});
+  const [assetId, setAssetId] = React.useState(null);
+  const [identifier, setIdentifier] = React.useState(null);
+  const lastSelectedTransaction = useSelector(getSelectedTransaction);
+  const [openTransactionModal, setOpenTransactionModal] = React.useState(false);
+  const [selectedTransaction, setSelectedTransaction] = React.useState({});
+  const [openConfirmModal, setOpenConfirmModal] = React.useState(false);
+  const [clickedTransactionId, setClickedTransactionId] = React.useState(null);
+  const [selectedRow, setSelectedRow] = React.useState(null);
+
+  const handleCloseConfirmModal = () => setOpenConfirmModal(false);
+
+  React.useEffect(() => {
+    async function fetchHistory() {
+      await showHistory(selectedRow);
+    }
+
+    if (
+      lastSelectedTransaction &&
+      lastSelectedTransaction.name === selectedRow?.name
+    ) {
+      fetchHistory();
+    }
+  }, [lastSelectedTransaction, selectedRow?.name]); // eslint-disable-line
+
+  const handleShowHistory = async (row) => {
+    if (Object.keys(openedRows).includes(row[identifier])) {
+      const openedRowsCopy = { ...openedRows };
+      delete openedRowsCopy[row[identifier]];
+      setOpenedRows(openedRowsCopy);
+    } else {
+      setSelectedRow(row);
+      await showHistory(row);
+    }
+  };
+
+  const handleCloseTransactionModal = () => {
+    setOpenTransactionModal(false);
+  };
+
+  const openEditModal = (row) => {
+    setSelectedTransaction({ ...row });
+    setOpenTransactionModal(true);
+  };
+
+  const openDeleteModal = (id) => {
+    setClickedTransactionId(id);
+    setOpenConfirmModal(true);
+  };
+
+  React.useEffect(() => {
+    if (assetId) {
+      setOpenedRows({
+        ...openedRows,
+        [assetId]: historyData
+      });
+    }
+  }, [historyData]); // eslint-disable-line
+
   if (loading !== 'succeeded') {
     return <CollapsibleTableSkeleton />;
   }
+
+  const showHistory = async (row) => {
+    let params;
+    switch (category) {
+      case 'crypto':
+        params = new URLSearchParams({
+          category,
+          asset_id: row.assetId
+        });
+        setAssetId(row.assetId);
+        setIdentifier('assetId');
+        break;
+      case 'stocks':
+      case 'etf':
+        params = new URLSearchParams({
+          category,
+          symbol: row.symbol
+        });
+        setAssetId(row.symbol);
+        setIdentifier('symbol');
+        break;
+      case 'commodities':
+      case 'misc':
+      case 'p2p':
+        params = new URLSearchParams({
+          category,
+          name: row.name
+        });
+        setAssetId(row.name);
+        setIdentifier('name');
+        break;
+      default:
+        params = '';
+    }
+
+    dispatch(fetchFilteredTransactions(params.toString()));
+  };
 
   return (
     <TableContainer component={Paper}>
@@ -376,10 +405,33 @@ export default function CollapsibleTable({ assets, category, loading }) {
         </TableHead>
         <TableBody>
           {assets.map((row) => (
-            <Row key={row.name} row={row} category={category} />
+            <Row
+              key={row.name}
+              row={row}
+              openedRows={openedRows}
+              category={category}
+              identifier={identifier}
+              handleShowHistory={handleShowHistory}
+              openEditModal={openEditModal}
+              openDeleteModal={openDeleteModal}
+            />
           ))}
         </TableBody>
       </Table>
+      <TransactionModal
+        transaction={selectedTransaction}
+        open={openTransactionModal}
+        close={handleCloseTransactionModal}
+        tabs={true}
+      />
+      <ConfirmDialog
+        open={openConfirmModal}
+        close={handleCloseConfirmModal}
+        title="Are you sure you want to delete this transaction?"
+        transactionId={clickedTransactionId}
+        category={category}
+        refetchTransactions={true}
+      />
     </TableContainer>
   );
 }
