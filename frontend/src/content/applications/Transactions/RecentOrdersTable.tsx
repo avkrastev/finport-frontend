@@ -79,7 +79,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
   });
 
   const categoryOptions = [
-    { name: 'All', alias: 'all' },
+    { value: 'All', key: 'all' },
     ...authUserData.categories.filter((category: any) => category.show === true)
   ];
 
@@ -158,10 +158,10 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
                 >
                   {categoryOptions.map((categoryOption) => (
                     <MenuItem
-                      key={categoryOption.alias}
-                      value={categoryOption.alias}
+                      key={categoryOption.key}
+                      value={categoryOption.key}
                     >
-                      {categoryOption.name}
+                      {categoryOption.value}
                     </MenuItem>
                   ))}
                 </Select>
@@ -247,15 +247,18 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
                       gutterBottom
                     >
                       {
-                        transactionTypes.find(
-                          (type) => type.value === asset.type
-                        )?.label
+                        transactionTypes.find((type) => type.key === asset.type)
+                          ?.label
                       }
                     </Typography>
                   </TableCell>
                   <TableCell>
                     <Typography variant="body1" color="text.secondary" noWrap>
-                      {authUserData.categories.find(category => category.alias === asset.category)?.name}
+                      {
+                        authUserData.categories.find(
+                          (category) => category.key === asset.category
+                        )?.value
+                      }
                     </Typography>
                   </TableCell>
                   <TableCell align="right">

@@ -12,8 +12,11 @@ import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import Icon from 'react-crypto-icons';
-import { formatAmountAndCurrency, roundNumber } from 'src/utils/functions';
+import {
+  formatAmountAndCurrency,
+  getCryptoIcon,
+  roundNumber
+} from 'src/utils/functions';
 import Text from 'src/components/Text';
 import { format } from 'date-fns';
 import { transactionTypes } from 'src/constants/common';
@@ -63,13 +66,17 @@ function Row(props: {
           <div
             style={{
               display: 'flex',
-              alignItems: 'center',
+              alignItems: 'flex-start',
               flexWrap: 'wrap'
             }}
           >
             {category === 'crypto' && (
               <Box sx={{ mr: 1, lineHeight: 'normal' }}>
-                <Icon name={row.symbol.toLowerCase()} size={20} />
+                <img
+                  src={getCryptoIcon(row.symbol.toLowerCase())}
+                  width="25"
+                  height="25"
+                />
               </Box>
             )}
             <Typography
@@ -197,7 +204,7 @@ function Row(props: {
                         >
                           {
                             transactionTypes.find(
-                              (type) => type.value === historyRow.type
+                              (type) => type.key === historyRow.type
                             )?.label
                           }
                         </Typography>
@@ -322,7 +329,10 @@ export default function CollapsibleTable({ assets, category, loading }) {
     }
   };
 
-  const handleCloseTransactionModal = () => {
+  const handleCloseTransactionModal = (event, reason) => {
+    if (reason === 'backdropClick') {
+      return;
+    }
     setOpenTransactionModal(false);
   };
 

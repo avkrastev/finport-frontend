@@ -112,7 +112,6 @@ function Wallets({ assets, status }) {
                   <Icon sx={{ width: '100%', height: 50, textAlign: 'left' }}>
                     <img
                       style={{ width: '100%', height: 50 }}
-                      alt="BTC"
                       src={p2pPlatform.logo}
                     />
                   </Icon>

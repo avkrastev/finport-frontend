@@ -24,7 +24,7 @@ import CloseTwoToneIcon from '@mui/icons-material/CloseTwoTone';
 import Label from 'src/components/Label';
 import { AuthContext } from '../../../../utils/context/authContext';
 import { updateUser } from '../../../../utils/api/userApiFunction';
-import { currencies } from 'src/constants/common';
+import { currencies, languages } from 'src/constants/common';
 
 function EditProfileTab() {
   const { authUserData, setUserData } = useContext(AuthContext);
@@ -34,7 +34,7 @@ function EditProfileTab() {
 
   const handleCategoryChange = (event: ChangeEvent<HTMLInputElement>) => {
     const category = dashboard.find(
-      (dashboard) => dashboard.alias === event.target.name
+      (dashboard) => dashboard.key === event.target.name
     );
     category.show = event.target.checked;
 
@@ -61,7 +61,7 @@ function EditProfileTab() {
   const handleUserSettingsChange = (event: any) => {
     if (event.target.name === 'categories') {
       const category = dashboard.find(
-        (dashboard) => dashboard.alias === event.target.name
+        (dashboard) => dashboard.key === event.target.name
       );
       category.show = event.target.checked;
     }
@@ -104,81 +104,103 @@ function EditProfileTab() {
           <CardContent sx={{ p: 4 }}>
             <Typography variant="subtitle2">
               <Grid container sx={{ p: 2 }}>
-                <Grid item xs={12} sm={12} md={2}>
-                  <Box style={{ lineHeight: '2.3rem' }}>Name:</Box>
-                </Grid>
-                <Grid item xs={12} sm={12} md={10}>
-                  <TextField
-                    fullWidth
-                    sx={{ mb: 2 }}
-                    id="outlined-basic"
-                    variant="outlined"
-                    size="small"
-                    defaultValue={authUserData.name}
-                    name="name"
-                    onBlur={(event) => handleUserSettingsChange(event)}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={12} md={2}>
-                  <Box style={{ lineHeight: '2.3rem' }}>E-mail:</Box>
-                </Grid>
-                <Grid item xs={12} sm={12} md={10}>
-                  <Typography
-                    style={{ lineHeight: '2.3rem' }}
-                    sx={{ mb: 2 }}
-                    variant="h5"
-                  >
-                    <span style={{ display: 'inline-block' }}>
-                      {authUserData.email}
-                    </span>
-                    <span
-                      style={{
-                        display: 'inline-block',
-                        marginLeft: '1rem',
-                        lineHeight: '2.3rem',
-                        verticalAlign: 'middle'
-                      }}
-                    >
-                      <Label
-                        color={
-                          authUserData.email_verified ? 'success' : 'error'
-                        }
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={12} md={2}>
+                    <Box style={{ lineHeight: '2.3rem' }}>Name:</Box>
+                  </Grid>
+                  <Grid item xs={12} sm={12} md={4}>
+                    <TextField
+                      fullWidth
+                      sx={{ mb: 2 }}
+                      id="outlined-basic"
+                      variant="outlined"
+                      size="small"
+                      defaultValue={authUserData.name}
+                      name="name"
+                      onBlur={(event) => handleUserSettingsChange(event)}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={12} md={2}>
+                    <Box style={{ lineHeight: '2.3rem' }}>E-mail:</Box>
+                  </Grid>
+                  <Grid item xs={12} sm={12} md={4}>
+                    <Typography style={{ lineHeight: '2.3rem' }} variant="h5">
+                      <span style={{ display: 'inline-block' }}>
+                        {authUserData.email}
+                      </span>
+                      <span
+                        style={{
+                          display: 'inline-block',
+                          marginLeft: '1rem',
+                          lineHeight: '2.3rem',
+                          verticalAlign: 'middle'
+                        }}
                       >
-                        {authUserData.email_verified ? (
-                          <DoneTwoToneIcon fontSize="small" />
-                        ) : (
-                          <CloseTwoToneIcon fontSize="small" />
-                        )}
-                        <b>
-                          {authUserData.email_verified
-                            ? 'Verified'
-                            : 'Not verified'}
-                        </b>
-                      </Label>
-                    </span>
-                  </Typography>
+                        <Label
+                          color={
+                            authUserData.email_verified ? 'success' : 'error'
+                          }
+                        >
+                          {authUserData.email_verified ? (
+                            <DoneTwoToneIcon fontSize="small" />
+                          ) : (
+                            <CloseTwoToneIcon fontSize="small" />
+                          )}
+                          <b>
+                            {authUserData.email_verified
+                              ? 'Verified'
+                              : 'Not verified'}
+                          </b>
+                        </Label>
+                      </span>
+                    </Typography>
+                  </Grid>
                 </Grid>
-                <Grid item xs={12} sm={12} md={2}>
-                  <Box style={{ lineHeight: '2.3rem' }}>
-                    Preferred currency:
-                  </Box>
-                </Grid>
-                <Grid item xs={12} sm={12} md={10}>
-                  <TextField
-                    name="currency"
-                    fullWidth
-                    size="small"
-                    id="outlined-select-currency"
-                    select
-                    value={authUserData.currency}
-                    onChange={(event) => handleUserSettingsChange(event)}
-                  >
-                    {currencies.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
-                        {option.value} - {option.label}
-                      </MenuItem>
-                    ))}
-                  </TextField>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={12} md={2}>
+                    <Box style={{ lineHeight: '2.3rem' }}>
+                      Preferred language:
+                    </Box>
+                  </Grid>
+                  <Grid item xs={12} sm={12} md={4}>
+                    <TextField
+                      name="currency"
+                      fullWidth
+                      size="small"
+                      id="outlined-select-currency"
+                      select
+                      value={authUserData.currency}
+                      onChange={(event) => handleUserSettingsChange(event)}
+                    >
+                      {languages.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.value}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={12} sm={12} md={2}>
+                    <Box style={{ lineHeight: '2.3rem' }}>
+                      Preferred currency:
+                    </Box>
+                  </Grid>
+                  <Grid item xs={12} sm={12} md={4}>
+                    <TextField
+                      name="currency"
+                      fullWidth
+                      size="small"
+                      id="outlined-select-currency"
+                      select
+                      value={authUserData.currency}
+                      onChange={(event) => handleUserSettingsChange(event)}
+                    >
+                      {currencies.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.key} - {option.value}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
                 </Grid>
               </Grid>
             </Typography>
@@ -275,13 +297,13 @@ function EditProfileTab() {
                             variant: 'h5',
                             gutterBottom: true
                           }}
-                          primary={category.name}
+                          primary={category.value}
                         />
                         <Switch
                           color="primary"
                           checked={category.show}
                           onChange={handleCategoryChange}
-                          name={category.alias}
+                          name={category.key}
                         />
                       </ListItem>
                       {i < dashboard.length - 1 && <Divider component="li" />}

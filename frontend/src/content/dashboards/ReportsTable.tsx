@@ -92,7 +92,7 @@ function Row(props) {
                         >
                           {
                             transactionTypes.find(
-                              (type) => type.value === row.type
+                              (type) => type.key === row.type
                             )?.label
                           }
                         </Typography>

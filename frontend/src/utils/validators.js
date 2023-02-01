@@ -5,6 +5,8 @@ const VALIDATOR_TYPE_MIN = 'MIN';
 const VALIDATOR_TYPE_MAX = 'MAX';
 const VALIDATOR_TYPE_EMAIL = 'EMAIL';
 const VALIDATOR_TYPE_FILE = 'FILE';
+const VALIDATOR_TYPE_REGEX = 'REGEX';
+const VALIDATOR_TYPE_CUSTOM = 'CUSTOM';
 
 export const VALIDATOR_REQUIRE = () => ({ type: VALIDATOR_TYPE_REQUIRE });
 export const VALIDATOR_FILE = () => ({ type: VALIDATOR_TYPE_FILE });
@@ -30,22 +32,30 @@ export const validate = (value, validators) => {
     let isValid = true;
     for (const validator of validators) {
         if (validator.type === VALIDATOR_TYPE_REQUIRE) {
-            isValid = isValid && value.trim().length > 0;
+            isValid = isValid && value.toString().trim().length > 0;
         }
         if (validator.type === VALIDATOR_TYPE_MINLENGTH) {
-            isValid = isValid && value.trim().length >= validator.val;
+            isValid = isValid && value.toString().trim().length >= validator.val;
         }
         if (validator.type === VALIDATOR_TYPE_MAXLENGTH) {
-            isValid = isValid && value.trim().length <= validator.val;
+            isValid = isValid && value.toString().trim().length <= validator.val;
         }
         if (validator.type === VALIDATOR_TYPE_MIN) {
-            isValid = isValid && +value >= validator.val;
+            isValid = isValid && parseFloat(value) >= parseFloat(validator.val);
         }
         if (validator.type === VALIDATOR_TYPE_MAX) {
-            isValid = isValid && +value <= validator.val;
+            isValid = isValid && parseFloat(value) <= parseFloat(validator.val);
         }
         if (validator.type === VALIDATOR_TYPE_EMAIL) {
             isValid = isValid && /^\S+@\S+\.\S+$/.test(value);
+
+        }
+        if (validator.type === VALIDATOR_TYPE_REGEX) {
+            const re = new RegExp(validator.val, 'g');
+            isValid = isValid && re.exec(value);
+        }
+        if (validator.type === VALIDATOR_TYPE_CUSTOM) {
+            isValid = isValid && validator.isValid;
         }
     }
 

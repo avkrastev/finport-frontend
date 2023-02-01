@@ -92,7 +92,10 @@ function RecentOrders() {
 
   const handleCloseConfirmModal = () => setOpenConfirmModal(false);
 
-  const handleCloseTransactionModal = () => {
+  const handleCloseTransactionModal = (event, reason) => {
+    if (reason === 'backdropClick') {
+      return;
+    }
     setOpenTransactionModal(false);
   };
 

@@ -1,41 +1,52 @@
+export const languages = [
+  {
+    value: 'Български',
+    label: 'bg'
+  },
+  {
+    value: 'English',
+    label: 'en'
+  }
+];
+
 export const currencies = [
   {
-    value: 'USD',
-    label: '$',
+    key: 'USD',
+    value: '$',
     left: true
   },
   {
-    value: 'EUR',
-    label: '€',
+    key: 'EUR',
+    value: '€',
     left: true
   },
   {
-    value: 'BGN',
-    label: 'лв.',
+    key: 'BGN',
+    value: 'лв.',
     left: false
   }
 ];
 
 export const transactionTypes = [
   {
-    value: 0,
+    key: 0,
     parent: 0,
-    label: 'Buy'
+    value: 'Buy'
   },
   {
-    value: 1,
+    key: 1,
     parent: 1,
-    label: 'Sell'
+    value: 'Sell'
   },
   {
-    value: 2,
+    key: 2,
     parent: 2,
-    label: 'Transfer in'
+    value: 'Transfer in'
   },
   {
-    value: 3,
+    key: 3,
     parent: 2,
-    label: 'Transfer out'
+    value: 'Transfer out'
   }
 ];
 
@@ -62,15 +73,7 @@ export const dayNames = [
   'Sunday'
 ];
 
-export const shortDayNames = [
-  'Mon',
-  'Tue',
-  'Wed',
-  'Thu',
-  'Fri',
-  'Sat',
-  'Sun'
-];
+export const shortDayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 export const monthNames = [
   'January',

@@ -1,22 +1,17 @@
-import { useState, useRef, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useDispatch } from 'react-redux';
 import {
   Button,
-  TextField,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Autocomplete,
   Box,
   Tab,
   Tabs,
-  MenuItem,
   Typography
 } from '@mui/material';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import {
   autocompleteStocks,
   autocompleteStocks2
@@ -25,14 +20,13 @@ import { autocompleteCrypto } from '../../utils/api/cryptoApiFunction';
 import {
   p2pPlatforms,
   transactionTypes,
-  currencies,
-  commodities
+  commodities,
+  currencies
 } from '../../constants/common';
 import {
   addNewTransaction,
   updateTransaction
 } from '../../content/applications/Transactions/transactionSlice';
-import { MobileDateTimePicker } from '@mui/x-date-pickers';
 import { AuthContext } from 'src/utils/context/authContext';
 import { changeCryptoStatus } from 'src/content/dashboards/Crypto/cryptoSlice';
 import { changeStocksStatus } from 'src/content/dashboards/Stocks/stocksSlice';
@@ -40,68 +34,128 @@ import { changeETFStatus } from 'src/content/dashboards/Etf/ETFsSlice';
 import { changeMiscStatus } from 'src/content/dashboards/Misc/miscSlice';
 import { changeCommoditiesStatus } from 'src/content/dashboards/Commodities/commoditiesSlice';
 import { changeP2PStatus } from 'src/content/dashboards/P2P/p2pSlice';
+import { useForm } from 'src/utils/hooks/form-hook';
+import { transactionStateDescriptor } from './transactionStateDescriptor';
+import Input from '../../components/FormElements/Input';
+import { VALIDATOR_REQUIRE } from 'src/utils/validators';
+import Selector from '../FormElements/Selector';
+import { format } from 'date-fns';
 
 function TransactionModal(props) {
-  const autoC = useRef(null);
   const dispatch = useDispatch();
 
   const [tab, setTab] = useState(0);
-  const [transferDropdown, setTransferDropdown] = useState(2);
   const [assetsDropdown, setAssetsDropdown] = useState([]);
   const [isEditForm, setIsEditForm] = useState(false);
 
   const { authUserData } = useContext(AuthContext);
 
-  const [transactionForm, setTransactionForm] = useState({
-    id: '',
-    category: '',
-    name: '',
-    asset_id: '',
-    symbol: '',
-    currency: 'USD',
-    price: '',
-    quantity: 0,
-    date: new Date(),
-    type: 0
-  });
+  const [formState, inputHandler, setFormData] = useForm(
+    transactionStateDescriptor()
+  );
+
+  useEffect(() => {
+    if (!isEditForm) {
+      setAssetsDropdown([]);
+
+      if (formState.inputs.category.value === 'p2p') {
+        const p2pPlatformsOptions = p2pPlatforms.map((platform) => {
+          let newItems = {};
+          newItems.key = platform.name;
+          newItems.value = platform.name;
+          return newItems;
+        });
+        setAssetsDropdown(p2pPlatformsOptions);
+      }
+
+      if (formState.inputs.category.value === 'commodities') {
+        const commoditiesOptions = commodities.map((commodity) => {
+          let newItems = {};
+          newItems.key = commodity.name;
+          newItems.value = commodity.name;
+          return newItems;
+        });
+        setAssetsDropdown(commoditiesOptions);
+      }
+      setFormData({
+        ...formState.inputs,
+        name: { value: '', isValid: false },
+        asset_id: { value: '', isValid: true },
+        symbol: { value: '', isValid: true }
+      });
+    }
+  }, [formState.inputs.category.value]); // eslint-disable-line
 
   useEffect(() => {
     if (props.transaction) {
-      setType(0);
-      if (props.transaction.type) setType(props.transaction.type);
-      setTransactionForm(props.transaction);
+      setFormData(
+        {
+          ...formState.inputs,
+          id: {
+            value: props.transaction.id,
+            isValid: true,
+            isTouched: false
+          },
+          name: {
+            value: props.transaction.name,
+            isValid: true,
+            isTouched: false
+          },
+          asset_id: {
+            value: props.transaction.asset_id,
+            isValid: true,
+            isTouched: false
+          },
+          symbol: {
+            value: props.transaction.symbol,
+            isValid: true,
+            isTouched: false
+          },
+          category: {
+            value: props.transaction.category,
+            isValid: true,
+            isTouched: false
+          },
+          price: {
+            value: props.transaction.price,
+            isValid: true,
+            isTouched: false
+          },
+          quantity: {
+            value: props.transaction.quantity,
+            isValid: true,
+            isTouched: false
+          },
+          currency: {
+            value: props.transaction.currency,
+            isValid: true,
+            isTouched: false
+          },
+          date: {
+            value: props.transaction.date,
+            isValid: true,
+            isTouched: false
+          },
+          type: {
+            value: props.transaction.type,
+            isValid: true,
+            isTouched: false
+          }
+        },
+        true
+      );
+      setTab(props.transaction.type);
       setIsEditForm(true);
     }
-  }, [props.transaction]);
-
-  const handleCategoryChange = (event, value) => {
-    setTransactionForm({
-      ...transactionForm,
-      category: value.alias,
-      name: '',
-      symbol: ''
-    });
-    setAssetsDropdown([]);
-
-    if (value.alias === 'p2p') setAssetsDropdown(p2pPlatforms);
-
-    if (value.alias === 'commodities') setAssetsDropdown(commodities);
-
-    const ele = autoC.current?.getElementsByClassName(
-      'MuiAutocomplete-clearIndicator'
-    )[0];
-    if (ele) {
-      ele.click();
-    }
-  };
+  }, [props.transaction]); // eslint-disable-line
 
   const handleAssetChange = (event, value) => {
     if (value) {
-      setTransactionForm({
-        ...transactionForm,
-        name: value.name,
-        asset_id: value.id,
-        symbol: value.symbol
+      setFormData({
+        ...formState.inputs,
+        name: { value: value.value, isValid: true },
+        asset_id: { value: value.id || '', isValid: true },
+        symbol: { value: value.key, isValid: true }
       });
     }
   };
@@ -109,12 +163,20 @@ function TransactionModal(props) {
   const handleAssetsDropdownChange = async (event) => {
     const currentVal = event.target.value;
     let assets = [];
-    if (transactionForm.category) {
-      switch (transactionForm.category) {
+
+    if (formState.inputs.category.value) {
+      switch (formState.inputs.category.value) {
         case 'crypto':
           if (currentVal.length > 2) {
             const responseData = await autocompleteCrypto(currentVal);
-            assets = responseData.data.coins;
+
+            assets = responseData.data.coins.map((item) => {
+              let newItems = {};
+              newItems.key = item.symbol;
+              newItems.value = item.name;
+              newItems.id = item.id;
+              return newItems;
+            });
           }
           break;
         case 'stocks':
@@ -124,10 +186,12 @@ function TransactionModal(props) {
               currentVal,
               authUserData.stocks_api_key
             );
+
             assets = responseData.data.ResultSet.Result.map((item) => {
               let newItems = {};
-              newItems.symbol = item.symbol;
-              newItems.name = item.name;
+              newItems.key = item.symbol;
+              newItems.value = item.name;
+              newItems.id = item.symbol;
               return newItems;
             });
           }
@@ -137,47 +201,18 @@ function TransactionModal(props) {
       }
 
       setAssetsDropdown(assets);
-
-      setTransactionForm({
-        ...transactionForm,
-        name: '',
-        symbol: ''
-      });
     }
-  };
-
-  const handleTransferDropdownChange = (value) => {
-    setTransferDropdown(value);
-    setTransactionForm({
-      ...transactionForm,
-      type: value
-    });
   };
 
   const setType = (value) => {
-    const transactionType = transactionTypes.find(
-      (type) => type.value === value
-    );
+    const transactionType = transactionTypes.find((type) => type.key === value);
     let type = value;
-    let price = transactionForm.price;
-    if (transactionType.parent === 2) {
-      type = transferDropdown;
-      price = 0;
-      setTransferDropdown(value);
-    }
-    setTransactionForm({
-      ...transactionForm,
-      type,
-      price
+
+    setFormData({
+      ...formState.inputs,
+      type: { value: type, isValid: true }
     });
     setTab(transactionType.parent);
-  };
-
-  const handleDateChange = async (event) => {
-    return setTransactionForm({
-      ...transactionForm,
-      date: event
-    });
   };
 
   function a11yProps(index) {
@@ -189,13 +224,18 @@ function TransactionModal(props) {
 
   const submitTransactionForm = async () => {
     try {
-      if (isEditForm) {
-        dispatch(updateTransaction(transactionForm));
-      } else {
-        dispatch(addNewTransaction(transactionForm));
+      let transactionPayload = {};
+      for (const [key, description] of Object.entries(formState.inputs)) {
+        transactionPayload[key] = description.value;
       }
 
-      switch (transactionForm.category) {
+      if (isEditForm) {
+        dispatch(updateTransaction(transactionPayload));
+      } else {
+        dispatch(addNewTransaction(transactionPayload));
+      }
+
+      switch (formState.inputs.category) {
         case 'crypto':
           dispatch(changeCryptoStatus('idle'));
           break;
@@ -219,27 +259,23 @@ function TransactionModal(props) {
       }
 
       props.close();
-      setTransactionForm({
-        id: '',
-        category: '',
-        name: '',
-        asset_id: '',
-        symbol: '',
-        currency: 'USD',
-        price: '',
-        quantity: 0,
-        date: new Date(),
-        type: 0
-      });
+      setFormData(transactionStateDescriptor());
       setTab(0);
     } catch (err) {
+      console.log(err);
       // TODO catch error
     }
   };
 
+  const handleCloseDialog = () => {
+    setFormData(transactionStateDescriptor());
+    setTab(0);
+    props.close();
+  };
+
   return (
     <>
-      <Dialog open={props.open} onClose={props.close} fullWidth>
+      <Dialog open={props.open} fullWidth>
         <DialogTitle>{props.title}</DialogTitle>
         <DialogContent>
           <DialogContentText>{props.contentText}</DialogContentText>
@@ -254,40 +290,24 @@ function TransactionModal(props) {
               >
                 <Tab label="Buy" {...a11yProps(0)} />
                 <Tab label="Sell" {...a11yProps(1)} />
-                {transactionForm.category !== 'p2p' && (
+                {formState.inputs.category !== 'p2p' && (
                   <Tab label="Transfer" {...a11yProps(2)} />
                 )}
               </Tabs>
             )}
             {!isEditForm && (
-              <Autocomplete
-                disableClearable
-                id="category"
-                sx={{ mt: 2, mb: 1 }}
-                options={props.categories ?? []}
-                onChange={handleCategoryChange}
+              <Selector
+                required
                 autoHighlight
-                getOptionLabel={(option) => option.name}
-                renderOption={(props, option) => {
-                  if (option.show) {
-                    return (
-                      <Box component="li" {...props}>
-                        {option.name}
-                      </Box>
-                    );
-                  }
-                }}
-                renderInput={(params) => {
-                  return (
-                    <TextField
-                      {...params}
-                      label="Choose a category"
-                      inputProps={{
-                        ...params.inputProps
-                      }}
-                    />
-                  );
-                }}
+                fullWidth
+                id="category"
+                options={
+                  props?.categories?.filter((category) => category.show) || []
+                }
+                label="Category"
+                sx={{ mt: 2, mb: 1 }}
+                onInput={inputHandler}
+                {...formState.inputs.category}
               />
             )}
 
@@ -298,158 +318,122 @@ function TransactionModal(props) {
                 align="center"
                 sx={{ m: 2 }}
               >
-                {transactionForm.name}{' '}
-                {transactionForm.symbol
-                  ? '(' + transactionForm.symbol + ')'
+                {formState.inputs.name.value}{' '}
+                {formState.inputs.symbol.value
+                  ? '(' + formState.inputs.symbol.value + ')'
                   : ''}
               </Typography>
-            ) : transactionForm.category === 'misc' ||
-              (transactionForm.category === 'stocks' &&
+            ) : formState.inputs.category === 'misc' ||
+              (formState.inputs.category === 'stocks' &&
                 !authUserData.stocks_api_key) ||
-              (transactionForm.category === 'etf' &&
+              (formState.inputs.category === 'etf' &&
                 !authUserData.stocks_api_key) ? (
-              <TextField
-                sx={{ mt: 1, mb: 2 }}
+              <Input
+                fullWidth
+                required
                 margin="dense"
-                id="asset"
+                sx={{ mt: 1, mb: 2 }}
+                id="name"
                 label="Asset"
                 type="text"
-                onChange={(event) => {
-                  return setTransactionForm({
-                    ...transactionForm,
-                    name: event.target.value
-                  });
-                }}
-                fullWidth
+                onInput={inputHandler}
+                {...formState.inputs.name}
+                validators={[VALIDATOR_REQUIRE()]}
               />
             ) : (
-              <Autocomplete
-                ref={autoC}
-                id="asset"
-                sx={{ mt: 2, mb: 1 }}
-                onChange={handleAssetChange}
-                options={assetsDropdown}
+              <Selector
+                required
                 autoHighlight
-                getOptionLabel={(option) =>
-                  option.symbol
-                    ? `${option.name} (${option.symbol})`
-                    : `${option.name}`
-                }
-                renderOption={(props, option) => {
-                  return (
-                    <Box component="li" key={option.symbol} {...props}>
-                      {option.name}{' '}
-                      {option.symbol ? '(' + option.symbol + ')' : ''}
-                    </Box>
-                  );
-                }}
-                renderInput={(params) => {
-                  return (
-                    <TextField
-                      {...params}
-                      label="Choose an asset"
-                      inputProps={{
-                        ...params.inputProps
-                      }}
-                      onChange={handleAssetsDropdownChange}
-                    />
-                  );
-                }}
+                fullWidth
+                id="asset"
+                options={assetsDropdown}
+                label="Asset"
+                sx={{ mt: 2, mb: 1 }}
+                change={handleAssetChange}
+                {...formState.inputs.symbol}
+                inputChange={handleAssetsDropdownChange}
               />
             )}
 
             {tab !== 2 && (
               <Box sx={{ display: 'grid' }}>
-                <TextField
-                  sx={{ gridColumn: '1', mt: 1, mb: 1 }}
-                  id="outlined-select-currency"
-                  select
+                <Selector
+                  required
+                  id="currency"
+                  options={currencies}
                   label="Currency"
-                  value={transactionForm.currency}
-                  onChange={(event) => {
-                    return setTransactionForm({
-                      ...transactionForm,
-                      currency: event.target.value
-                    });
-                  }}
-                >
-                  {currencies.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </TextField>
-                <TextField
+                  sx={{ gridColumn: '1', mt: 1, mb: 1 }}
+                  onInput={inputHandler}
+                  {...formState.inputs.currency}
+                />
+                <Input
+                  required
                   sx={{ gridColumn: '2', input: { textAlign: 'right' } }}
                   margin="dense"
                   id="price"
-                  label="Amount"
+                  label="Price"
                   type="number"
-                  onChange={(event) => {
-                    return setTransactionForm({
-                      ...transactionForm,
-                      price: Number(event.target.value)
-                    });
-                  }}
-                  value={transactionForm.price}
-                ></TextField>
+                  valueType="number"
+                  onInput={inputHandler}
+                  validators={[VALIDATOR_REQUIRE()]}
+                  {...formState.inputs.price}
+                />
               </Box>
             )}
             {tab === 2 && (
-              <TextField
+              <Selector
+                required
+                autoHighlight
                 fullWidth
-                sx={{ mt: 1, mb: 1 }}
                 id="transfer"
-                select
+                options={transactionTypes.filter((type) => type.parent === 2)}
                 label="Transfer"
-                value={transferDropdown}
-                onChange={(event) =>
-                  handleTransferDropdownChange(event.target.value)
-                }
-              >
-                {transactionTypes
-                  .filter((option) => option.parent === 2)
-                  .map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-              </TextField>
+                sx={{ mt: 2, mb: 1 }}
+                {...formState.inputs.transfer}
+                onInput={inputHandler}
+              />
             )}
-            {transactionForm.category !== 'p2p' && (
-              <TextField
-                value={transactionForm.quantity}
+            {formState.inputs.category !== 'p2p' && (
+              <Input
+                required
                 sx={{ input: { textAlign: 'right' } }}
                 margin="dense"
                 id="quantity"
                 label="Quantity"
                 type="number"
+                valueType="number"
                 onFocus={(event) => event.target.select()}
-                onChange={(event) => {
-                  return setTransactionForm({
-                    ...transactionForm,
-                    quantity: Number(event.target.value)
-                  });
-                }}
+                onInput={inputHandler}
                 fullWidth
+                validators={[VALIDATOR_REQUIRE()]}
+                {...formState.inputs.quantity}
               />
             )}
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <MobileDateTimePicker
-                label="Date"
-                inputFormat="dd.MM.yyyy HH:mm:ss"
-                value={transactionForm.date}
-                onChange={(event) => handleDateChange(event)}
-                renderInput={(params) => (
-                  <TextField sx={{ mt: 2, width: 1 }} {...params} />
-                )}
-              />
-            </LocalizationProvider>
+
+            <Input
+              margin="dense"
+              id="date"
+              label="Date"
+              type="datetime-local"
+              onInput={inputHandler}
+              fullWidth
+              value={
+                formState.inputs.date.value
+                  ? format(
+                      new Date(formState.inputs.date.value),
+                      'yyyy-MM-dd HH:mm'
+                    )
+                  : ''
+              }
+              isTouched={formState.inputs.date.isTouched}
+              isValid={formState.inputs.date.isValid}
+            />
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={props.close}>Cancel</Button>
+          <Button onClick={handleCloseDialog}>Cancel</Button>
           <Button
+            disabled={!formState.isValid}
             onClick={submitTransactionForm}
             variant="contained"
             color="primary"

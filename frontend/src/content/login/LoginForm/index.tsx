@@ -13,6 +13,7 @@ import {
 import { useForm } from '../../../utils/hooks/form-hook';
 import { AuthContext } from '../../../utils/context/authContext';
 import { useDispatch } from 'react-redux';
+
 import { changeTransactionStatus } from 'src/content/applications/Transactions/transactionSlice';
 import LoadingButton from '@mui/lab/LoadingButton';
 import LoginIcon from '@mui/icons-material/Login';
@@ -74,7 +75,7 @@ function LoginForm() {
     return () => {
       document.removeEventListener('keydown', listener);
     };
-  }, [formState.isValid]);
+  }, [formState.isValid]); // eslint-disable-line
 
   const switchModeHandler = () => {
     if (!isLogin) {
@@ -181,30 +182,33 @@ function LoginForm() {
             <div>
               {!isLogin && (
                 <Input
-                  isRequired={true}
+                  required
                   id="username"
                   label="Name"
                   errorMessage="Please enter you name!"
                   validators={[VALIDATOR_REQUIRE()]}
                   onInput={inputHandler}
+                  {...formState.inputs.username}
                 />
               )}
               <Input
-                isRequired={true}
+                required
                 id="email"
                 label="E-mail"
                 errorMessage="Please enter a valid email address!"
                 validators={[VALIDATOR_EMAIL()]}
                 onInput={inputHandler}
+                {...formState.inputs.email}
               />
               <Input
                 type="password"
-                isRequired={true}
+                required
                 id="password"
                 label="Password"
                 errorMessage="Password needs to be at least 8 characters"
                 validators={[VALIDATOR_MINLENGTH(8)]}
                 onInput={inputHandler}
+                {...formState.inputs.password}
               />
               {!isLogin && (
                 <Input
@@ -215,6 +219,7 @@ function LoginForm() {
                   errorMessage="Please re-enter your password!"
                   onInput={inputHandler}
                   validators={[VALIDATOR_REQUIRE()]}
+                  {...formState.inputs.password}
                 />
               )}
             </div>

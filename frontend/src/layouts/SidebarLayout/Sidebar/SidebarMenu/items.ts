@@ -21,7 +21,7 @@ export interface MenuItem {
   badge?: string;
   items?: MenuItem[];
   name: string;
-  alias?: string;
+  key?: string;
   show?: Boolean;
 }
 
@@ -47,56 +47,56 @@ const menuItems: MenuItems[] = [
     items: [
       {
         name: 'Crypto',
-        alias: 'crypto',
+        key: 'crypto',
         link: '/dashboards/crypto',
         icon: CurrencyBitcoinTwoToneIcon,
         show: true
       },
       {
         name: 'Stocks',
-        alias: 'stocks',
+        key: 'stocks',
         link: '/dashboards/stocks',
         icon: ShowChartTwoToneIcon,
         show: true
       },
       {
         name: 'Bonds',
-        alias: 'bonds',
+        key: 'bonds',
         link: '/dashboards/bonds',
         icon: BookTwoToneIcon,
         show: true
       },
       {
         name: 'Commodities',
-        alias: 'commodities',
+        key: 'commodities',
         link: '/dashboards/commodities',
         icon: AgricultureTwoToneIcon,
         show: true
       },
       {
         name: 'Real Estates',
-        alias: 'real',
+        key: 'real',
         link: '/dashboards/realestate',
         icon: MapsHomeWorkTwoToneIcon,
         show: true
       },
       {
         name: 'P2P',
-        alias: 'p2p',
+        key: 'p2p',
         link: '/dashboards/p2p',
         icon: GroupTwoToneIcon,
         show: true
       },
       {
         name: 'ETFs',
-        alias: 'etf',
+        key: 'etf',
         link: '/dashboards/etf',
         icon: AddchartTwoToneIcon,
         show: true
       },
       {
         name: 'Miscellaneous',
-        alias: 'misc',
+        key: 'misc',
         link: '/dashboards/misc',
         icon: AutoGraphTwoToneIcon,
         show: true

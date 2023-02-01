@@ -18,8 +18,11 @@ import TrendingDown from '@mui/icons-material/TrendingDown';
 import TrendingFlat from '@mui/icons-material/TrendingFlat';
 import AccountBalanceChart from './AccountBalanceChart';
 import Text from 'src/components/Text';
-import { formatAmountAndCurrency, roundNumber } from 'src/utils/functions';
-import Icon from 'react-crypto-icons';
+import {
+  formatAmountAndCurrency,
+  getCryptoIcon,
+  roundNumber
+} from 'src/utils/functions';
 import AccountBalanceSkeleton from './AccountBalanceSkeleton';
 
 const AccountBalanceChartWrapper = styled(AccountBalanceChart)(
@@ -255,9 +258,12 @@ function AccountBalance({ assets, category, loading, ...rest }) {
                                   alignItems: 'center'
                                 }}
                               >
-                                <Icon
-                                  name={asset.symbol.toLowerCase()}
-                                  size={25}
+                                <img
+                                  src={getCryptoIcon(
+                                    asset.symbol.toLowerCase()
+                                  )}
+                                  width="35"
+                                  height="35"
                                 />
                               </ListItemAvatar>
                             )}

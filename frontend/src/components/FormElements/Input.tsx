@@ -1,63 +1,75 @@
 import { TextField } from '@mui/material';
-import { useReducer, useEffect } from 'react';
-import { validate } from '../../utils/validators';
+import { useEffect, useState } from 'react';
+import { validate } from 'src/utils/validators';
 
-const inputReducer = (state, action) => {
-    switch (action.type) {
-        case 'CHANGE': 
-            return {
-                ...state,
-                value: action.val,
-                isValid: validate(action.val, action.validators)
-            }
-        case 'TOUCH': 
-            return {
-                ...state,
-                isTouched: true
-            }
-        default:
-            return state;
-    }
-}
-  
 function Input(props) {
-    const [inputState, dispatch] = useReducer(inputReducer, {
-        value: props.initialValue || '', 
-        isValid: props.initialValid || false,
-        isTouched: false
-    });
-    const { id, onInput } = props;
-    const { value, isValid } = inputState;
+  const [helpMessage, setHelpMessage] = useState('');
 
-    const changeHandler = (event) => {
-        dispatch({
-            type: 'CHANGE', 
-            val: event.target.value,
-            validators: props.validators
-        })
+  const emptyValue = props.hasOwnProperty('emptyValue') ? props.emptyValue : '';
+
+  const onChange = (event, checkValidity = false) => {
+    let value = event.target.value || emptyValue;
+
+    if (props.onChange) {
+      props.onChange(event);
     }
 
-    const touchHandler = () => {
-        dispatch({type: 'TOUCH'})
+    if (props.change) {
+      props.change(event);
     }
 
-    useEffect(() => {
-        onInput(id, value, isValid);
-    }, [id, value, isValid, onInput]);
+    if (props.valueTransformer) {
+      value = props.valueTransformer(value);
+    }
 
-    return (
-        <TextField
-            required={props.isRequired}
-            type={props.type}
-            id={id}
-            label={props.label}
-            onChange={(e) => changeHandler(e)}
-            onBlur={touchHandler}
-            value={inputState.value}
-            error={!inputState.isValid && inputState.isTouched}
-            helperText={!inputState.isValid && inputState.isTouched ? props.errorMessage : ""}
-        />
-    );
+    if (props.onInput) {
+      const isValid = checkValidity
+        ? validate(value, props.validators || [])
+        : true;
+
+      const validators = checkValidity ? props.validators || [] : [];
+
+      if (props.valueType === 'number') {
+        value = Number(value);
+      }
+
+      props.onInput(props.id, value, isValid, true, validators);
+    }
+  };
+
+  const onBlur = (event) => {
+    onChange(event, true);
+  };
+
+  useEffect(() => {
+    const errorMessage = props.errorMessage || '';
+
+    setHelpMessage(props.helperText || '');
+
+    if (!props.isValid && props.isTouched) {
+      setHelpMessage(props.isValid ? props.helperText : errorMessage);
+    }
+  }, [props.errorMessage, props.helperText, props.isValid, props.isTouched]);
+
+  return (
+    <TextField
+      fullWidth={props.fullWidth}
+      sx={props.sx}
+      margin={props.margin}
+      variant={props.variant}
+      required={props.required}
+      disabled={props.disabled}
+      type={props.type}
+      inputProps={props.inputProps}
+      id={props.id}
+      label={props.label}
+      onChange={onChange}
+      onBlur={onBlur}
+      value={props.value || ''}
+      error={!props.isValid && props.isTouched}
+      helperText={helpMessage}
+    />
+  );
 }
 
 export default Input;

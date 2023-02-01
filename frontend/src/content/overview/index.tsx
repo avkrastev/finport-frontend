@@ -73,7 +73,7 @@ function Overview() {
   ] = useState(() => {
     return currencies.map((currency) => {
       let data: any = {};
-      data.currency = currency.value;
+      data.currency = currency.key;
       data.holdingAmount = 0;
       data.totalAmount = 0;
       return data;
