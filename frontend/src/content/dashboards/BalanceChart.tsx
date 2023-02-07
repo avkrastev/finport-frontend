@@ -90,7 +90,7 @@ function BalanceChart(props) {
           )}
 
           <Typography variant="body2" color="text.secondary" sx={{ pl: 1 }}>
-            last 24h
+            {props.t('last 24h')}
           </Typography>
         </Box>
       </Box>

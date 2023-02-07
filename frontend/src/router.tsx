@@ -18,6 +18,10 @@ const Login = Loader(lazy(() => import('src/content/login')));
 
 const Overview = Loader(lazy(() => import('src/content/overview')));
 
+const ResetPassword = Loader(
+  lazy(() => import('src/content/pages/ResetPassword'))
+);
+
 // Dashboards
 const Crypto = Loader(lazy(() => import('src/content/dashboards/Crypto')));
 const Stocks = Loader(lazy(() => import('src/content/dashboards/Stocks')));
@@ -60,6 +64,9 @@ const StatusComingSoon = Loader(
 const StatusMaintenance = Loader(
   lazy(() => import('src/content/pages/Status/Maintenance'))
 );
+const StatusVerification = Loader(
+  lazy(() => import('src/content/pages/Status/Verification'))
+);
 
 const routes = (isLoggedIn: any) => [
   {
@@ -96,16 +103,21 @@ const routes = (isLoggedIn: any) => [
         ]
       },
       {
+        path: 'verify',
+        children: [
+          {
+            path: '/',
+            element: <StatusVerification />
+          }
+        ]
+      },
+      {
         path: 'reset-password',
         children: [
           {
             path: '/',
-            element: <Login />
-          },
-          {
-            path: '/:token',
-            element: <StatusComingSoon />
-          },
+            element: <ResetPassword />
+          }
         ]
       },
       {

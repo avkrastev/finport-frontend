@@ -32,7 +32,7 @@ const WatchListColumn1ChartWrapper = styled(WatchListColumn1Chart)(
 `
 );
 
-function WatchListColumn1({ category, ...rest }) {
+function WatchListColumn1({ category, t, ...rest }) {
   let prices = [];
   let categories = {};
   const todayDayName = new Date().getDay();
@@ -123,7 +123,7 @@ function WatchListColumn1({ category, ...rest }) {
             </AvatarWrapper>
             <Box>
               <Typography variant="h4" noWrap>
-                {category.name}
+                {t(category.name)}
               </Typography>
             </Box>
           </Box>
@@ -165,7 +165,7 @@ function WatchListColumn1({ category, ...rest }) {
               </Label>
             )}
             <Typography variant="body2" color="text.secondary" sx={{ pl: 1 }}>
-              since start
+              {t('since start')}
             </Typography>
           </Box>
         </Box>

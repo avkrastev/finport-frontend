@@ -1,11 +1,11 @@
 export const languages = [
   {
     value: 'Български',
-    label: 'bg'
+    key: 'bg'
   },
   {
     value: 'English',
-    label: 'en'
+    key: 'en'
   }
 ];
 

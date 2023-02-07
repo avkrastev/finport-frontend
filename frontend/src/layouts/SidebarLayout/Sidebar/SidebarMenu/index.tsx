@@ -5,6 +5,7 @@ import SidebarMenuItem from './item';
 import menuItems, { MenuItem } from './items';
 import { styled } from '@mui/material/styles';
 import { AuthContext } from '../../../../utils/context/authContext';
+import { useTranslation, Trans } from 'react-i18next';
 
 const MenuWrapper = styled(List)(
   ({ theme }) => `
@@ -134,24 +135,28 @@ const SubMenuWrapper = styled(List)(
 
 const renderSidebarMenuItems = ({
   items,
-  path
+  path,
+  t
 }: {
   items: MenuItem[];
   path: string;
+  t: any;
 }): JSX.Element => (
   <SubMenuWrapper>
-    {items.reduce((ev, item) => reduceChildRoutes({ ev, item, path }), [])}
+    {items.reduce((ev, item) => reduceChildRoutes({ ev, item, path, t }), [])}
   </SubMenuWrapper>
 );
 
 const reduceChildRoutes = ({
   ev,
   path,
-  item
+  item,
+  t
 }: {
   ev: JSX.Element[];
   path: string;
   item: MenuItem;
+  t: any;
 }): Array<JSX.Element> => {
   const key = item.name;
 
@@ -181,14 +186,15 @@ const reduceChildRoutes = ({
         key={key}
         active={partialMatch}
         open={partialMatch}
-        name={item.name}
+        name={t(item.name)}
         icon={item.icon}
         link={item.link}
         badge={item.badge}
       >
         {renderSidebarMenuItems({
           path,
-          items: item.items
+          items: item.items,
+          t
         })}
       </SidebarMenuItem>
     );
@@ -198,7 +204,7 @@ const reduceChildRoutes = ({
         <SidebarMenuItem
           key={key}
           active={exactMatch}
-          name={item.name}
+          name={t(item.name)}
           link={item.link}
           badge={item.badge}
           icon={item.icon}
@@ -212,6 +218,7 @@ const reduceChildRoutes = ({
 function SidebarMenu() {
   const location = useLocation();
   const { authUserData } = useContext(AuthContext);
+  const { t } = useTranslation();
 
   let dashboards = menuItems.find(
     (section) => section.heading === 'Dashboards'
@@ -228,13 +235,14 @@ function SidebarMenu() {
             key={section.heading}
             subheader={
               <ListSubheader component="div" disableSticky>
-                {section.heading}
+                <Trans>{section.heading}</Trans>
               </ListSubheader>
             }
           >
             {renderSidebarMenuItems({
               items: section.items,
-              path: location.pathname
+              path: location.pathname,
+              t: t
             })}
           </MenuWrapper>
         );

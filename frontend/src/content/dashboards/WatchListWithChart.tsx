@@ -20,8 +20,8 @@ import {
   getHistoryStatus,
   selectAllHistorySinceStart
 } from '../overview/summarySlice';
-import { HistoryOutlined } from '@mui/icons-material';
 import BalanceSkeleton from './BalanceSkeleton';
+import { useTranslation } from 'react-i18next';
 
 const EmptyResultsWrapper = styled('img')(
   ({ theme }) => `
@@ -32,6 +32,7 @@ const EmptyResultsWrapper = styled('img')(
 );
 
 function WatchListWithChart(props) {
+  const { t } = useTranslation();
   const [tabs, setTab] = useState<string | null>('watch_list_columns');
   const dispatch: AppDispatch = useDispatch();
   const history = useSelector(selectAllHistorySinceStart);
@@ -80,13 +81,13 @@ function WatchListWithChart(props) {
       >
         {tabs === 'watch_list_columns' && (
           <Grid item lg={12} xs={12}>
-            <AccountBalance {...props} />
+            <AccountBalance t={t} {...props} />
           </Grid>
         )}
 
-        {tabs === 'watch_list_rows' && history && historyStatus !== 'succeeded' && (
-          <BalanceSkeleton />
-        )}
+        {tabs === 'watch_list_rows' &&
+          history &&
+          historyStatus !== 'succeeded' && <BalanceSkeleton />}
 
         {tabs === 'watch_list_rows' &&
           (props?.category === history?.category ? (
@@ -96,11 +97,12 @@ function WatchListWithChart(props) {
                 category={props.category}
                 history={history}
                 loading={historyStatus}
+                t={t}
               />
             </Grid>
           ) : (
             <Grid item xs={12}>
-              <BalanceChart assets={props.assets} category={props.category} />
+              <BalanceChart assets={props.assets} category={props.category} t={t} />
             </Grid>
           ))}
 

@@ -20,6 +20,7 @@ import AccountBoxTwoToneIcon from '@mui/icons-material/AccountBoxTwoTone';
 import LockOpenTwoToneIcon from '@mui/icons-material/LockOpenTwoTone';
 import AccountTreeTwoToneIcon from '@mui/icons-material/AccountTreeTwoTone';
 import { AuthContext } from '../../../../utils/context/authContext';
+import { useTranslation } from 'react-i18next';
 
 const UserBoxButton = styled(Button)(
   ({ theme }) => `
@@ -51,6 +52,7 @@ const UserBoxLabel = styled(Typography)(
 );
 
 function HeaderUserbox() {
+  const { t } = useTranslation();
   const { logout, authUserData } = useContext(AuthContext);
 
   const ref = useRef<any>(null);
@@ -69,7 +71,9 @@ function HeaderUserbox() {
       <UserBoxButton color="secondary" ref={ref} onClick={handleOpen}>
         <Hidden mdDown>
           <UserBoxText>
-            <UserBoxLabel variant="body1">{authUserData && authUserData.name}</UserBoxLabel>
+            <UserBoxLabel variant="body1">
+              {authUserData && authUserData.name}
+            </UserBoxLabel>
           </UserBoxText>
         </Hidden>
         <Hidden smDown>
@@ -91,7 +95,9 @@ function HeaderUserbox() {
       >
         <MenuUserBox sx={{ minWidth: 210 }} display="flex">
           <UserBoxText>
-            <UserBoxLabel variant="body1">{authUserData && authUserData.name}</UserBoxLabel>
+            <UserBoxLabel variant="body1">
+              {authUserData && authUserData.name}
+            </UserBoxLabel>
           </UserBoxText>
         </MenuUserBox>
         <Divider sx={{ mb: 0 }} />
@@ -111,17 +117,14 @@ function HeaderUserbox() {
             component={NavLink}
           >
             <AccountTreeTwoToneIcon fontSize="small" />
-            <ListItemText primary="Account Settings" />
+            <ListItemText primary={t('Account Settings')} />
           </ListItem>
         </List>
         <Divider />
         <Box sx={{ m: 1 }}>
-          <Button 
-            color="primary" 
-            fullWidth 
-            onClick={() => logout()}>
-              <LockOpenTwoToneIcon sx={{ mr: 1 }} />
-              Sign out
+          <Button color="primary" fullWidth onClick={() => logout()}>
+            <LockOpenTwoToneIcon sx={{ mr: 1 }} />
+            {t('Sign out')}
           </Button>
         </Box>
       </Popover>

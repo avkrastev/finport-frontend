@@ -19,18 +19,27 @@ import {
   MenuItem
 } from '@mui/material';
 
-import DoneTwoToneIcon from '@mui/icons-material/DoneTwoTone';
-import CloseTwoToneIcon from '@mui/icons-material/CloseTwoTone';
-import Label from 'src/components/Label';
+import VerifiedIcon from '@mui/icons-material/Verified';
+import NewReleasesIcon from '@mui/icons-material/NewReleases';
 import { AuthContext } from '../../../../utils/context/authContext';
-import { updateUser } from '../../../../utils/api/userApiFunction';
+import {
+  sendVerificationEmail,
+  updateUser
+} from '../../../../utils/api/userApiFunction';
 import { currencies, languages } from 'src/constants/common';
+import { useTranslation, Trans } from 'react-i18next';
+import Tooltip from '@mui/material/Tooltip';
+import CircularProgress from '@mui/material/CircularProgress';
 
 function EditProfileTab() {
   const { authUserData, setUserData } = useContext(AuthContext);
 
+  const { t, i18n } = useTranslation();
+
   const [dashboard, setDashboard] = useState(authUserData.categories);
   const [showSuccessSnackbar, setShowSuccessSnackbar] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const handleCategoryChange = (event: ChangeEvent<HTMLInputElement>) => {
     const category = dashboard.find(
@@ -73,12 +82,23 @@ function EditProfileTab() {
       if (responseData.data) {
         if (event.target.name === 'categories')
           setDashboard(responseData.data.categories);
+        if (event.target.name === 'language')
+          i18n.changeLanguage(responseData.data.language);
         setUserData(responseData.data, Object.keys(responseData.data)[0]);
         setShowSuccessSnackbar(true);
       }
     }
 
     fetchUserData();
+  };
+
+  const handleEmailVerification = async () => {
+    setLoading(true);
+    const verifyData = await sendVerificationEmail();
+    if (verifyData) {
+      setSuccess(true);
+      setLoading(false);
+    }
   };
 
   return (
@@ -93,10 +113,10 @@ function EditProfileTab() {
           >
             <Box>
               <Typography variant="h4" gutterBottom>
-                Personal Details
+                {t('Personal Details')}
               </Typography>
               <Typography variant="subtitle2">
-                Manage information related to your personal details
+                {t('Manage information related to your personal details')}
               </Typography>
             </Box>
           </Box>
@@ -106,7 +126,7 @@ function EditProfileTab() {
               <Grid container sx={{ p: 2 }}>
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={12} md={2}>
-                    <Box style={{ lineHeight: '2.3rem' }}>Name:</Box>
+                    <Box style={{ lineHeight: '2.3rem' }}>{t('Name')}:</Box>
                   </Grid>
                   <Grid item xs={12} sm={12} md={4}>
                     <TextField
@@ -121,7 +141,7 @@ function EditProfileTab() {
                     />
                   </Grid>
                   <Grid item xs={12} sm={12} md={2}>
-                    <Box style={{ lineHeight: '2.3rem' }}>E-mail:</Box>
+                    <Box style={{ lineHeight: '2.3rem' }}>{t('E-mail')}:</Box>
                   </Grid>
                   <Grid item xs={12} sm={12} md={4}>
                     <Typography style={{ lineHeight: '2.3rem' }} variant="h5">
@@ -130,28 +150,41 @@ function EditProfileTab() {
                       </span>
                       <span
                         style={{
-                          display: 'inline-block',
-                          marginLeft: '1rem',
-                          lineHeight: '2.3rem',
+                          display: 'inline-flex',
+                          marginLeft: '1em',
                           verticalAlign: 'middle'
                         }}
                       >
-                        <Label
-                          color={
-                            authUserData.email_verified ? 'success' : 'error'
-                          }
-                        >
-                          {authUserData.email_verified ? (
-                            <DoneTwoToneIcon fontSize="small" />
-                          ) : (
-                            <CloseTwoToneIcon fontSize="small" />
-                          )}
-                          <b>
-                            {authUserData.email_verified
-                              ? 'Verified'
-                              : 'Not verified'}
-                          </b>
-                        </Label>
+                        {authUserData.email_verified ? (
+                          <Tooltip title={t('Verified')}>
+                            <VerifiedIcon fontSize="medium" color="success" />
+                          </Tooltip>
+                        ) : (
+                          <>
+                            <Tooltip title={t('Not verified')}>
+                              <NewReleasesIcon
+                                fontSize="medium"
+                                color="error"
+                              />
+                            </Tooltip>
+                            {loading ? (
+                              <CircularProgress size={20} sx={{ ml: 2 }} />
+                            ) : success ? (
+                              <Typography variant="subtitle2" sx={{ ml: 2 }}>
+                                {t('Sent!')}
+                              </Typography>
+                            ) : (
+                              <Link
+                                href="#"
+                                underline="none"
+                                sx={{ ml: 1, lineHeight: 2 }}
+                                onClick={handleEmailVerification}
+                              >
+                                {t('Send verification e-mail')}
+                              </Link>
+                            )}
+                          </>
+                        )}
                       </span>
                     </Typography>
                   </Grid>
@@ -159,21 +192,20 @@ function EditProfileTab() {
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={12} md={2}>
                     <Box style={{ lineHeight: '2.3rem' }}>
-                      Preferred language:
+                      {t('Preferred language')}:
                     </Box>
                   </Grid>
                   <Grid item xs={12} sm={12} md={4}>
                     <TextField
-                      name="currency"
+                      name="language"
                       fullWidth
                       size="small"
-                      id="outlined-select-currency"
                       select
-                      value={authUserData.currency}
+                      value={authUserData.language}
                       onChange={(event) => handleUserSettingsChange(event)}
                     >
                       {languages.map((option) => (
-                        <MenuItem key={option.value} value={option.value}>
+                        <MenuItem key={option.value} value={option.key}>
                           {option.value}
                         </MenuItem>
                       ))}
@@ -181,7 +213,7 @@ function EditProfileTab() {
                   </Grid>
                   <Grid item xs={12} sm={12} md={2}>
                     <Box style={{ lineHeight: '2.3rem' }}>
-                      Preferred currency:
+                      {t('Preferred currency')}:
                     </Box>
                   </Grid>
                   <Grid item xs={12} sm={12} md={4}>
@@ -189,13 +221,12 @@ function EditProfileTab() {
                       name="currency"
                       fullWidth
                       size="small"
-                      id="outlined-select-currency"
                       select
                       value={authUserData.currency}
                       onChange={(event) => handleUserSettingsChange(event)}
                     >
                       {currencies.map((option) => (
-                        <MenuItem key={option.value} value={option.value}>
+                        <MenuItem key={option.value} value={option.key}>
                           {option.key} - {option.value}
                         </MenuItem>
                       ))}
@@ -218,10 +249,10 @@ function EditProfileTab() {
           >
             <Box>
               <Typography variant="h4" gutterBottom>
-                API keys
+                {t('API keys')}:
               </Typography>
               <Typography variant="subtitle2">
-                Manage keys for reading data from 3rd party interfaces
+                {t('Manage keys for reading data from 3rd party interfaces')}
               </Typography>
             </Box>
           </Box>
@@ -234,7 +265,7 @@ function EditProfileTab() {
                     <TextField
                       fullWidth
                       id="outlined-basic"
-                      label="Stocks API key"
+                      label={t('Stocks API key')}
                       margin="dense"
                       variant="outlined"
                       defaultValue={authUserData.stocks_api_key}
@@ -245,19 +276,21 @@ function EditProfileTab() {
                 </Grid>
                 <Grid item xs={12} sm={12} md={12}>
                   <Typography variant="subtitle2">
-                    You must obtain it from&nbsp;
-                    <Link
-                      fontWeight={'bold'}
-                      color="inherit"
-                      underline="none"
-                      href="https://financeapi.net/"
-                      target="_blank"
-                    >
-                      https://financeapi.net/
-                    </Link>
-                    . You have to go and create an account. Then you will be
-                    redirected to the Dashboard where you can see the API key.
-                    Just paste it here.
+                    <Trans i18nKey="stockAPI">
+                      You must obtain it from
+                      <Link
+                        fontWeight={'bold'}
+                        color="inherit"
+                        underline="none"
+                        href="https://financeapi.net/"
+                        target="_blank"
+                      >
+                        https://financeapi.net/
+                      </Link>
+                      You have to go and create an account. Then you will be
+                      redirected to the Dashboard where you can see the API key.
+                      Just paste it here.
+                    </Trans>
                   </Typography>
                 </Grid>
               </Grid>
@@ -275,10 +308,10 @@ function EditProfileTab() {
           >
             <Box>
               <Typography variant="h4" gutterBottom>
-                Dashboards
+                {t('Dashboards')}
               </Typography>
               <Typography variant="subtitle2">
-                Show/hide dashboards from your portfolio
+                {t('Show/hide dashboards from your portfolio')}
               </Typography>
             </Box>
             <LinearProgress />
@@ -297,7 +330,7 @@ function EditProfileTab() {
                             variant: 'h5',
                             gutterBottom: true
                           }}
-                          primary={category.value}
+                          primary={t(category.value)}
                         />
                         <Switch
                           color="primary"
@@ -327,7 +360,7 @@ function EditProfileTab() {
             severity="success"
             sx={{ width: '100%' }}
           >
-            Successfully modified data!
+            {t('Successfully modified data!')}
           </Alert>
         </Snackbar>
       </Stack>

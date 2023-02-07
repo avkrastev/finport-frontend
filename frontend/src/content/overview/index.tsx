@@ -46,8 +46,10 @@ import {
 } from '../dashboards/Etf/ETFsSlice';
 import { currencies } from 'src/constants/common';
 import WatchListWithChart from '../dashboards/WatchListWithChart';
+import { useTranslation } from 'react-i18next';
 
 function Overview() {
+  const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const summary = useSelector(selectAllSummary);
   const summaryStatus = useSelector(getSummaryStatus);
@@ -260,10 +262,10 @@ function Overview() {
   return (
     <>
       <Helmet>
-        <title>Overview</title>
+        <title>{t('Overview')}</title>
       </Helmet>
       <PageTitleWrapper>
-        <PageHeader title="Overview" />
+        <PageHeader title={t('Overview')} />
       </PageTitleWrapper>
       <Container maxWidth="lg">
         <Grid

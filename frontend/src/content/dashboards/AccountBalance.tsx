@@ -24,6 +24,7 @@ import {
   roundNumber
 } from 'src/utils/functions';
 import AccountBalanceSkeleton from './AccountBalanceSkeleton';
+import { useTranslation, Trans } from 'react-i18next';
 
 const AccountBalanceChartWrapper = styled(AccountBalanceChart)(
   () => `
@@ -60,6 +61,7 @@ const AvatarEqual = styled(Avatar)(
 );
 
 function AccountBalance({ assets, category, loading, ...rest }) {
+  const { t } = useTranslation();
   let percentages = [];
   let names = [];
   let colors = [
@@ -137,7 +139,7 @@ function AccountBalance({ assets, category, loading, ...rest }) {
         <Grid item xs={12} md={6}>
           <Box p={4}>
             <Typography sx={{ pb: 3 }} variant="h4">
-              Account Balance | Total Invested
+              {t('Account Balance')} | {t('Total Invested')}
             </Typography>
             <Box>
               <Typography variant="h1" gutterBottom>
@@ -211,8 +213,11 @@ function AccountBalance({ assets, category, loading, ...rest }) {
               </Box>
               {assets.stats && category === 'p2p' && (
                 <Typography variant="h5">
-                  * The compound interest calculations are based on the best
-                  case scenario. Therefore the data is approximate.
+                  *
+                  <Trans i18nKey="compoundInterest">
+                    The compound interest calculations are based on the best
+                    case scenario. Therefore the data is approximate.
+                  </Trans>
                 </Typography>
               )}
             </Box>
@@ -273,7 +278,11 @@ function AccountBalance({ assets, category, loading, ...rest }) {
                                 variant: 'h5',
                                 noWrap: true
                               }}
-                              secondary={asset.name}
+                              secondary={
+                                asset.hasOwnProperty('alias')
+                                  ? t(asset.name)
+                                  : asset.name
+                              }
                               secondaryTypographyProps={{
                                 variant: 'subtitle2',
                                 noWrap: true

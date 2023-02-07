@@ -39,6 +39,9 @@ function Input(props) {
 
   const onBlur = (event) => {
     onChange(event, true);
+    if (props.onBlur) {
+      props.onBlur(event);
+    }
   };
 
   useEffect(() => {
@@ -61,6 +64,9 @@ function Input(props) {
       disabled={props.disabled}
       type={props.type}
       inputProps={props.inputProps}
+      InputProps={{
+        endAdornment: props.endAdornment
+      }}
       id={props.id}
       label={props.label}
       onChange={onChange}

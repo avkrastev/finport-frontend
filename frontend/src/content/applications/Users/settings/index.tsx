@@ -9,6 +9,7 @@ import { styled } from '@mui/material/styles';
 import EditProfileTab from './EditProfileTab';
 import NotificationsTab from './NotificationsTab';
 import SecurityTab from './SecurityTab';
+import { useTranslation } from 'react-i18next';
 
 const TabsWrapper = styled(Tabs)(
   () => `
@@ -19,13 +20,13 @@ const TabsWrapper = styled(Tabs)(
 );
 
 function ManagementUserSettings() {
-
   const [currentTab, setCurrentTab] = useState<string>('edit_profile');
+  const { t } = useTranslation();
 
   const tabs = [
-    { value: 'edit_profile', label: 'Edit Profile' },
-    { value: 'notifications', label: 'Notifications' },
-    { value: 'security', label: 'Passwords/Security' }
+    { value: 'edit_profile', label: t('Edit Profile') },
+    { value: 'notifications', label: t('Notifications') },
+    { value: 'security', label: t('Passwords/Security') }
   ];
 
   const handleTabsChange = (event: ChangeEvent<{}>, value: string): void => {
@@ -35,10 +36,10 @@ function ManagementUserSettings() {
   return (
     <>
       <Helmet>
-        <title>User Settings - Applications</title>
+        <title>{t('User Settings')}</title>
       </Helmet>
       <PageTitleWrapper>
-        <PageHeader />
+        <PageHeader i18n={t}/>
       </PageTitleWrapper>
       <Container maxWidth="lg">
         <Grid

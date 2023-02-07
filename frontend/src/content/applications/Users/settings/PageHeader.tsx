@@ -1,11 +1,10 @@
 import { Typography } from '@mui/material';
 
-function PageHeader() {
-
+function PageHeader(props) {
   return (
     <>
       <Typography variant="h3" component="h3" gutterBottom>
-        User Settings
+        {props.i18n('User Settings')}
       </Typography>
     </>
   );
