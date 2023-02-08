@@ -17,6 +17,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import Alert from '@mui/lab/Alert';
 
 const TypographyH1 = experimentalStyled(Typography)(
   ({ theme }) => `
@@ -48,6 +49,7 @@ function ChangePassword(props) {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
@@ -92,8 +94,8 @@ function ChangePassword(props) {
     if (
       (formState?.inputs?.password?.isTouched ||
         formState?.inputs?.confirm_password?.isTouched) &&
-      formState.inputs.password.value !==
-        formState.inputs.confirm_password.value
+      formState?.inputs?.password?.value !==
+        formState?.inputs?.confirm_password?.value
     ) {
       setPasswordErrorMessage("The passwords don't match!");
       setFormData(
@@ -123,20 +125,22 @@ function ChangePassword(props) {
   console.log(formState);
 
   const handleChangePassword = async () => {
+    setErrorMessage('');
     setLoading(true);
-    try {
-      const responseData = await changePassword(
-        props.id,
-        formState.inputs.password.value
-      );
-      if (responseData.data) {
-        setSuccess(true);
-        setLoading(false);
-      }
-    } catch (err) {
-      // TODO catch error
+
+    const responseData = await changePassword(
+      props.id,
+      formState.inputs.password.value
+    );
+
+    if (responseData.status <= 299) {
+      setSuccess(true);
       setLoading(false);
+    } else {
+      setErrorMessage(responseData.data.message);
     }
+
+    setLoading(false);
   };
 
   return (
@@ -171,6 +175,12 @@ function ChangePassword(props) {
               </Trans>
             )}
           </TypographyH2>
+
+          {errorMessage && (
+            <Alert sx={{ mr: 1.5, ml: 1.5, mb: 2 }} severity="error">
+              {errorMessage}
+            </Alert>
+          )}
           <Box
             component="form"
             sx={{ '& .MuiTextField-root': { m: 1, width: '35ch' } }}

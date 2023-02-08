@@ -10,6 +10,7 @@ import { useForm } from '../../../utils/hooks/form-hook';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { Trans, useTranslation } from 'react-i18next';
 import SendIcon from '@mui/icons-material/Send';
+import Alert from '@mui/material/Alert';
 
 const TypographyH1 = experimentalStyled(Typography)(
   ({ theme }) => `
@@ -41,6 +42,7 @@ function SendResetLink() {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const [formState, inputHandler] = useForm({
     email: { value: '', isValid: false }
@@ -62,17 +64,18 @@ function SendResetLink() {
   }, [formState.isValid]); // eslint-disable-line
 
   const handleResetPassword = async () => {
+    setErrorMessage('');
     setLoading(true);
-    try {
-      const responseData = await resetPassword(formState.inputs.email.value);
-      if (responseData.data) {
-        setSuccess(true);
-        setLoading(false);
-      }
-    } catch (err) {
-      // TODO catch error
+
+    const responseData = await resetPassword(formState.inputs.email.value);
+    if (responseData.status <= 299) {
+      setSuccess(true);
       setLoading(false);
+    } else {
+      setErrorMessage(responseData.data.message);
     }
+
+    setLoading(false);
   };
 
   return (
@@ -103,10 +106,18 @@ function SendResetLink() {
               </Trans>
             ) : (
               <Trans i18nKey="resetSuccessMessage">
-                An email with additional instructions has been sent to your inbox!
+                An email with additional instructions has been sent to your
+                inbox!
               </Trans>
             )}
           </TypographyH2>
+
+          {errorMessage && (
+            <Alert sx={{ mr: 1.5, ml: 1.5, mb: 2 }} severity="error">
+              {errorMessage}
+            </Alert>
+          )}
+
           {!success && (
             <Box
               component="form"

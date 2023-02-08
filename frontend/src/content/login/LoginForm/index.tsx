@@ -23,6 +23,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { Alert } from '@mui/lab';
 
 const TypographyH1 = experimentalStyled(Typography)(
   ({ theme }) => `
@@ -62,6 +63,7 @@ function LoginForm() {
   const dispatch = useDispatch();
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
@@ -103,6 +105,7 @@ function LoginForm() {
   }, [formState.isValid]); // eslint-disable-line
 
   const switchModeHandler = () => {
+    setErrorMessage('');
     if (!isLogin) {
       setFormData(
         {
@@ -136,42 +139,39 @@ function LoginForm() {
   const loginOrSignUp = async () => {
     setLoading(true);
     if (isLogin) {
-      try {
-        const responseData = await userLogin(
-          formState.inputs.email.value,
-          formState.inputs.password.value
+      const responseData = await userLogin(
+        formState.inputs.email.value,
+        formState.inputs.password.value
+      );
+
+      if (responseData.status <= 299) {
+        auth.login(
+          responseData.data.userID,
+          responseData.data.token,
+          responseData.data.userData
         );
-        if (responseData.data) {
-          auth.login(
-            responseData.data.userID,
-            responseData.data.token,
-            responseData.data.userData
-          );
-          setLoading(false);
-        }
-      } catch (err) {
-        // TODO catch error
-        setLoading(false);
+      } else {
+        setErrorMessage(responseData.data.message);
       }
+
+      setLoading(false);
     } else {
-      try {
-        const responseData = await userSignUp(
-          formState.inputs.username.value,
-          formState.inputs.email.value,
-          formState.inputs.password.value
+      const responseData = await userSignUp(
+        formState.inputs.username.value,
+        formState.inputs.email.value,
+        formState.inputs.password.value
+      );
+      if (responseData.status <= 299) {
+        auth.login(
+          responseData.data.userID,
+          responseData.data.token,
+          responseData.data.userData
         );
-        if (responseData.data) {
-          auth.login(
-            responseData.data.userID,
-            responseData.data.token,
-            responseData.data.userData
-          );
-          setLoading(false);
-        }
-      } catch (err) {
-        // TODO catch error
-        setLoading(false);
+      } else {
+        setErrorMessage(responseData.data.message);
       }
+
+      setLoading(false);
     }
 
     dispatch(changeTransactionStatus('idle'));
@@ -180,10 +180,11 @@ function LoginForm() {
 
   const checkPasswords = () => {
     if (
+      !isLogin &&
       (formState?.inputs?.password?.isTouched ||
         formState?.inputs?.confirm_password?.isTouched) &&
-      formState.inputs.password.value !==
-        formState.inputs.confirm_password.value
+      formState?.inputs?.password?.value !==
+        formState?.inputs?.confirm_password?.value
     ) {
       setPasswordErrorMessage("The passwords don't match!");
       setFormData(
@@ -243,6 +244,12 @@ function LoginForm() {
             autoComplete="on"
           >
             <div>
+              {errorMessage && (
+                <Alert sx={{ mr: 1.5, ml: 1.5, mb: 2 }} severity="error">
+                  {errorMessage}
+                </Alert>
+              )}
+
               {!isLogin && (
                 <Input
                   required

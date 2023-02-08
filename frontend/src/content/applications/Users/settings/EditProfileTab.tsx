@@ -31,15 +31,25 @@ import { useTranslation, Trans } from 'react-i18next';
 import Tooltip from '@mui/material/Tooltip';
 import CircularProgress from '@mui/material/CircularProgress';
 
+interface Status {
+  severity: 'error' | 'success' | 'warning';
+  text: string;
+}
+
 function EditProfileTab() {
   const { authUserData, setUserData } = useContext(AuthContext);
 
   const { t, i18n } = useTranslation();
 
   const [dashboard, setDashboard] = useState(authUserData.categories);
-  const [showSuccessSnackbar, setShowSuccessSnackbar] = useState(false);
+  const [showSnackbar, setShowSnackbar] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+
+  const [status, setStatus] = useState<Status>({
+    severity: 'error',
+    text: ''
+  });
 
   const handleCategoryChange = (event: ChangeEvent<HTMLInputElement>) => {
     const category = dashboard.find(
@@ -49,10 +59,15 @@ function EditProfileTab() {
 
     async function fetchUserData() {
       const responseData = await updateUser(dashboard, 'categories');
-      if (responseData.data) {
+      setShowSnackbar(true);
+      if (responseData.status <= 299) {
         setUserData(responseData.data, Object.keys(responseData.data)[0]);
         setDashboard(responseData.data.categories);
-        setShowSuccessSnackbar(true);
+      } else {
+        setStatus({
+          severity: 'error',
+          text: responseData.data.message
+        });
       }
     }
 
@@ -64,7 +79,7 @@ function EditProfileTab() {
       return;
     }
 
-    setShowSuccessSnackbar(false);
+    setShowSnackbar(false);
   };
 
   const handleUserSettingsChange = (event: any) => {
@@ -79,13 +94,23 @@ function EditProfileTab() {
         event.target.value,
         event.target.name
       );
-      if (responseData.data) {
+      setShowSnackbar(true);
+      if (responseData.status <= 299) {
         if (event.target.name === 'categories')
           setDashboard(responseData.data.categories);
         if (event.target.name === 'language')
           i18n.changeLanguage(responseData.data.language);
         setUserData(responseData.data, Object.keys(responseData.data)[0]);
-        setShowSuccessSnackbar(true);
+
+        setStatus({
+          severity: 'success',
+          text: 'Successfully modified data!'
+        });
+      } else {
+        setStatus({
+          severity: 'error',
+          text: responseData.data.message
+        });
       }
     }
 
@@ -95,10 +120,16 @@ function EditProfileTab() {
   const handleEmailVerification = async () => {
     setLoading(true);
     const verifyData = await sendVerificationEmail();
-    if (verifyData) {
+    if (verifyData.status <= 299) {
       setSuccess(true);
-      setLoading(false);
+    } else {
+      setShowSnackbar(true);
+      setStatus({
+        severity: 'error',
+        text: verifyData.data.message
+      });
     }
+    setLoading(false);
   };
 
   return (
@@ -350,17 +381,17 @@ function EditProfileTab() {
       </Grid>
       <Stack spacing={2} sx={{ width: '100%' }}>
         <Snackbar
-          open={showSuccessSnackbar}
-          autoHideDuration={2000}
+          open={showSnackbar}
+          autoHideDuration={3000}
           onClose={handleCloseSnackbar}
         >
           <Alert
             onClose={(event) => handleCloseSnackbar(event, 'close')}
             variant="filled"
-            severity="success"
+            severity={status.severity}
             sx={{ width: '100%' }}
           >
-            {t('Successfully modified data!')}
+            {t(status.text)}
           </Alert>
         </Snackbar>
       </Stack>
