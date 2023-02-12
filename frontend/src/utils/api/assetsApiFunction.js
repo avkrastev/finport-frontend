@@ -14,7 +14,7 @@ export async function getAssets(query = '') {
 
     return response;
   } catch (error) {
-    console.log(error);
+    return error.response;
   }
 }
 
@@ -33,7 +33,7 @@ export async function getAssetsByCategory(category) {
 
     return response;
   } catch (error) {
-    console.log(error);
+    return error.response;
   }
 }
 
@@ -52,7 +52,7 @@ export async function getAssetsSummary() {
 
     return response;
   } catch (error) {
-    console.log(error);
+    return error.response;
   }
 }
 
@@ -73,7 +73,7 @@ export async function addNewAsset(transaction) {
 
     return response;
   } catch (error) {
-    console.log(error);
+    return error.response;
   }
 }
 
@@ -94,7 +94,7 @@ export async function updateAsset(transaction) {
 
     return response;
   } catch (error) {
-    console.log(error);
+    return error.response;
   }
 }
 
@@ -112,7 +112,7 @@ export async function deleteAsset(id) {
 
     return response;
   } catch (error) {
-    console.log(error);
+    return error.response;
   }
 }
 
@@ -133,7 +133,7 @@ export async function deleteAssets(ids) {
 
     return response;
   } catch (error) {
-    console.log(error);
+    return error.response;
   }
 }
 
@@ -151,7 +151,7 @@ export async function getAssetById(id) {
 
     return response;
   } catch (error) {
-    console.log(error);
+    return error.response;
   }
 }
 
@@ -170,6 +170,6 @@ export async function getTransactionsReport(period) {
 
     return response;
   } catch (error) {
-    console.log(error);
+    return error.response;
   }
 }

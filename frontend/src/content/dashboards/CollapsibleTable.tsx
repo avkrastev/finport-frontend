@@ -33,6 +33,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from 'src/app/store';
 import TransactionModal from 'src/components/TransactionModal';
+import { useTranslation, Trans } from 'react-i18next';
 
 function Row(props: {
   row: any;
@@ -85,12 +86,18 @@ function Row(props: {
               color="text.primary"
               noWrap
             >
-              {row.name}
+              {category !== 'commodities' ? (
+                row.name
+              ) : (
+                <Trans i18nKey={row.name}>{row.name}</Trans>
+              )}
             </Typography>
             &nbsp;&nbsp;
-            <Typography variant="body1" color="text.secondary" noWrap>
-              {row.symbol}
-            </Typography>
+            {category !== 'commodities' && (
+              <Typography variant="body1" color="text.secondary" noWrap>
+                {row.symbol}
+              </Typography>
+            )}
           </div>
         </TableCell>
         {category !== 'p2p' && (
@@ -123,7 +130,12 @@ function Row(props: {
           </Typography>
           {category !== 'p2p' && (
             <Typography variant="body2" noWrap gutterBottom>
-              {row.holdingQuantity} {row.symbol}
+              {row.holdingQuantity}{' '}
+              {category !== 'commodities' ? (
+                row.symbol
+              ) : (
+                <Trans i18nKey={'toz'}>oz t.</Trans>
+              )}
             </Typography>
           )}
         </TableCell>
@@ -168,118 +180,152 @@ function Row(props: {
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
               <Typography variant="h6" gutterBottom component="div">
-                History
+                <Trans i18nKey={'History'}>History</Trans>
               </Typography>
               <Table size="small" aria-label="purchases">
                 <TableHead>
                   <TableRow>
-                    <TableCell>Date</TableCell>
-                    <TableCell>Type</TableCell>
+                    <TableCell>
+                      <Trans i18nKey={'Date'}>Date</Trans>
+                    </TableCell>
+                    <TableCell>
+                      <Trans i18nKey={'Type'}>Type</Trans>
+                    </TableCell>
                     {category !== 'p2p' && (
-                      <TableCell align="right">Price per asset</TableCell>
+                      <TableCell align="right">
+                        <Trans i18nKey={'Price per asset'}>
+                          Price per asset
+                        </Trans>
+                      </TableCell>
                     )}
                     {category !== 'p2p' && (
-                      <TableCell align="right">Quantity</TableCell>
+                      <TableCell align="right">
+                        <Trans i18nKey={'Quantity'}>Quantity</Trans>
+                      </TableCell>
                     )}
-                    <TableCell align="right">Total cost</TableCell>
-                    <TableCell align="right">Actions</TableCell>
+                    <TableCell align="right">
+                      <Trans i18nKey={'Total cost'}>Total cost</Trans>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Trans i18nKey={'Actions'}>Actions</Trans>
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {openedRows[row[identifier]]?.map((historyRow) => (
-                    <TableRow key={historyRow.id}>
-                      <TableCell component="th" scope="row">
-                        {format(new Date(historyRow.date), 'dd MMM yyyy HH:ss')}
-                      </TableCell>
-                      <TableCell>
-                        <Typography
-                          variant="body2"
-                          noWrap
-                          color={
-                            historyRow.type === 1 || historyRow.type === 3
-                              ? theme.palette.error.main
-                              : theme.palette.primary.main
-                          }
-                          gutterBottom
-                        >
-                          {
-                            transactionTypes.find(
-                              (type) => type.key === historyRow.type
-                            )?.label
-                          }
-                        </Typography>
-                      </TableCell>
-                      {category !== 'p2p' && (
-                        <TableCell align="right">
-                          {historyRow.quantity !== 0 &&
-                          historyRow.price !== 0 ? (
-                            <Typography
-                              variant="body1"
-                              color="text.secondary"
-                              noWrap
-                            >
-                              {formatAmountAndCurrency(
-                                historyRow.price_usd /
-                                  Math.abs(historyRow.quantity),
-                                row.currency
-                              )}
-                            </Typography>
-                          ) : (
-                            <Typography
-                              variant="body1"
-                              color="text.secondary"
-                              noWrap
-                            >
-                              N/A
-                            </Typography>
+                  {openedRows[row[identifier]]?.map((historyRow) => {
+                    const typeOfTransaction = transactionTypes.find(
+                      (type) => type.key === historyRow.type
+                    )?.value;
+                    return (
+                      <TableRow key={historyRow.id}>
+                        <TableCell component="th" scope="row">
+                          {format(
+                            new Date(historyRow.date),
+                            'dd MMM yyyy HH:ss'
                           )}
                         </TableCell>
-                      )}
-                      {category !== 'p2p' && (
-                        <TableCell align="right">
-                          {historyRow.quantity}
+                        <TableCell>
+                          <Typography
+                            variant="body2"
+                            noWrap
+                            color={
+                              historyRow.type === 1 || historyRow.type === 3
+                                ? theme.palette.error.main
+                                : theme.palette.primary.main
+                            }
+                            gutterBottom
+                          >
+                            <Trans i18nKey={typeOfTransaction}>
+                              {typeOfTransaction}
+                            </Trans>
+                          </Typography>
                         </TableCell>
-                      )}
-                      <TableCell align="right">
-                        {formatAmountAndCurrency(
-                          historyRow.price,
-                          historyRow.currency
+                        {category !== 'p2p' && (
+                          <TableCell align="right">
+                            {historyRow.quantity !== 0 &&
+                            historyRow.price !== 0 ? (
+                              <Typography
+                                variant="body1"
+                                color="text.secondary"
+                                noWrap
+                              >
+                                {formatAmountAndCurrency(
+                                  historyRow.price_usd /
+                                    Math.abs(historyRow.quantity),
+                                  row.currency
+                                )}
+                              </Typography>
+                            ) : (
+                              <Typography
+                                variant="body1"
+                                color="text.secondary"
+                                noWrap
+                              >
+                                <Trans i18nKey={'N/A'}>N/A</Trans>
+                              </Typography>
+                            )}
+                          </TableCell>
                         )}
-                      </TableCell>
-                      <TableCell align="right">
-                        <Tooltip title="Edit Transaction" arrow>
-                          <IconButton
-                            onClick={() => openEditModal(historyRow)}
-                            sx={{
-                              '&:hover': {
-                                background: theme.colors.primary.lighter
-                              },
-                              color: theme.palette.primary.main
-                            }}
-                            color="inherit"
-                            size="small"
+                        {category !== 'p2p' && (
+                          <TableCell align="right">
+                            {historyRow.quantity}
+                          </TableCell>
+                        )}
+                        <TableCell align="right">
+                          {formatAmountAndCurrency(
+                            historyRow.price,
+                            historyRow.currency
+                          )}
+                        </TableCell>
+                        <TableCell align="right">
+                          <Tooltip
+                            title={
+                              <Trans i18nKey={'Edit Transaction'}>
+                                Edit Transaction
+                              </Trans>
+                            }
+                            arrow
                           >
-                            <EditTwoToneIcon fontSize="small" />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Delete Transaction" arrow>
-                          <IconButton
-                            onClick={() => openDeleteModal(historyRow.id)}
-                            sx={{
-                              '&:hover': {
-                                background: theme.colors.error.lighter
-                              },
-                              color: theme.palette.error.main
-                            }}
-                            color="inherit"
-                            size="small"
+                            <IconButton
+                              onClick={() => openEditModal(historyRow)}
+                              sx={{
+                                '&:hover': {
+                                  background: theme.colors.primary.lighter
+                                },
+                                color: theme.palette.primary.main
+                              }}
+                              color="inherit"
+                              size="small"
+                            >
+                              <EditTwoToneIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip
+                            title={
+                              <Trans i18nKey={'Delete Transaction'}>
+                                Delete Transaction
+                              </Trans>
+                            }
+                            arrow
                           >
-                            <DeleteTwoToneIcon fontSize="small" />
-                          </IconButton>
-                        </Tooltip>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                            <IconButton
+                              onClick={() => openDeleteModal(historyRow.id)}
+                              sx={{
+                                '&:hover': {
+                                  background: theme.colors.error.lighter
+                                },
+                                color: theme.palette.error.main
+                              }}
+                              color="inherit"
+                              size="small"
+                            >
+                              <DeleteTwoToneIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
             </Box>
@@ -304,6 +350,8 @@ export default function CollapsibleTable({ assets, category, loading }) {
   const [selectedRow, setSelectedRow] = React.useState(null);
 
   const handleCloseConfirmModal = () => setOpenConfirmModal(false);
+
+  const { t } = useTranslation();
 
   React.useEffect(() => {
     async function fetchHistory() {
@@ -401,15 +449,15 @@ export default function CollapsibleTable({ assets, category, loading }) {
       <Table aria-label="collapsible table">
         <TableHead>
           <TableRow>
-            <TableCell>Asset</TableCell>
+            <TableCell>{t('Asset')}</TableCell>
             {category !== 'p2p' && (
-              <TableCell align="right">Current Price</TableCell>
+              <TableCell align="right">{t('Current Price')}</TableCell>
             )}
             <TableCell align="right">
-              {category !== 'p2p' ? 'Average Net Cost' : 'Total Invested'}
+              {category !== 'p2p' ? t('Average Net Cost') : t('Total Invested')}
             </TableCell>
-            <TableCell align="right">Holdings</TableCell>
-            <TableCell align="right">P&amp;L</TableCell>
+            <TableCell align="right">{t('Holdings')}</TableCell>
+            <TableCell align="right">{t('P&L')}</TableCell>
             <TableCell />
           </TableRow>
         </TableHead>

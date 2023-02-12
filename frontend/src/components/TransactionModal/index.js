@@ -40,9 +40,11 @@ import Input from '../../components/FormElements/Input';
 import { VALIDATOR_REQUIRE } from 'src/utils/validators';
 import Selector from '../FormElements/Selector';
 import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 
 function TransactionModal(props) {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const [tab, setTab] = useState(0);
   const [assetsDropdown, setAssetsDropdown] = useState([]);
@@ -69,13 +71,7 @@ function TransactionModal(props) {
       }
 
       if (formState.inputs.category.value === 'commodities') {
-        const commoditiesOptions = commodities.map((commodity) => {
-          let newItems = {};
-          newItems.key = commodity.name;
-          newItems.value = commodity.name;
-          return newItems;
-        });
-        setAssetsDropdown(commoditiesOptions);
+        setAssetsDropdown(commodities);
       }
       setFormData({
         ...formState.inputs,
@@ -235,7 +231,7 @@ function TransactionModal(props) {
         dispatch(addNewTransaction(transactionPayload));
       }
 
-      switch (formState.inputs.category) {
+      switch (formState.inputs.category.value) {
         case 'crypto':
           dispatch(changeCryptoStatus('idle'));
           break;
@@ -279,7 +275,7 @@ function TransactionModal(props) {
         <DialogTitle>{props.title}</DialogTitle>
         <DialogContent>
           <DialogContentText>{props.contentText}</DialogContentText>
-          <Box sx={{ width: 1 }}>
+          <Box sx={{ width: 1, p: 2 }}>
             {props.tabs && (
               <Tabs
                 centered
@@ -288,10 +284,10 @@ function TransactionModal(props) {
                 value={tab}
                 onChange={(event, value) => setType(value)}
               >
-                <Tab label="Buy" {...a11yProps(0)} />
-                <Tab label="Sell" {...a11yProps(1)} />
-                {formState.inputs.category !== 'p2p' && (
-                  <Tab label="Transfer" {...a11yProps(2)} />
+                <Tab label={t('Buy')} {...a11yProps(0)} />
+                <Tab label={t('Sell')} {...a11yProps(1)} />
+                {formState.inputs.category.value !== 'p2p' && (
+                  <Tab label={t('Transfer')} {...a11yProps(2)} />
                 )}
               </Tabs>
             )}
@@ -304,7 +300,7 @@ function TransactionModal(props) {
                 options={
                   props?.categories?.filter((category) => category.show) || []
                 }
-                label="Category"
+                label={t('Category')}
                 sx={{ mt: 2, mb: 1 }}
                 onInput={inputHandler}
                 {...formState.inputs.category}
@@ -323,10 +319,10 @@ function TransactionModal(props) {
                   ? '(' + formState.inputs.symbol.value + ')'
                   : ''}
               </Typography>
-            ) : formState.inputs.category === 'misc' ||
-              (formState.inputs.category === 'stocks' &&
+            ) : formState.inputs.category.value === 'misc' ||
+              (formState.inputs.category.value === 'stocks' &&
                 !authUserData.stocks_api_key) ||
-              (formState.inputs.category === 'etf' &&
+              (formState.inputs.category.value === 'etf' &&
                 !authUserData.stocks_api_key) ? (
               <Input
                 fullWidth
@@ -334,7 +330,7 @@ function TransactionModal(props) {
                 margin="dense"
                 sx={{ mt: 1, mb: 2 }}
                 id="name"
-                label="Asset"
+                label={t('Asset')}
                 type="text"
                 onInput={inputHandler}
                 {...formState.inputs.name}
@@ -347,7 +343,7 @@ function TransactionModal(props) {
                 fullWidth
                 id="asset"
                 options={assetsDropdown}
-                label="Asset"
+                label={t('Asset')}
                 sx={{ mt: 2, mb: 1 }}
                 change={handleAssetChange}
                 {...formState.inputs.symbol}
@@ -361,7 +357,7 @@ function TransactionModal(props) {
                   required
                   id="currency"
                   options={currencies}
-                  label="Currency"
+                  label={t('Currency')}
                   sx={{ gridColumn: '1', mt: 1, mb: 1 }}
                   onInput={inputHandler}
                   {...formState.inputs.currency}
@@ -371,7 +367,7 @@ function TransactionModal(props) {
                   sx={{ gridColumn: '2', input: { textAlign: 'right' } }}
                   margin="dense"
                   id="price"
-                  label="Price"
+                  label={t('Price')}
                   type="number"
                   valueType="number"
                   onInput={inputHandler}
@@ -387,38 +383,73 @@ function TransactionModal(props) {
                 fullWidth
                 id="transfer"
                 options={transactionTypes.filter((type) => type.parent === 2)}
-                label="Transfer"
+                label={t('Transfer')}
                 sx={{ mt: 2, mb: 1 }}
                 {...formState.inputs.transfer}
                 onInput={inputHandler}
               />
             )}
-            {formState.inputs.category !== 'p2p' && (
-              <Input
-                required
-                sx={{ input: { textAlign: 'right' } }}
-                margin="dense"
-                id="quantity"
-                label="Quantity"
-                type="number"
-                valueType="number"
-                onFocus={(event) => event.target.select()}
-                onInput={inputHandler}
-                fullWidth
-                validators={[VALIDATOR_REQUIRE()]}
-                {...formState.inputs.quantity}
-              />
-            )}
+            {formState.inputs.category.value !== 'p2p' &&
+              (formState.inputs.category.value === 'commodities' ? (
+                <Box
+                  sx={{
+                    display: 'grid',
+                    gridTemplateColumns: '3fr 1fr'
+                  }}
+                >
+                  <Input
+                    required
+                    sx={{ gridColumn: '1', input: { textAlign: 'right' } }}
+                    margin="dense"
+                    id="quantity"
+                    label={t('Quantity')}
+                    type="number"
+                    valueType="number"
+                    onFocus={(event) => event.target.select()}
+                    onInput={inputHandler}
+                    fullWidth
+                    validators={[VALIDATOR_REQUIRE()]}
+                    {...formState.inputs.quantity}
+                  />
+                  <Typography
+                    sx={{
+                      gridColumn: '2',
+                      alignItems: 'center',
+                      display: 'flex',
+                      justifyContent: 'end',
+                      ml: 2
+                    }}
+                    variant="subtitle1"
+                  >
+                    {t('in troy ounces')}
+                  </Typography>
+                </Box>
+              ) : (
+                <Input
+                  required
+                  sx={{ input: { textAlign: 'right' } }}
+                  margin="dense"
+                  id="quantity"
+                  label={t('Quantity')}
+                  type="number"
+                  valueType="number"
+                  onFocus={(event) => event.target.select()}
+                  onInput={inputHandler}
+                  fullWidth
+                  validators={[VALIDATOR_REQUIRE()]}
+                  {...formState.inputs.quantity}
+                />
+              ))}
 
             <Input
               margin="dense"
               id="date"
-              label="Date"
+              label={t('Date')}
               type="datetime-local"
               onInput={inputHandler}
               fullWidth
               value={
-                formState.inputs.date.value
+                isNaN(Date.parse(formState.inputs.date.value)) == false
                   ? format(
                       new Date(formState.inputs.date.value),
                       'yyyy-MM-dd HH:mm'
@@ -430,8 +461,8 @@ function TransactionModal(props) {
             />
           </Box>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog}>Cancel</Button>
+        <DialogActions sx={{ m: 3 }}>
+          <Button onClick={handleCloseDialog}>{t('Cancel')}</Button>
           <Button
             disabled={!formState.isValid}
             onClick={submitTransactionForm}
@@ -439,7 +470,7 @@ function TransactionModal(props) {
             color="primary"
             autoFocus
           >
-            Save
+            {t('Save')}
           </Button>
         </DialogActions>
       </Dialog>

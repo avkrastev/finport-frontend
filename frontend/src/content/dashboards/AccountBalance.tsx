@@ -273,15 +273,17 @@ function AccountBalance({ assets, category, loading, ...rest }) {
                               </ListItemAvatar>
                             )}
                             <ListItemText
-                              primary={asset.symbol}
+                              primary={
+                                category === 'commodities'
+                                  ? t(asset.name)
+                                  : asset.symbol
+                              }
                               primaryTypographyProps={{
                                 variant: 'h5',
                                 noWrap: true
                               }}
                               secondary={
-                                asset.hasOwnProperty('alias')
-                                  ? t(asset.name)
-                                  : asset.name
+                                category !== 'commodities' ? asset.name : ''
                               }
                               secondaryTypographyProps={{
                                 variant: 'subtitle2',

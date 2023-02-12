@@ -15,6 +15,7 @@ import {
 } from './commoditiesSlice';
 import CollapsibleTable from '../CollapsibleTable';
 import WatchListWithChart from '../WatchListWithChart';
+import { Trans } from 'react-i18next';
 
 function DashboardCommodities() {
   const dispatch: AppDispatch = useDispatch();
@@ -33,7 +34,13 @@ function DashboardCommodities() {
         <title>Commodities Dashboard</title>
       </Helmet>
       <PageTitleWrapper>
-        <PageHeader title="Commodities Portfolio" />
+        <PageHeader
+          title={
+            <Trans i18nKey={'Commodities Portfolio'}>
+              Commodities Portfolio
+            </Trans>
+          }
+        />
       </PageTitleWrapper>
       <Container maxWidth="lg">
         <Grid

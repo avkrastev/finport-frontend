@@ -122,8 +122,6 @@ function ChangePassword(props) {
     }
   };
 
-  console.log(formState);
-
   const handleChangePassword = async () => {
     setErrorMessage('');
     setLoading(true);

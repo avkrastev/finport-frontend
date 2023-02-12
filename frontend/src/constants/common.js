@@ -1,3 +1,10 @@
+import CurrencyBitcoinTwoToneIcon from '@mui/icons-material/CurrencyBitcoinTwoTone';
+import AgricultureTwoToneIcon from '@mui/icons-material/AgricultureTwoTone';
+import AutoGraphTwoToneIcon from '@mui/icons-material/AutoGraphTwoTone';
+import AddchartTwoToneIcon from '@mui/icons-material/AddchartTwoTone';
+import GroupTwoToneIcon from '@mui/icons-material/GroupTwoTone';
+import ShowChartTwoToneIcon from '@mui/icons-material/ShowChartTwoTone';
+
 export const languages = [
   {
     value: 'Български',
@@ -52,14 +59,20 @@ export const transactionTypes = [
 
 export const commodities = [
   {
-    name: 'Silver',
-    logo: 'silver.png',
-    description: ''
+    key: 'gold',
+    value: 'Gold'
   },
   {
-    name: 'Gold',
-    logo: 'silver.png',
-    description: ''
+    key: 'silver',
+    value: 'Silver'
+  },
+  {
+    key: 'platinum',
+    value: 'Platinum'
+  },
+  {
+    key: 'palladium',
+    value: 'Palladium'
   }
 ];
 
@@ -392,3 +405,12 @@ export const p2pPlatforms = [
     website: 'https://www.youhodler.com/'
   }
 ];
+
+export const assetIcons = {
+  crypto: CurrencyBitcoinTwoToneIcon,
+  stocks: ShowChartTwoToneIcon,
+  p2p: GroupTwoToneIcon,
+  etf: AddchartTwoToneIcon,
+  misc: AutoGraphTwoToneIcon,
+  commodities: AgricultureTwoToneIcon
+};

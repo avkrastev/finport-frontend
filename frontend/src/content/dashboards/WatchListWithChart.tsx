@@ -22,6 +22,9 @@ import {
 } from '../overview/summarySlice';
 import BalanceSkeleton from './BalanceSkeleton';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router';
+import { assetIcons } from 'src/constants/common';
+import CommoditiesModal from '../dialogs/commodities';
 
 const EmptyResultsWrapper = styled('img')(
   ({ theme }) => `
@@ -33,7 +36,9 @@ const EmptyResultsWrapper = styled('img')(
 
 function WatchListWithChart(props) {
   const { t } = useTranslation();
+  const location = useLocation();
   const [tabs, setTab] = useState<string | null>('watch_list_columns');
+  const [openModal, setOpenModal] = useState(false);
   const dispatch: AppDispatch = useDispatch();
   const history = useSelector(selectAllHistorySinceStart);
   const historyStatus = useSelector(getHistoryStatus);
@@ -44,11 +49,37 @@ function WatchListWithChart(props) {
     setTab(newValue);
   };
 
+  const currentPath = location.pathname.split('/')[2];
+
+  const Icon = assetIcons[currentPath];
+
+  const modals = {
+    crypto: CommoditiesModal,
+    stocks: CommoditiesModal,
+    p2p: CommoditiesModal,
+    etf: CommoditiesModal,
+    misc: CommoditiesModal,
+    commodities: CommoditiesModal
+  };
+
+  const Modal = modals[currentPath];
+
   useEffect(() => {
     if (tabs === 'watch_list_rows') {
       dispatch(fetchHistorySinceStart(props.category));
     }
   }, [tabs, dispatch, props.category]);
+
+  const handleClickOpen = () => {
+    setOpenModal(true);
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === 'backdropClick') {
+      return;
+    }
+    setOpenModal(false);
+  };
 
   return (
     <>
@@ -58,7 +89,20 @@ function WatchListWithChart(props) {
         justifyContent="space-between"
         sx={{ pb: 3 }}
       >
-        <Typography variant="h3"></Typography>
+        {assetIcons[currentPath] ? (
+          <Button
+            onClick={handleClickOpen}
+            size="large"
+            sx={{ mt: { xs: 2, md: 0 } }}
+            variant="contained"
+            startIcon={<Icon />}
+          >
+            {t('Add transaction')}
+          </Button>
+        ) : (
+          <Typography></Typography>
+        )}
+
         <ToggleButtonGroup
           value={tabs}
           exclusive
@@ -102,7 +146,11 @@ function WatchListWithChart(props) {
             </Grid>
           ) : (
             <Grid item xs={12}>
-              <BalanceChart assets={props.assets} category={props.category} t={t} />
+              <BalanceChart
+                assets={props.assets}
+                category={props.category}
+                t={t}
+              />
             </Grid>
           ))}
 
@@ -128,6 +176,14 @@ function WatchListWithChart(props) {
           </Grid>
         )}
       </Grid>
+      {modals[currentPath] && (
+        <Modal
+          open={openModal}
+          close={handleClose}
+          categories={[]}
+          tabs={true}
+        />
+      )}
     </>
   );
 }

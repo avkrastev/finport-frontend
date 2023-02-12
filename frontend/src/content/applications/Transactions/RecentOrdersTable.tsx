@@ -31,6 +31,7 @@ import BulkActions from './BulkActions';
 import { AuthContext } from '../../../utils/context/authContext';
 import { transactionTypes } from '../../../constants/common';
 import { formatAmountAndCurrency } from '../../../utils/functions';
+import { useTranslation } from 'react-i18next';
 
 interface RecentOrdersTableProps {
   assets: Asset[];
@@ -69,6 +70,8 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
 }) => {
   const { authUserData } = useContext(AuthContext);
 
+  const { t } = useTranslation();
+
   const [selectedAssets, setSelectedAssets] = useState<string[]>([]);
 
   const selectedBulkActions = selectedAssets.length > 0;
@@ -79,7 +82,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
   });
 
   const categoryOptions = [
-    { value: 'All', key: 'all' },
+    { value: t('All'), key: 'all' },
     ...authUserData.categories.filter((category: any) => category.show === true)
   ];
 
@@ -149,7 +152,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
           action={
             <Box width={150}>
               <FormControl fullWidth variant="outlined">
-                <InputLabel>Category</InputLabel>
+                <InputLabel>{t('Category')}</InputLabel>
                 <Select
                   value={filters.category || 'all'}
                   onChange={handleCategoryChange}
@@ -168,7 +171,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
               </FormControl>
             </Box>
           }
-          title="Recent Transactions"
+          title={t('Recent Transactions')}
         />
       )}
       <Divider />
@@ -184,12 +187,12 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
                   onChange={handleSelectAllAssets}
                 />
               </TableCell>
-              <TableCell>Transaction Details</TableCell>
-              <TableCell>Category</TableCell>
-              <TableCell align="right">Price per asset</TableCell>
-              <TableCell align="right">Quantity</TableCell>
-              <TableCell align="right">Amount</TableCell>
-              <TableCell align="right">Actions</TableCell>
+              <TableCell>{t('Transaction Details')}</TableCell>
+              <TableCell>{t('Category')}</TableCell>
+              <TableCell align="right">{t('Price per asset')}</TableCell>
+              <TableCell align="right">{t('Quantity')}</TableCell>
+              <TableCell align="right">{t('Amount')}</TableCell>
+              <TableCell align="right">{t('Actions')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -229,8 +232,12 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
                           width: '25em'
                         }}
                       >
-                        {asset.name}{' '}
-                        {asset.symbol ? '(' + asset.symbol + ')' : ''}
+                        {asset.category !== 'commodities'
+                          ? asset.name
+                          : t(asset.name)}{' '}
+                        {asset.category !== 'commodities' && asset.symbol
+                          ? '(' + asset.symbol + ')'
+                          : ''}
                       </p>
                     </Typography>
                     <Typography variant="body1" color="text.secondary" noWrap>
@@ -246,19 +253,19 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
                       }
                       gutterBottom
                     >
-                      {
+                      {t(
                         transactionTypes.find((type) => type.key === asset.type)
-                          ?.label
-                      }
+                          ?.value
+                      )}
                     </Typography>
                   </TableCell>
                   <TableCell>
                     <Typography variant="body1" color="text.secondary" noWrap>
-                      {
+                      {t(
                         authUserData.categories.find(
                           (category) => category.key === asset.category
                         )?.value
-                      }
+                      )}
                     </Typography>
                   </TableCell>
                   <TableCell align="right">
@@ -271,7 +278,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
                       </Typography>
                     ) : (
                       <Typography variant="body1" color="text.secondary" noWrap>
-                        N/A
+                        {t('N/A')}
                       </Typography>
                     )}
                   </TableCell>
@@ -291,7 +298,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
                           color="text.secondary"
                           noWrap
                         >
-                          N/A
+                          {t('N/A')}
                         </Typography>
                       )}
                     </Typography>
@@ -299,7 +306,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
                   <TableCell align="right">
                     {asset.price === 0 ? (
                       <Typography variant="body1" color="text.secondary" noWrap>
-                        N/A
+                        {t('N/A')}
                       </Typography>
                     ) : (
                       <>
@@ -325,7 +332,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
                   </TableCell>
 
                   <TableCell align="right">
-                    <Tooltip title="Edit Transaction" arrow>
+                    <Tooltip title={t('Edit Transaction')} arrow>
                       <IconButton
                         onClick={() => openEditModal(asset.id)}
                         sx={{
@@ -340,7 +347,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
                         <EditTwoToneIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
-                    <Tooltip title="Delete Transaction" arrow>
+                    <Tooltip title={t('Delete Transaction')} arrow>
                       <IconButton
                         onClick={() => openDeleteModal(asset.id)}
                         sx={{
