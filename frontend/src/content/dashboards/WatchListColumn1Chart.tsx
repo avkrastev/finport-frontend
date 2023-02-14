@@ -2,6 +2,7 @@ import { FC } from 'react';
 import PropTypes from 'prop-types';
 import { Line } from 'react-chartjs-2';
 import { alpha, useTheme } from '@mui/material';
+import { formatAmountAndCurrency } from 'src/utils/functions';
 
 interface WatchListColumn1ChartProps {
   data: any[];
@@ -98,7 +99,7 @@ const WatchListColumn1Chart: FC<WatchListColumn1ChartProps> = ({
           }
         },
         label: (tooltipItem: any) => {
-          return `Price: $${tooltipItem.yLabel}`;
+          return formatAmountAndCurrency(tooltipItem.yLabel);
         }
       }
     }

@@ -107,9 +107,15 @@
   "Save": "Запазване",
   "Commodities Portfolio": "Моите стоки",
   "Category": "Категория",
-  "recentTransactions": "<0>{{name}}</0>, всички твои транзакция са тук",
+  "recentTransactions": "<0>{{name}}</0>, всички твои транзакции са тук",
   "All": "Всички",
   "Recent Transactions": "Последни транзакции",
   "Transaction Details": "Детайли на транзакцията",
-  "Amount": "Стойност"
+  "Amount": "Стойност",
+  "U.S. Dollar": "Щатски долар",
+  "Euro": "Евро",
+  "Bulgarian Lev": "Бълграски лев",
+  "British Pound": "Британска лира",
+  "Swiss Franc": "Швейцарски франк",
+  "Canadian Dollar": "Канадски долар"
 }

@@ -258,7 +258,7 @@ function EditProfileTab() {
                     >
                       {currencies.map((option) => (
                         <MenuItem key={option.value} value={option.key}>
-                          {option.key} - {option.value}
+                          {t(option.description)} - {option.value}
                         </MenuItem>
                       ))}
                     </TextField>

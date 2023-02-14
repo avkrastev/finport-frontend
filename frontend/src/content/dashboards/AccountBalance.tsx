@@ -21,6 +21,7 @@ import Text from 'src/components/Text';
 import {
   formatAmountAndCurrency,
   getCryptoIcon,
+  getUserSelectedCurrency,
   roundNumber
 } from 'src/utils/functions';
 import AccountBalanceSkeleton from './AccountBalanceSkeleton';
@@ -133,6 +134,8 @@ function AccountBalance({ assets, category, loading, ...rest }) {
     return <AccountBalanceSkeleton />;
   }
 
+  const currentCurrency = getUserSelectedCurrency();
+
   return (
     <Card>
       <Grid spacing={0} container>
@@ -144,14 +147,21 @@ function AccountBalance({ assets, category, loading, ...rest }) {
             <Box>
               <Typography variant="h1" gutterBottom>
                 {rest.totalBalance
-                  ? formatAmountAndCurrency(rest.totalBalance, 'USD')
-                  : formatAmountAndCurrency(assets?.sums?.holdingValue, 'USD')}
+                  ? formatAmountAndCurrency(rest.totalBalance, currentCurrency)
+                  : formatAmountAndCurrency(
+                      assets?.sums?.holdingValue,
+                      currentCurrency
+                    )}
                 &nbsp;|&nbsp;
-                {formatAmountAndCurrency(assets?.sums?.totalSum, 'USD')}
+                {formatAmountAndCurrency(
+                  assets?.sums?.totalSum,
+                  currentCurrency
+                )}
               </Typography>
 
               {sumsInDifferentCurrencies
-                .filter((item) => item.currency !== 'USD')
+                .filter((item) => item.currency !== currentCurrency)
+                .slice(0, 3)
                 .map((item, i) => {
                   return (
                     <Typography
@@ -163,10 +173,15 @@ function AccountBalance({ assets, category, loading, ...rest }) {
                     >
                       {formatAmountAndCurrency(
                         item.holdingAmount,
-                        item.currency
+                        item.currency,
+                        false
                       )}
                       &nbsp;|&nbsp;
-                      {formatAmountAndCurrency(item.totalAmount, item.currency)}
+                      {formatAmountAndCurrency(
+                        item.totalAmount,
+                        item.currency,
+                        false
+                      )}
                     </Typography>
                   );
                 })}
@@ -200,7 +215,7 @@ function AccountBalance({ assets, category, loading, ...rest }) {
                   rest.totalBalance >= 0) && (
                   <Box>
                     <Typography variant="h4">
-                      {formatAmountAndCurrency(difference, 'USD')}
+                      {formatAmountAndCurrency(difference)}
                     </Typography>
                     <Typography variant="subtitle2" noWrap align="right">
                       {differenceInPercents !== null

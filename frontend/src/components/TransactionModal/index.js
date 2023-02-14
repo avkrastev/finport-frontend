@@ -373,6 +373,7 @@ function TransactionModal(props) {
                   onInput={inputHandler}
                   validators={[VALIDATOR_REQUIRE()]}
                   {...formState.inputs.price}
+                  emptyValue={0}
                 />
               </Box>
             )}
@@ -410,6 +411,7 @@ function TransactionModal(props) {
                     fullWidth
                     validators={[VALIDATOR_REQUIRE()]}
                     {...formState.inputs.quantity}
+                    emptyValue={0}
                   />
                   <Typography
                     sx={{
@@ -438,6 +440,7 @@ function TransactionModal(props) {
                   fullWidth
                   validators={[VALIDATOR_REQUIRE()]}
                   {...formState.inputs.quantity}
+                  emptyValue={0}
                 />
               ))}
 

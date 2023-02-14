@@ -64,7 +64,7 @@ function BalanceChart(props) {
           }}
         >
           <Typography variant="h2" sx={{ pr: 1, mb: 1 }}>
-            {formatAmountAndCurrency(prices[prices.length - 1], 'USD')}
+            {formatAmountAndCurrency(prices[prices.length - 1])}
           </Typography>
           {differenceInPercents >= 0 ? (
             <Text color="success">{roundNumber(differenceInPercents)}%</Text>
@@ -80,13 +80,9 @@ function BalanceChart(props) {
           }}
         >
           {difference >= 0 ? (
-            <Label color="success">
-              {formatAmountAndCurrency(difference, 'USD')}
-            </Label>
+            <Label color="success">{formatAmountAndCurrency(difference)}</Label>
           ) : (
-            <Label color="error">
-              {formatAmountAndCurrency(difference, 'USD')}
-            </Label>
+            <Label color="error">{formatAmountAndCurrency(difference)}</Label>
           )}
 
           <Typography variant="body2" color="text.secondary" sx={{ pl: 1 }}>

@@ -136,7 +136,7 @@ function WatchListColumn1({ category, t, ...rest }) {
             }}
           >
             <Typography variant="h2" sx={{ pr: 1, mb: 1 }}>
-              {formatAmountAndCurrency(holdingValue, 'USD')}
+              {formatAmountAndCurrency(holdingValue)}
             </Typography>
             {parseInt(differenceInPercents) >= 0 ? (
               <Text color="success">
@@ -157,12 +157,10 @@ function WatchListColumn1({ category, t, ...rest }) {
           >
             {parseInt(difference) >= 0 ? (
               <Label color="success">
-                +{formatAmountAndCurrency(difference, 'USD')}
+                +{formatAmountAndCurrency(difference)}
               </Label>
             ) : (
-              <Label color="error">
-                {formatAmountAndCurrency(difference, 'USD')}
-              </Label>
+              <Label color="error">{formatAmountAndCurrency(difference)}</Label>
             )}
             <Typography variant="body2" color="text.secondary" sx={{ pl: 1 }}>
               {t('since start')}

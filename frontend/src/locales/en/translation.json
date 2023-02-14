@@ -111,5 +111,11 @@
   "All": "All",
   "Recent Transactions": "Recent Transactions",
   "Transaction Details": "Transaction Details",
-  "Amount": "Amount"
+  "Amount": "Amount",
+  "U.S. Dollar": "U.S. Dollar",
+  "Euro": "Euro",
+  "Bulgarian Lev": "Бulgarian Lev",
+  "British Pound": "British Pound",
+  "Swiss Franc": "Swiss Franc",
+  "Canadian Dollar": "Canadian Dollar"
 }

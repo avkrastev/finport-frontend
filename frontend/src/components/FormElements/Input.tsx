@@ -71,7 +71,8 @@ function Input(props) {
       label={props.label}
       onChange={onChange}
       onBlur={onBlur}
-      value={props.value || ''}
+      onFocus={props.onFocus}
+      value={props.value}
       error={!props.isValid && props.isTouched}
       helperText={helpMessage}
     />

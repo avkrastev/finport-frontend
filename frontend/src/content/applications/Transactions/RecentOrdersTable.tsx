@@ -272,8 +272,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
                     {asset.quantity !== 0 && asset.price !== 0 ? (
                       <Typography variant="body1" color="text.secondary" noWrap>
                         {formatAmountAndCurrency(
-                          asset.price_usd / Math.abs(asset.quantity),
-                          'USD'
+                          asset.price_usd / Math.abs(asset.quantity)
                         )}
                       </Typography>
                     ) : (
@@ -325,7 +324,11 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
                           color="text.secondary"
                           noWrap
                         >
-                          {formatAmountAndCurrency(asset.price_usd, 'USD')}
+                          {formatAmountAndCurrency(
+                            asset.price_usd,
+                            'USD',
+                            false
+                          )}
                         </Typography>
                       </>
                     )}

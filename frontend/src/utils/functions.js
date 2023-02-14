@@ -1,15 +1,26 @@
 import { currencies } from 'src/constants/common';
 import numeral from 'numeral';
 
-export const formatAmountAndCurrency = (amount, curr, quantity = 0) => {
-  const selectedCurrency = currencies.find(
-    (currency) => currency.key === curr
-  );
+export const formatAmountAndCurrency = (
+  amount,
+  curr = 'USD',
+  exchange = true
+) => {
+  const userData = JSON.parse(localStorage.getItem('userData')).userData;
 
-  let formattedAmount;
-  if (quantity > 0)
-    formattedAmount = numeral(amount * quantity).format(`0,0.00`);
-  else formattedAmount = numeral(amount).format(`0,0.00`);
+  if (
+    userData.hasOwnProperty('currency') &&
+    userData.currency !== 'USD' &&
+    exchange
+  ) {
+    const selectedCurrencyRate = userData.exchangeRates[userData.currency];
+    amount = selectedCurrencyRate * amount;
+    curr = userData.currency;
+  }
+
+  const selectedCurrency = currencies.find((currency) => currency.key === curr);
+
+  let formattedAmount = numeral(amount).format(`0,0.00`);
 
   if (selectedCurrency.left) {
     formattedAmount = selectedCurrency.value + ' ' + formattedAmount;
@@ -18,6 +29,12 @@ export const formatAmountAndCurrency = (amount, curr, quantity = 0) => {
   }
 
   return formattedAmount;
+};
+
+export const getUserSelectedCurrency = () => {
+  const userData = JSON.parse(localStorage.getItem('userData')).userData;
+
+  return userData.hasOwnProperty('currency') ? userData.currency : 'USD';
 };
 
 export const roundNumber = (num, scale = 2) => {

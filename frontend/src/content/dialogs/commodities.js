@@ -267,9 +267,11 @@ function CommoditiesModal(props) {
                   label={t('Price')}
                   type="number"
                   valueType="number"
-                  onInput={inputHandler}
                   validators={[VALIDATOR_REQUIRE()]}
+                  onInput={inputHandler}
+                  onFocus={(event) => event.target.select()}
                   {...formState.inputs.price}
+                  emptyValue={0}
                 />
               </Box>
             )}
@@ -306,6 +308,7 @@ function CommoditiesModal(props) {
                 fullWidth
                 validators={[VALIDATOR_REQUIRE()]}
                 {...formState.inputs.quantity}
+                emptyValue={0}
               />
               <Typography
                 sx={{

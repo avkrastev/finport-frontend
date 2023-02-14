@@ -150,7 +150,7 @@ function Row(props: {
           </Typography>
           {row.currency !== 'USD' && (
             <Typography variant="subtitle1">
-              ({formatAmountAndCurrency(row.differenceInUSD, 'USD')})
+              ({formatAmountAndCurrency(row.differenceInUSD, 'USD', false)})
             </Typography>
           )}
           <Typography variant="body2" noWrap gutterBottom>

@@ -37,12 +37,8 @@ function Row(props) {
         </TableCell>
         <TableCell align="right">{count}</TableCell>
         <TableCell align="right">
-          <Typography
-            variant="body1"
-            color="text.primary"
-            noWrap
-          >
-            {formatAmountAndCurrency(total, 'USD')}
+          <Typography variant="body1" color="text.primary" noWrap>
+            {formatAmountAndCurrency(total)}
           </Typography>
         </TableCell>
         <TableCell align="right">
@@ -99,7 +95,7 @@ function Row(props) {
                       </TableCell>
                       <TableCell align="right">{row.quantity}</TableCell>
                       <TableCell align="right">
-                        {formatAmountAndCurrency(row.price, 'USD')}
+                        {formatAmountAndCurrency(row.price)}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -126,16 +122,17 @@ export default function ReportsTable(props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {props.months && props.months.map((row, i) => (
-            <Row
-              key={i}
-              month={row._id.month}
-              year={row._id.year}
-              count={row.count}
-              total={row.totalPriceInUSD}
-              history={row.transactions}
-            />
-          ))}
+          {props.months &&
+            props.months.map((row, i) => (
+              <Row
+                key={i}
+                month={row._id.month}
+                year={row._id.year}
+                count={row.count}
+                total={row.totalPriceInUSD}
+                history={row.transactions}
+              />
+            ))}
         </TableBody>
       </Table>
     </TableContainer>

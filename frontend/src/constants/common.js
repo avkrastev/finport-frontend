@@ -20,17 +20,38 @@ export const currencies = [
   {
     key: 'USD',
     value: '$',
-    left: true
+    left: true,
+    description: 'U.S. Dollar'
   },
   {
     key: 'EUR',
     value: '€',
-    left: true
+    left: true,
+    description: 'Euro'
   },
   {
     key: 'BGN',
     value: 'лв.',
-    left: false
+    left: false,
+    description: 'Bulgarian Lev'
+  },
+  {
+    key: 'GBP',
+    value: '£',
+    left: true,
+    description: 'British Pound'
+  },
+  {
+    key: 'CHF',
+    value: 'CHF',
+    left: true,
+    description: 'Swiss Franc'
+  },
+  {
+    key: 'CAD',
+    value: 'CAD',
+    left: true,
+    description: 'Canadian Dollar'
   }
 ];
 

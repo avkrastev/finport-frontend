@@ -38,7 +38,7 @@ function WatchListMonthly(props) {
           }}
         >
           <Typography variant="h2" sx={{ pr: 1, mb: 1 }}>
-            {formatAmountAndCurrency(totalInvested, 'USD')}
+            {formatAmountAndCurrency(totalInvested)}
           </Typography>
           <Text color="black">invested</Text>
         </Box>
