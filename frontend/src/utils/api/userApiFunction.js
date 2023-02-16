@@ -1,4 +1,5 @@
 import axios from 'axios';
+import dispatchApiError from 'src/error-management/dispatchApiError';
 
 export async function userLogin(email, password) {
   try {
@@ -12,6 +13,11 @@ export async function userLogin(email, password) {
 
     return response;
   } catch (error) {
+    if (error.response.status === 500) {
+      dispatchApiError({
+        method: 'POST'
+      });
+    }
     return error.response;
   }
 }
@@ -29,6 +35,11 @@ export async function userSignUp(name, email, password) {
 
     return response;
   } catch (error) {
+    if (error.response.status === 500) {
+      dispatchApiError({
+        method: 'POST'
+      });
+    }
     return error.response;
   }
 }
@@ -44,6 +55,11 @@ export async function resetPassword(email) {
 
     return response;
   } catch (error) {
+    if (error.response.status === 500) {
+      dispatchApiError({
+        method: 'POST'
+      });
+    }
     return error.response;
   }
 }
@@ -60,6 +76,11 @@ export async function changePassword(id, password) {
 
     return response;
   } catch (error) {
+    if (error.response.status === 500) {
+      dispatchApiError({
+        method: 'POST'
+      });
+    }
     return error.response;
   }
 }
@@ -79,6 +100,11 @@ export async function getLoggedInUserData() {
 
     return response;
   } catch (error) {
+    if (error.response.status === 500) {
+      dispatchApiError({
+        method: 'GET'
+      });
+    }
     return error.response;
   }
 }
@@ -101,6 +127,11 @@ export async function updateUser(data, key) {
 
     return response;
   } catch (error) {
+    if (error.response.status === 500) {
+      dispatchApiError({
+        method: 'PATCH'
+      });
+    }
     return error.response;
   }
 }
@@ -113,6 +144,11 @@ export async function verifyEmail(id) {
 
     return response;
   } catch (error) {
+    if (error.response.status === 500) {
+      dispatchApiError({
+        method: 'GET'
+      });
+    }
     return error.response;
   }
 }
@@ -132,6 +168,11 @@ export async function sendVerificationEmail() {
 
     return response;
   } catch (error) {
+    if (error.response.status === 500) {
+      dispatchApiError({
+        method: 'POST'
+      });
+    }
     return error.response;
   }
 }

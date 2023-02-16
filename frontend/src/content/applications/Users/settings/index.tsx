@@ -24,9 +24,9 @@ function ManagementUserSettings() {
   const { t } = useTranslation();
 
   const tabs = [
-    { value: 'edit_profile', label: t('Edit Profile') },
-    { value: 'notifications', label: t('Notifications') },
-    { value: 'security', label: t('Passwords/Security') }
+    { value: 'edit_profile', label: t('Edit Profile') }
+    // { value: 'notifications', label: t('Notifications') },
+    // { value: 'security', label: t('Passwords/Security') }
   ];
 
   const handleTabsChange = (event: ChangeEvent<{}>, value: string): void => {
@@ -39,7 +39,7 @@ function ManagementUserSettings() {
         <title>{t('User Settings')}</title>
       </Helmet>
       <PageTitleWrapper>
-        <PageHeader i18n={t}/>
+        <PageHeader i18n={t} />
       </PageTitleWrapper>
       <Container maxWidth="lg">
         <Grid

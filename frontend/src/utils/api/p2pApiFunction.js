@@ -1,4 +1,5 @@
 import axios from 'axios';
+import dispatchApiError from 'src/error-management/dispatchApiError';
 
 export async function addPlatformAPR(platformData) {
   const token = JSON.parse(localStorage.getItem('userData')).token;
@@ -18,6 +19,11 @@ export async function addPlatformAPR(platformData) {
 
     return response;
   } catch (error) {
+    if (error.response.status === 500) {
+      dispatchApiError({
+        method: 'POST'
+      });
+    }
     console.log(error);
   }
 }
@@ -40,6 +46,11 @@ export async function updatePlatformAPR(platformData) {
 
     return response;
   } catch (error) {
+    if (error.response.status === 500) {
+      dispatchApiError({
+        method: 'PATCH'
+      });
+    }
     console.log(error);
   }
 }
@@ -59,6 +70,11 @@ export async function getAssetsByCategory(category) {
 
     return response;
   } catch (error) {
+    if (error.response.status === 500) {
+      dispatchApiError({
+        method: 'GET'
+      });
+    }
     console.log(error);
   }
 }
@@ -78,6 +94,11 @@ export async function getAssetsSummary() {
 
     return response;
   } catch (error) {
+    if (error.response.status === 500) {
+      dispatchApiError({
+        method: 'GET'
+      });
+    }
     console.log(error);
   }
 }
@@ -99,6 +120,11 @@ export async function addNewAsset(transaction) {
 
     return response;
   } catch (error) {
+    if (error.response.status === 500) {
+      dispatchApiError({
+        method: 'POST'
+      });
+    }
     console.log(error);
   }
 }
@@ -138,6 +164,11 @@ export async function deleteAsset(id) {
 
     return response;
   } catch (error) {
+    if (error.response.status === 500) {
+      dispatchApiError({
+        method: 'DELETE'
+      });
+    }
     console.log(error);
   }
 }
@@ -159,6 +190,11 @@ export async function deleteAssets(ids) {
 
     return response;
   } catch (error) {
+    if (error.response.status === 500) {
+      dispatchApiError({
+        method: 'DELETE_MANY'
+      });
+    }
     console.log(error);
   }
 }
@@ -166,14 +202,22 @@ export async function deleteAssets(ids) {
 export async function getAssetById(id) {
   const token = JSON.parse(localStorage.getItem('userData')).token;
   try {
-    const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/assets/${id}`, {
-      headers: {
-        Authorization: `Basic ${token}`
+    const response = await axios.get(
+      `${process.env.REACT_APP_BACKEND_URL}/assets/${id}`,
+      {
+        headers: {
+          Authorization: `Basic ${token}`
+        }
       }
-    });
+    );
 
     return response;
   } catch (error) {
+    if (error.response.status === 500) {
+      dispatchApiError({
+        method: 'GET'
+      });
+    }
     console.log(error);
   }
 }

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import dispatchApiError from 'src/error-management/dispatchApiError';
 
 export async function getAssets(query = '') {
   const token = JSON.parse(localStorage.getItem('userData')).token;
@@ -14,6 +15,11 @@ export async function getAssets(query = '') {
 
     return response;
   } catch (error) {
+    if (error.response.status === 500) {
+      dispatchApiError({
+        method: 'GET'
+      });
+    }
     return error.response;
   }
 }
@@ -33,6 +39,9 @@ export async function getAssetsByCategory(category) {
 
     return response;
   } catch (error) {
+    dispatchApiError({
+      method: 'GET'
+    });
     return error.response;
   }
 }
@@ -52,6 +61,9 @@ export async function getAssetsSummary() {
 
     return response;
   } catch (error) {
+    dispatchApiError({
+      method: 'GET'
+    });
     return error.response;
   }
 }
@@ -73,6 +85,11 @@ export async function addNewAsset(transaction) {
 
     return response;
   } catch (error) {
+    if (error.response.status === 500) {
+      dispatchApiError({
+        method: 'POST'
+      });
+    }
     return error.response;
   }
 }
@@ -94,6 +111,11 @@ export async function updateAsset(transaction) {
 
     return response;
   } catch (error) {
+    if (error.response.status === 500) {
+      dispatchApiError({
+        method: 'PATCH'
+      });
+    }
     return error.response;
   }
 }
@@ -112,6 +134,11 @@ export async function deleteAsset(id) {
 
     return response;
   } catch (error) {
+    if (error.response.status === 500) {
+      dispatchApiError({
+        method: 'DELETE'
+      });
+    }
     return error.response;
   }
 }
@@ -133,6 +160,11 @@ export async function deleteAssets(ids) {
 
     return response;
   } catch (error) {
+    if (error.response.status === 500) {
+      dispatchApiError({
+        method: 'DELETE_MANY'
+      });
+    }
     return error.response;
   }
 }
@@ -151,6 +183,11 @@ export async function getAssetById(id) {
 
     return response;
   } catch (error) {
+    if (error.response.status === 500) {
+      dispatchApiError({
+        method: 'GET'
+      });
+    }
     return error.response;
   }
 }
@@ -170,6 +207,11 @@ export async function getTransactionsReport(period) {
 
     return response;
   } catch (error) {
+    if (error.response.status === 500) {
+      dispatchApiError({
+        method: 'GET'
+      });
+    }
     return error.response;
   }
 }

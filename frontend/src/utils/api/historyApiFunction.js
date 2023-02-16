@@ -1,4 +1,5 @@
 import axios from 'axios';
+import dispatchApiError from 'src/error-management/dispatchApiError';
 
 export async function historyForAWeek() {
   const token = JSON.parse(localStorage.getItem('userData')).token;
@@ -15,11 +16,16 @@ export async function historyForAWeek() {
 
     return response;
   } catch (error) {
+    if (error.response.status === 500) {
+      dispatchApiError({
+        method: 'GET'
+      });
+    }
     console.log(error);
   }
 }
 
-export async function historySinceStart(category = "") {
+export async function historySinceStart(category = '') {
   const token = JSON.parse(localStorage.getItem('userData')).token;
 
   try {
@@ -36,6 +42,11 @@ export async function historySinceStart(category = "") {
 
     return response;
   } catch (error) {
+    if (error.response.status === 500) {
+      dispatchApiError({
+        method: 'GET'
+      });
+    }
     console.log(error);
   }
 }

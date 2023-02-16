@@ -1,4 +1,5 @@
 import axios from 'axios';
+import dispatchApiError from 'src/error-management/dispatchApiError';
 
 export async function autocompleteCrypto(query) {
   try {
@@ -8,6 +9,11 @@ export async function autocompleteCrypto(query) {
 
     return response;
   } catch (error) {
+    if (error.response.status === 500) {
+      dispatchApiError({
+        method: 'GET'
+      });
+    }
     console.log(error);
   }
 }
@@ -20,6 +26,11 @@ export async function cryptoHistoricalData(coin, date) {
 
     return response;
   } catch (error) {
+    if (error.response.status === 500) {
+      dispatchApiError({
+        method: 'GET'
+      });
+    }
     console.log(error);
   }
 }

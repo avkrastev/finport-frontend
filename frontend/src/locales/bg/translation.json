@@ -117,5 +117,12 @@
   "Bulgarian Lev": "Бълграски лев",
   "British Pound": "Британска лира",
   "Swiss Franc": "Швейцарски франк",
-  "Canadian Dollar": "Канадски долар"
+  "Canadian Dollar": "Канадски долар",
+  "We are sorry about this!": "Съжаляваме за това!",
+  "Contact us": "Свържете се с нас",
+  "An error appeared while fetching data. Please reload the page. If the issue persists please contact us.": "Възникна грешка по време на извличането на данни. Моля, презаредете страницата. Ако проблемът продължава, моля свържете се с нас.",
+  "An error appeared while updating a record. Please, start over. If the issue persists please contact us.": "Възникна грешка по време на актуализирането на записа. Моля, започнете отначало. Ако проблемът продължава, моля свържете се с нас.",
+  "An error appeared while creating a new record. Please, start over. If the issue persists please contact us.": "Възникна грешка по време на създаването на нов запис. Моля, започнете отначало. Ако проблемът продължава, моля свържете се с нас.",
+  "An error appeared while deleting a record. Please, try again. If the issue persists please contact us.": "Възникна грешка по време на изтриването на записа. Моля, опитайте отново. Ако проблемът продължава, моля свържете се с нас.",
+  "An error appeared while deleting multiple records. Please, try again. If the issue persists please contact us.": "Възникна грешка по време на изтриването на множество записи. Моля, опитайте отново. Ако проблемът продължава, моля свържете се с нас."
 }

@@ -117,5 +117,12 @@
   "Bulgarian Lev": "Бulgarian Lev",
   "British Pound": "British Pound",
   "Swiss Franc": "Swiss Franc",
-  "Canadian Dollar": "Canadian Dollar"
+  "Canadian Dollar": "Canadian Dollar",
+  "We are sorry about this!": "We are sorry about this!",
+  "Contact us": "Contact us",
+  "An error appeared while fetching data. Please reload the page. If the issue persists please contact us.": "An error appeared while fetching data. Please reload the page. If the issue persists please contact us.",
+  "An error appeared while updating a record. Please, start over. If the issue persists please contact us.": "An error appeared while updating a record. Please, start over. If the issue persists please contact us.",
+  "An error appeared while creating a new record. Please, start over. If the issue persists please contact us.": "An error appeared while creating a new record. Please, start over. If the issue persists please contact us.",
+  "An error appeared while deleting a record. Please, try again. If the issue persists please contact us.": "An error appeared while deleting a record. Please, try again. If the issue persists please contact us.",
+  "An error appeared while deleting multiple records. Please, try again. If the issue persists please contact us.": "An error appeared while deleting multiple records. Please, try again. If the issue persists please contact us."
 }

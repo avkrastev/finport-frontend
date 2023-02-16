@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { resetCommoditiesState } from 'src/content/dashboards/Commodities/commoditiesSlice';
@@ -17,6 +18,7 @@ export const useAuth = () => {
   const [token, setToken] = useState(null);
   const [tokenExpirationDate, setTokenExpirationDate] = useState();
   const [authUserData, setAuthUserData] = useState(null);
+  const { i18n } = useTranslation();
 
   const login = useCallback((uid, token, userData, expirationDate) => {
     setToken(token);
@@ -32,7 +34,11 @@ export const useAuth = () => {
     } else {
       expiration = new Date(new Date().getTime() + 1000 * 60 * 60);
     }
-    //const expiration = expirationDate || new Date(new Date().getTime() + 1000 * 60 * 60);
+
+    if (i18n.language !== userData.language) {
+      i18n.changeLanguage(userData.language);
+    }
+
     setTokenExpirationDate(expiration);
     localStorage.setItem(
       'userData',

@@ -7,6 +7,7 @@ import { AuthContext } from './utils/context/authContext';
 import { useAuth } from './utils/hooks/auth-hook';
 
 import './i18n';
+import CustomErrorBoundary from './error-management/CustomErrorBoundary';
 
 const App = () => {
   const { token, login, logout, authUserData, setUserData } = useAuth();
@@ -26,7 +27,7 @@ const App = () => {
     >
       <ThemeProvider>
         <CssBaseline />
-        {content}
+        <CustomErrorBoundary>{content}</CustomErrorBoundary>
       </ThemeProvider>
     </AuthContext.Provider>
   );

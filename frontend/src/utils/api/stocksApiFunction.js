@@ -1,4 +1,5 @@
 import axios from 'axios';
+import dispatchApiError from 'src/error-management/dispatchApiError';
 
 export async function autocompleteStocks(query) {
   try {
@@ -10,6 +11,9 @@ export async function autocompleteStocks(query) {
 
     return response;
   } catch (error) {
+    dispatchApiError({
+      method: 'GET'
+    });
     console.log(error);
   }
 }
@@ -27,6 +31,9 @@ export async function autocompleteStocks2(query, apiKey) {
 
     return response;
   } catch (error) {
+    dispatchApiError({
+      method: 'GET'
+    });
     console.log(error);
   }
 }
