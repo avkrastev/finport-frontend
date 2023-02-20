@@ -85,7 +85,7 @@
   "Average Net Cost": "Средна нетна стойност",
   "Current Price": "Текуща стойност",
   "Successful operation!": "Успешна операция!",
-  "Successfully added transaction!": "Успещно добавена транзакция",
+  "Successfully added transaction!": "Успешно добавена транзакция!",
   "Date": "Дата",
   "Price per asset": "Цена",
   "Quantity": "Количество",
@@ -124,5 +124,8 @@
   "An error appeared while updating a record. Please, start over. If the issue persists please contact us.": "Възникна грешка по време на актуализирането на записа. Моля, започнете отначало. Ако проблемът продължава, моля свържете се с нас.",
   "An error appeared while creating a new record. Please, start over. If the issue persists please contact us.": "Възникна грешка по време на създаването на нов запис. Моля, започнете отначало. Ако проблемът продължава, моля свържете се с нас.",
   "An error appeared while deleting a record. Please, try again. If the issue persists please contact us.": "Възникна грешка по време на изтриването на записа. Моля, опитайте отново. Ако проблемът продължава, моля свържете се с нас.",
-  "An error appeared while deleting multiple records. Please, try again. If the issue persists please contact us.": "Възникна грешка по време на изтриването на множество записи. Моля, опитайте отново. Ако проблемът продължава, моля свържете се с нас."
+  "An error appeared while deleting multiple records. Please, try again. If the issue persists please contact us.": "Възникна грешка по време на изтриването на множество записи. Моля, опитайте отново. Ако проблемът продължава, моля свържете се с нас.",
+  "Total Spent": "Общо изразходвани",
+  "Successfully updated transaction!": "Успешно редактирана транзакция!",
+  "Balance": "Баланс"
 }

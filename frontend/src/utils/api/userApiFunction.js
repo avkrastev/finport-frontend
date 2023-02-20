@@ -13,7 +13,7 @@ export async function userLogin(email, password) {
 
     return response;
   } catch (error) {
-    if (error.response.status === 500) {
+    if (error.response.status >= 500) {
       dispatchApiError({
         method: 'POST'
       });
@@ -35,7 +35,7 @@ export async function userSignUp(name, email, password) {
 
     return response;
   } catch (error) {
-    if (error.response.status === 500) {
+    if (error.response.status >= 500) {
       dispatchApiError({
         method: 'POST'
       });
@@ -55,7 +55,7 @@ export async function resetPassword(email) {
 
     return response;
   } catch (error) {
-    if (error.response.status === 500) {
+    if (error.response.status >= 500) {
       dispatchApiError({
         method: 'POST'
       });
@@ -76,7 +76,7 @@ export async function changePassword(id, password) {
 
     return response;
   } catch (error) {
-    if (error.response.status === 500) {
+    if (error.response.status >= 500) {
       dispatchApiError({
         method: 'POST'
       });
@@ -100,7 +100,7 @@ export async function getLoggedInUserData() {
 
     return response;
   } catch (error) {
-    if (error.response.status === 500) {
+    if (error.response.status >= 500) {
       dispatchApiError({
         method: 'GET'
       });
@@ -127,7 +127,7 @@ export async function updateUser(data, key) {
 
     return response;
   } catch (error) {
-    if (error.response.status === 500) {
+    if (error.response.status >= 500) {
       dispatchApiError({
         method: 'PATCH'
       });
@@ -144,7 +144,7 @@ export async function verifyEmail(id) {
 
     return response;
   } catch (error) {
-    if (error.response.status === 500) {
+    if (error.response.status >= 500) {
       dispatchApiError({
         method: 'GET'
       });
@@ -168,7 +168,7 @@ export async function sendVerificationEmail() {
 
     return response;
   } catch (error) {
-    if (error.response.status === 500) {
+    if (error.response.status >= 500) {
       dispatchApiError({
         method: 'POST'
       });

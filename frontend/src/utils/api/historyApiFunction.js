@@ -16,7 +16,7 @@ export async function historyForAWeek() {
 
     return response;
   } catch (error) {
-    if (error.response.status === 500) {
+    if (error.response.status >= 500) {
       dispatchApiError({
         method: 'GET'
       });
@@ -42,7 +42,7 @@ export async function historySinceStart(category = '') {
 
     return response;
   } catch (error) {
-    if (error.response.status === 500) {
+    if (error.response.status >= 500) {
       dispatchApiError({
         method: 'GET'
       });

@@ -9,7 +9,7 @@ export async function autocompleteCrypto(query) {
 
     return response;
   } catch (error) {
-    if (error.response.status === 500) {
+    if (error.response.status >= 500) {
       dispatchApiError({
         method: 'GET'
       });
@@ -26,7 +26,7 @@ export async function cryptoHistoricalData(coin, date) {
 
     return response;
   } catch (error) {
-    if (error.response.status === 500) {
+    if (error.response.status >= 500) {
       dispatchApiError({
         method: 'GET'
       });

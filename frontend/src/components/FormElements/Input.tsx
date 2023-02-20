@@ -63,7 +63,12 @@ function Input(props) {
       required={props.required}
       disabled={props.disabled}
       type={props.type}
-      inputProps={props.inputProps}
+      inputProps={
+        !props.inputProps && props.type === 'number'
+          ? { min: 0, step: 0.1 }
+          : props.inputProps
+      }
+      InputLabelProps={{ style: { fontWeight: 'bold' } }}
       InputProps={{
         endAdornment: props.endAdornment
       }}

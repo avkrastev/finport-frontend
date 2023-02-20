@@ -15,7 +15,7 @@ export async function getAssets(query = '') {
 
     return response;
   } catch (error) {
-    if (error.response.status === 500) {
+    if (error.response.status >= 500) {
       dispatchApiError({
         method: 'GET'
       });
@@ -85,7 +85,7 @@ export async function addNewAsset(transaction) {
 
     return response;
   } catch (error) {
-    if (error.response.status === 500) {
+    if (error.response.status >= 500) {
       dispatchApiError({
         method: 'POST'
       });
@@ -111,7 +111,7 @@ export async function updateAsset(transaction) {
 
     return response;
   } catch (error) {
-    if (error.response.status === 500) {
+    if (error.response.status >= 500) {
       dispatchApiError({
         method: 'PATCH'
       });
@@ -134,7 +134,7 @@ export async function deleteAsset(id) {
 
     return response;
   } catch (error) {
-    if (error.response.status === 500) {
+    if (error.response.status >= 500) {
       dispatchApiError({
         method: 'DELETE'
       });
@@ -160,7 +160,7 @@ export async function deleteAssets(ids) {
 
     return response;
   } catch (error) {
-    if (error.response.status === 500) {
+    if (error.response.status >= 500) {
       dispatchApiError({
         method: 'DELETE_MANY'
       });
@@ -183,7 +183,7 @@ export async function getAssetById(id) {
 
     return response;
   } catch (error) {
-    if (error.response.status === 500) {
+    if (error.response.status >= 500) {
       dispatchApiError({
         method: 'GET'
       });
@@ -207,7 +207,30 @@ export async function getTransactionsReport(period) {
 
     return response;
   } catch (error) {
-    if (error.response.status === 500) {
+    if (error.response.status >= 500) {
+      dispatchApiError({
+        method: 'GET'
+      });
+    }
+    return error.response;
+  }
+}
+
+export async function getAssetPrices() {
+  const token = JSON.parse(localStorage.getItem('userData')).token;
+  try {
+    const response = await axios.get(
+      process.env.REACT_APP_BACKEND_URL + '/assets/prices',
+      {
+        headers: {
+          Authorization: `Basic ${token}`
+        }
+      }
+    );
+
+    return response;
+  } catch (error) {
+    if (error.response.status >= 500) {
       dispatchApiError({
         method: 'GET'
       });

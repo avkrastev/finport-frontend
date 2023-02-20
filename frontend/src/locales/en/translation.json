@@ -78,7 +78,7 @@
   "Platinum": "Platinum",
   "toz": "oz. t",
   "Add transaction": "Add transaction",
-  "in troy ounces": "n troy ounces",
+  "in troy ounces": "in troy ounces",
   "Asset": "Asset",
   "Holdings": "Holdings",
   "P&L": "P&L",
@@ -114,7 +114,7 @@
   "Amount": "Amount",
   "U.S. Dollar": "U.S. Dollar",
   "Euro": "Euro",
-  "Bulgarian Lev": "Бulgarian Lev",
+  "Bulgarian Lev": "Bulgarian Lev",
   "British Pound": "British Pound",
   "Swiss Franc": "Swiss Franc",
   "Canadian Dollar": "Canadian Dollar",
@@ -124,5 +124,8 @@
   "An error appeared while updating a record. Please, start over. If the issue persists please contact us.": "An error appeared while updating a record. Please, start over. If the issue persists please contact us.",
   "An error appeared while creating a new record. Please, start over. If the issue persists please contact us.": "An error appeared while creating a new record. Please, start over. If the issue persists please contact us.",
   "An error appeared while deleting a record. Please, try again. If the issue persists please contact us.": "An error appeared while deleting a record. Please, try again. If the issue persists please contact us.",
-  "An error appeared while deleting multiple records. Please, try again. If the issue persists please contact us.": "An error appeared while deleting multiple records. Please, try again. If the issue persists please contact us."
+  "An error appeared while deleting multiple records. Please, try again. If the issue persists please contact us.": "An error appeared while deleting multiple records. Please, try again. If the issue persists please contact us.",
+  "Total Spent": "Total Spent",
+  "Successfully updated transaction!": "Successfully updated transaction!",
+  "Balance": "Balance"
 }

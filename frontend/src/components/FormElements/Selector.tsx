@@ -2,7 +2,7 @@ import { Autocomplete, TextField, Box } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { validate } from '../../utils/validators';
 
-export function Selector(props) {
+export function Selector(props: any) {
   const [helpMessage, setHelpMessage] = useState('');
 
   const onChange = (event, value) => {
@@ -82,6 +82,7 @@ export function Selector(props) {
             error={!props.isValid && props.isTouched}
             helperText={helpMessage}
             onChange={props.inputChange}
+            InputLabelProps={{ style: { fontWeight: 'bold' } }}
           />
         );
       }}

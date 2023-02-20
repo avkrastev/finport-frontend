@@ -19,7 +19,7 @@ export async function addPlatformAPR(platformData) {
 
     return response;
   } catch (error) {
-    if (error.response.status === 500) {
+    if (error.response.status >= 500) {
       dispatchApiError({
         method: 'POST'
       });
@@ -46,7 +46,7 @@ export async function updatePlatformAPR(platformData) {
 
     return response;
   } catch (error) {
-    if (error.response.status === 500) {
+    if (error.response.status >= 500) {
       dispatchApiError({
         method: 'PATCH'
       });
@@ -70,7 +70,7 @@ export async function getAssetsByCategory(category) {
 
     return response;
   } catch (error) {
-    if (error.response.status === 500) {
+    if (error.response.status >= 500) {
       dispatchApiError({
         method: 'GET'
       });
@@ -94,7 +94,7 @@ export async function getAssetsSummary() {
 
     return response;
   } catch (error) {
-    if (error.response.status === 500) {
+    if (error.response.status >= 500) {
       dispatchApiError({
         method: 'GET'
       });
@@ -120,7 +120,7 @@ export async function addNewAsset(transaction) {
 
     return response;
   } catch (error) {
-    if (error.response.status === 500) {
+    if (error.response.status >= 500) {
       dispatchApiError({
         method: 'POST'
       });
@@ -164,7 +164,7 @@ export async function deleteAsset(id) {
 
     return response;
   } catch (error) {
-    if (error.response.status === 500) {
+    if (error.response.status >= 500) {
       dispatchApiError({
         method: 'DELETE'
       });
@@ -190,7 +190,7 @@ export async function deleteAssets(ids) {
 
     return response;
   } catch (error) {
-    if (error.response.status === 500) {
+    if (error.response.status >= 500) {
       dispatchApiError({
         method: 'DELETE_MANY'
       });
@@ -213,7 +213,7 @@ export async function getAssetById(id) {
 
     return response;
   } catch (error) {
-    if (error.response.status === 500) {
+    if (error.response.status >= 500) {
       dispatchApiError({
         method: 'GET'
       });

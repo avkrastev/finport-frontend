@@ -13,7 +13,9 @@ import {
   Typography,
   Stack,
   Snackbar,
-  Alert
+  Alert,
+  IconButton,
+  InputAdornment
 } from '@mui/material';
 import {
   transactionTypes,
@@ -36,6 +38,8 @@ import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { transactionStateDescriptor } from 'src/components/TransactionModal/transactionStateDescriptor';
 import Selector from 'src/components/FormElements/Selector';
+import { getAssetPrices } from 'src/utils/api/assetsApiFunction';
+import { formatAmountAndCurrency } from 'src/utils/functions';
 
 function CommoditiesModal(props) {
   const dispatch = useDispatch();
@@ -51,21 +55,78 @@ function CommoditiesModal(props) {
   const [showFailedSnackbar, setShowFailedSnackbar] = useState(false);
   const [operation, setOperation] = useState('');
 
+  const [currentPrices, setCurrentPrices] = useState([]);
+
+  const [totalSpent, setTotalSpent] = useState(null);
+
+  const [balance, setBalance] = useState(null);
+
   const [formState, inputHandler, setFormData] = useForm(
     transactionStateDescriptor()
   );
 
-  const handleAssetChange = (event, value) => {
+  useEffect(() => {
+    async function getPrices() {
+      const response = await getAssetPrices();
+      if (response.status === 200) setCurrentPrices(response.data.prices);
+    }
+
+    getPrices();
+  }, []);
+
+  const handleAssetChange = async (event, value) => {
     if (value) {
-      setFormData({
-        ...formState.inputs,
-        category: { value: 'commodities', isValid: true },
-        name: { value: value.value, isValid: true },
-        asset_id: { value: value.id || '', isValid: true },
-        symbol: { value: value.key, isValid: true }
-      });
+      const selectedAsset = props.assets.stats.find(
+        (asset) => asset.symbol === value.key
+      );
+
+      if (selectedAsset) {
+        setBalance(selectedAsset.holdingQuantity);
+      }
+
+      setFormData(
+        {
+          ...formState.inputs,
+          category: { value: 'commodities', isValid: true },
+          name: { value: value.value, isValid: true },
+          asset_id: { value: value.id || '', isValid: true },
+          symbol: { value: value.key, isValid: true },
+          price_per_asset: {
+            value: currentPrices[value.key]?.price,
+            isValid: true
+          }
+        },
+        true
+      );
     }
   };
+
+  useEffect(() => {
+    setTotalSpent(
+      formatAmountAndCurrency(
+        formState.inputs.quantity.value *
+          formState.inputs.price_per_asset.value,
+        formState.inputs.currency.value,
+        false
+      )
+    );
+    setFormData(
+      {
+        ...formState.inputs,
+        price: {
+          value:
+            formState.inputs.quantity.value *
+            formState.inputs.price_per_asset.value,
+          isValid: true
+        }
+      },
+      true
+    );
+  }, [
+    formState.inputs.price_per_asset.value,
+    formState.inputs.quantity.value,
+    formState.inputs.currency.value
+  ]);
 
   useEffect(() => {
     if (props.transaction) {
@@ -201,6 +262,18 @@ function CommoditiesModal(props) {
     dispatch(resetStatuses());
   }, [transactionAddStatus, dispatch]);
 
+  useEffect(() => {
+    if (transactionUpdateStatus === 'succeeded') {
+      setShowSuccessSnackbar(true);
+      dispatch(changeCommoditiesStatus('idle'));
+    }
+    if (transactionUpdateStatus === 'failed') {
+      setShowFailedSnackbar(true);
+    }
+    setOperation('update');
+    dispatch(resetStatuses());
+  }, [transactionUpdateStatus, dispatch]);
+
   const handleCloseDialog = () => {
     setFormData(transactionStateDescriptor());
     setTab(0);
@@ -215,13 +288,23 @@ function CommoditiesModal(props) {
     setShowSuccessSnackbar(false);
   };
 
+  const handleSetAllQuantity = () => {
+    setFormData(
+      {
+        ...formState.inputs,
+        quantity: { value: balance, isValid: true }
+      },
+      true
+    );
+  };
+
   return (
     <>
       <Dialog open={props.open} fullWidth>
         <DialogTitle>{props.title}</DialogTitle>
         <DialogContent>
           <DialogContentText>{props.contentText}</DialogContentText>
-          <Box sx={{ width: 1, p: 2 }}>
+          <Box sx={{ width: 1, pt: 2, pl: 5, pr: 5 }}>
             {props.tabs && (
               <Tabs
                 centered
@@ -252,6 +335,7 @@ function CommoditiesModal(props) {
               <Box sx={{ display: 'grid' }}>
                 <Selector
                   required
+                  showKey
                   id="currency"
                   options={currencies}
                   label={t('Currency')}
@@ -263,14 +347,14 @@ function CommoditiesModal(props) {
                   required
                   sx={{ gridColumn: '2', input: { textAlign: 'right' } }}
                   margin="dense"
-                  id="price"
+                  id="price_per_asset"
                   label={t('Price')}
                   type="number"
                   valueType="number"
                   validators={[VALIDATOR_REQUIRE()]}
                   onInput={inputHandler}
                   onFocus={(event) => event.target.select()}
-                  {...formState.inputs.price}
+                  {...formState.inputs.price_per_asset}
                   emptyValue={0}
                 />
               </Box>
@@ -289,6 +373,27 @@ function CommoditiesModal(props) {
               />
             )}
 
+            {balance && formState.inputs.type.value === 1 && (
+              <Box
+                sx={{
+                  display: 'grid'
+                }}
+              >
+                <Typography
+                  sx={{
+                    gridColumn: '2',
+                    alignItems: 'center',
+                    display: 'flex',
+                    justifyContent: 'end',
+                    ml: 2
+                  }}
+                  variant="subtitle1"
+                >
+                  {t('Balance')}: {balance} {t('toz')}
+                </Typography>
+              </Box>
+            )}
+
             <Box
               sx={{
                 display: 'grid',
@@ -303,6 +408,21 @@ function CommoditiesModal(props) {
                 label={t('Quantity')}
                 type="number"
                 valueType="number"
+                endAdornment={
+                  balance &&
+                  formState.inputs.type.value === 1 && (
+                    <InputAdornment position="end">
+                      <IconButton
+                        color="primary"
+                        sx={{ fontSize: 15 }}
+                        onClick={handleSetAllQuantity}
+                        edge="end"
+                      >
+                        max
+                      </IconButton>
+                    </InputAdornment>
+                  )
+                }
                 onFocus={(event) => event.target.select()}
                 onInput={inputHandler}
                 fullWidth
@@ -323,6 +443,18 @@ function CommoditiesModal(props) {
                 {t('in troy ounces')}
               </Typography>
             </Box>
+
+            {tab !== 2 && (
+              <Input
+                disabled
+                fullWidth
+                sx={{ input: { textAlign: 'right' } }}
+                margin="dense"
+                label={t('Total Spent')}
+                type="text"
+                value={totalSpent}
+              />
+            )}
 
             <Input
               margin="dense"

@@ -182,6 +182,7 @@ function WatchListWithChart(props) {
           close={handleClose}
           categories={[]}
           tabs={true}
+          {...props}
         />
       )}
     </>
