@@ -48,7 +48,7 @@ export function Selector(props: any) {
       id={props.id}
       options={props.options}
       disabled={props.disabled}
-      disableClearable={props.required}
+      disableClearable={props.required || props.disableClearable}
       multiple={props.multiple}
       defaultValue={props.defaultValue}
       isOptionEqualToValue={(option, value) => option.key === value}

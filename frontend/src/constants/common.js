@@ -4,6 +4,9 @@ import AutoGraphTwoToneIcon from '@mui/icons-material/AutoGraphTwoTone';
 import AddchartTwoToneIcon from '@mui/icons-material/AddchartTwoTone';
 import GroupTwoToneIcon from '@mui/icons-material/GroupTwoTone';
 import ShowChartTwoToneIcon from '@mui/icons-material/ShowChartTwoTone';
+import { t } from 'i18next';
+
+export const gramOunceRatio = 0.0321507466;
 
 export const languages = [
   {
@@ -13,6 +16,17 @@ export const languages = [
   {
     value: 'English',
     key: 'en'
+  }
+];
+
+export const commoditiesWeights = [
+  {
+    value: t('troy ounces'),
+    key: 'toz'
+  },
+  {
+    value: t('grams'),
+    key: 'gr'
   }
 ];
 

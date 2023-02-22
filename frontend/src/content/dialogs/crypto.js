@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Button,
   Dialog,
@@ -11,20 +11,26 @@ import {
   Tab,
   Tabs,
   Typography,
+  Stack,
+  Snackbar,
+  Alert,
   IconButton,
   InputAdornment
 } from '@mui/material';
 import {
   transactionTypes,
   commodities,
-  currencies,
-  commoditiesWeights,
-  gramOunceRatio
+  currencies
 } from '../../constants/common';
 import {
   addNewTransaction,
-  updateTransaction
-} from '../../content/applications/Transactions/transactionSlice';
+  updateTransaction,
+  getTransactionAddStatus,
+  getTransactionUpdateStatus,
+  resetStatuses,
+  getTransactionsError
+} from '../applications/Transactions/transactionSlice';
+import { changeCommoditiesStatus } from 'src/content/dashboards/Commodities/commoditiesSlice';
 import { useForm } from 'src/utils/hooks/form-hook';
 import Input from '../../components/FormElements/Input';
 import { VALIDATOR_REQUIRE } from 'src/utils/validators';
@@ -32,35 +38,35 @@ import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { transactionStateDescriptor } from 'src/components/TransactionModal/transactionStateDescriptor';
 import Selector from 'src/components/FormElements/Selector';
-import { getCommodityPrices } from 'src/utils/api/assetsApiFunction';
-import { formatAmountAndCurrency, roundNumber } from 'src/utils/functions';
+import { formatAmountAndCurrency } from 'src/utils/functions';
 
-function CommoditiesModal(props) {
+function CryptoModal(props) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
   const [tab, setTab] = useState(0);
   const [isEditForm, setIsEditForm] = useState(false);
+  const transactionAddStatus = useSelector(getTransactionAddStatus);
+  const transactionUpdateStatus = useSelector(getTransactionUpdateStatus);
+  const transactionsError = useSelector(getTransactionsError);
+
+  const [showSuccessSnackbar, setShowSuccessSnackbar] = useState(false);
+  const [showFailedSnackbar, setShowFailedSnackbar] = useState(false);
+  const [operation, setOperation] = useState('');
+
   const [currentPrices, setCurrentPrices] = useState([]);
+
   const [totalSpent, setTotalSpent] = useState(null);
+
   const [balance, setBalance] = useState(null);
 
   const [formState, inputHandler, setFormData] = useForm(
     transactionStateDescriptor()
   );
 
-  useEffect(() => {
-    async function getPrices() {
-      const response = await getCommodityPrices();
-      if (response.status === 200) setCurrentPrices(response.data.prices);
-    }
-
-    getPrices();
-  }, []);
-
   const handleAssetChange = async (event, value) => {
     if (value) {
-      const selectedAsset = props.stats.find(
+      const selectedAsset = props.assets.stats.find(
         (asset) => asset.symbol === value.key
       );
 
@@ -74,11 +80,11 @@ function CommoditiesModal(props) {
           category: { value: 'commodities', isValid: true },
           name: { value: value.value, isValid: true },
           asset_id: { value: value.id || '', isValid: true },
-          symbol: { value: value.key, isValid: true },
-          price_per_asset: {
-            value: roundNumber(currentPrices[value.key]?.price),
-            isValid: true
-          }
+          symbol: { value: value.key, isValid: true }
+          // price_per_asset: {
+          //   value: currentPrices[value.key]?.price,
+          //   isValid: true
+          // }
         },
         true
       );
@@ -94,24 +100,18 @@ function CommoditiesModal(props) {
         false
       )
     );
-    if (
-      formState.inputs.quantity.value > 0 &&
-      formState.inputs.price_per_asset.value > 0
-    ) {
-      setFormData(
-        {
-          ...formState.inputs,
-          price: {
-            value: roundNumber(
-              formState.inputs.quantity.value *
-                formState.inputs.price_per_asset.value
-            ),
-            isValid: true
-          }
-        },
-        true
-      );
-    }
+    setFormData(
+      {
+        ...formState.inputs,
+        price: {
+          value:
+            formState.inputs.quantity.value *
+            formState.inputs.price_per_asset.value,
+          isValid: true
+        }
+      },
+      true
+    );
   }, [
     formState.inputs.price_per_asset.value,
     formState.inputs.quantity.value,
@@ -119,45 +119,7 @@ function CommoditiesModal(props) {
   ]);
 
   useEffect(() => {
-    if (!isEditForm && currentPrices[formState.inputs.symbol.value]) {
-      if (formState.inputs.weight.value === 'gr') {
-        setFormData(
-          {
-            ...formState.inputs,
-            price_per_asset: {
-              value: roundNumber(
-                currentPrices[formState.inputs.symbol.value]?.price *
-                  gramOunceRatio
-              ),
-              isValid: true
-            }
-          },
-          true
-        );
-      }
-      if (formState.inputs.weight.value === 'toz') {
-        setFormData(
-          {
-            ...formState.inputs,
-            price_per_asset: {
-              value: roundNumber(
-                currentPrices[formState.inputs.symbol.value]?.price
-              ),
-              isValid: true
-            }
-          },
-          true
-        );
-      }
-    }
-  }, [
-    formState.inputs.price_per_asset.value,
-    formState.inputs.weight.value,
-    formState.inputs.symbol.value
-  ]);
-
-  useEffect(() => {
-    if (Object.keys(props.transaction).length > 0) {
+    if (props.transaction) {
       setFormData(
         {
           ...formState.inputs,
@@ -187,30 +149,12 @@ function CommoditiesModal(props) {
             isTouched: false
           },
           price: {
-            value:
-              props.transaction.type === 1
-                ? roundNumber(props.transaction.price) * -1
-                : roundNumber(props.transaction.price),
-            isValid: true,
-            isTouched: false
-          },
-          price_per_asset: {
-            value: roundNumber(
-              props.transaction.price / props.transaction.quantity
-            ),
+            value: props.transaction.price,
             isValid: true,
             isTouched: false
           },
           quantity: {
-            value:
-              props.transaction.type === 1
-                ? props.transaction.quantity * -1
-                : props.transaction.quantity,
-            isValid: true,
-            isTouched: false
-          },
-          weight: {
-            value: props.transaction.weight || 'toz',
+            value: props.transaction.quantity,
             isValid: true,
             isTouched: false
           },
@@ -273,13 +217,65 @@ function CommoditiesModal(props) {
       setTab(0);
     } catch (err) {
       console.log(err);
+      // TODO catch error
     }
   };
+
+  const getSnackbarSuccessMessage = () => {
+    let message = '';
+    switch (operation) {
+      case 'add':
+        message = 'Successfully added transaction!';
+        break;
+      case 'update':
+        message = 'Successfully updated transaction!';
+        break;
+      case 'delete':
+        message = 'Successfully deleted transaction(s)!';
+        break;
+      default:
+        message = 'Successful operation!';
+    }
+
+    return t(message);
+  };
+
+  useEffect(() => {
+    if (transactionAddStatus === 'succeeded') {
+      setShowSuccessSnackbar(true);
+      dispatch(changeCommoditiesStatus('idle'));
+    }
+    if (transactionAddStatus === 'failed') {
+      setShowFailedSnackbar(true);
+    }
+    setOperation('add');
+    dispatch(resetStatuses());
+  }, [transactionAddStatus, dispatch]);
+
+  useEffect(() => {
+    if (transactionUpdateStatus === 'succeeded') {
+      setShowSuccessSnackbar(true);
+      dispatch(changeCommoditiesStatus('idle'));
+    }
+    if (transactionUpdateStatus === 'failed') {
+      setShowFailedSnackbar(true);
+    }
+    setOperation('update');
+    dispatch(resetStatuses());
+  }, [transactionUpdateStatus, dispatch]);
 
   const handleCloseDialog = () => {
     setFormData(transactionStateDescriptor());
     setTab(0);
     props.close();
+  };
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setShowSuccessSnackbar(false);
   };
 
   const handleSetAllQuantity = () => {
@@ -313,28 +309,17 @@ function CommoditiesModal(props) {
               </Tabs>
             )}
 
-            {isEditForm ? (
-              <Typography
-                variant="h3"
-                component="h2"
-                align="center"
-                sx={{ m: 2 }}
-              >
-                {t(formState.inputs.name.value)}
-              </Typography>
-            ) : (
-              <Selector
-                required
-                autoHighlight
-                fullWidth
-                id="asset"
-                options={commodities}
-                label={t('Commodity')}
-                sx={{ mt: 2, mb: 1 }}
-                change={handleAssetChange}
-                {...formState.inputs.symbol}
-              />
-            )}
+            <Selector
+              required
+              autoHighlight
+              fullWidth
+              id="asset"
+              options={commodities}
+              label={t('Commodity')}
+              sx={{ mt: 2, mb: 1 }}
+              change={handleAssetChange}
+              {...formState.inputs.symbol}
+            />
 
             {tab !== 2 && (
               <Box sx={{ display: 'grid' }}>
@@ -399,53 +384,36 @@ function CommoditiesModal(props) {
               </Box>
             )}
 
-            <Box
-              sx={{
-                display: 'grid',
-                gridTemplateColumns: '3fr 1fr'
-              }}
-            >
-              <Input
-                required
-                sx={{ gridColumn: '1', input: { textAlign: 'right' } }}
-                margin="dense"
-                id="quantity"
-                label={t('Quantity')}
-                type="number"
-                valueType="number"
-                endAdornment={
-                  balance &&
-                  formState.inputs.type.value === 1 && (
-                    <InputAdornment position="end">
-                      <IconButton
-                        color="primary"
-                        sx={{ fontSize: 15 }}
-                        onClick={handleSetAllQuantity}
-                        edge="end"
-                      >
-                        max
-                      </IconButton>
-                    </InputAdornment>
-                  )
-                }
-                onFocus={(event) => event.target.select()}
-                onInput={inputHandler}
-                fullWidth
-                validators={[VALIDATOR_REQUIRE()]}
-                {...formState.inputs.quantity}
-                emptyValue={0}
-              />
-              <Selector
-                disableClearable
-                fullWidth
-                id="weight"
-                options={commoditiesWeights}
-                label={t('Weight')}
-                sx={{ mt: 1, gridColumn: '2' }}
-                onInput={inputHandler}
-                {...formState.inputs.weight}
-              />
-            </Box>
+            <Input
+              required
+              sx={{ input: { textAlign: 'right' } }}
+              margin="dense"
+              id="quantity"
+              label={t('Quantity')}
+              type="number"
+              valueType="number"
+              endAdornment={
+                balance &&
+                formState.inputs.type.value === 1 && (
+                  <InputAdornment position="end">
+                    <IconButton
+                      color="primary"
+                      sx={{ fontSize: 15 }}
+                      onClick={handleSetAllQuantity}
+                      edge="end"
+                    >
+                      max
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }
+              onFocus={(event) => event.target.select()}
+              onInput={inputHandler}
+              fullWidth
+              validators={[VALIDATOR_REQUIRE()]}
+              {...formState.inputs.quantity}
+              emptyValue={0}
+            />
 
             {tab !== 2 && (
               <Input
@@ -492,8 +460,38 @@ function CommoditiesModal(props) {
           </Button>
         </DialogActions>
       </Dialog>
+      <Stack spacing={2} sx={{ width: '100%' }}>
+        <Snackbar
+          open={showSuccessSnackbar}
+          autoHideDuration={2000}
+          onClose={handleCloseSnackbar}
+        >
+          <Alert
+            onClose={handleCloseSnackbar}
+            variant="filled"
+            severity="success"
+            sx={{ width: '100%' }}
+          >
+            {getSnackbarSuccessMessage()}
+          </Alert>
+        </Snackbar>
+        <Snackbar
+          open={showFailedSnackbar}
+          autoHideDuration={2000}
+          onClose={handleCloseSnackbar}
+        >
+          <Alert
+            onClose={handleCloseSnackbar}
+            variant="filled"
+            severity="error"
+            sx={{ width: '100%' }}
+          >
+            {transactionsError}
+          </Alert>
+        </Snackbar>
+      </Stack>
     </>
   );
 }
 
-export default CommoditiesModal;
+export default CryptoModal;

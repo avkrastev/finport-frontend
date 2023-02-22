@@ -52,6 +52,9 @@ function DashboardCrypto() {
                 assets={crypto.stats}
                 category="crypto"
                 loading={cryptoStatus}
+                selectedTransaction={() => {}}
+                openModal={() => {}}
+                clearOpenedRow={() => {}}
               />
             </Grid>
           )}

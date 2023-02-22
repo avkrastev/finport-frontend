@@ -41,7 +41,11 @@ function DashboardP2P() {
           spacing={3}
         >
           <Grid item xs={12}>
-            <WatchListWithChart assets={p2p} category="p2p" loading={p2pStatus} />
+            <WatchListWithChart
+              assets={p2p}
+              category="p2p"
+              loading={p2pStatus}
+            />
           </Grid>
           {p2p && (
             <Grid item lg={12} xs={12}>
@@ -54,6 +58,9 @@ function DashboardP2P() {
                 assets={p2p.stats}
                 category="p2p"
                 loading={p2pStatus}
+                selectedTransaction={() => {}}
+                openModal={() => {}}
+                clearOpenedRow={() => {}}
               />
             </Grid>
           )}

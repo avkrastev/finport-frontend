@@ -58,6 +58,9 @@ function DashboardStocks() {
                 assets={stocks.stats}
                 category="stocks"
                 loading={stocksStatus}
+                selectedTransaction={() => {}}
+                openModal={() => {}}
+                clearOpenedRow={() => {}}
               />
             </Grid>
           )}

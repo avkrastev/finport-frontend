@@ -32,7 +32,6 @@ import {
 } from '../applications/Transactions/transactionSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from 'src/app/store';
-import TransactionModal from 'src/components/TransactionModal';
 import { useTranslation, Trans } from 'react-i18next';
 
 function Row(props: {
@@ -273,7 +272,7 @@ function Row(props: {
                         )}
                         <TableCell align="right">
                           {formatAmountAndCurrency(
-                            historyRow.price,
+                            historyRow.price_usd,
                             historyRow.currency
                           )}
                         </TableCell>
@@ -336,15 +335,20 @@ function Row(props: {
   );
 }
 
-export default function CollapsibleTable({ assets, category, loading }) {
+export default function CollapsibleTable({
+  assets,
+  category,
+  loading,
+  selectedTransaction,
+  openModal,
+  clearOpenedRow
+}) {
   const dispatch: AppDispatch = useDispatch();
   const historyData = useSelector(selectFilteredTransactions);
   const [openedRows, setOpenedRows] = React.useState({});
   const [assetId, setAssetId] = React.useState(null);
   const [identifier, setIdentifier] = React.useState(null);
   const lastSelectedTransaction = useSelector(getSelectedTransaction);
-  const [openTransactionModal, setOpenTransactionModal] = React.useState(false);
-  const [selectedTransaction, setSelectedTransaction] = React.useState({});
   const [openConfirmModal, setOpenConfirmModal] = React.useState(false);
   const [clickedTransactionId, setClickedTransactionId] = React.useState(null);
   const [selectedRow, setSelectedRow] = React.useState(null);
@@ -352,6 +356,12 @@ export default function CollapsibleTable({ assets, category, loading }) {
   const handleCloseConfirmModal = () => setOpenConfirmModal(false);
 
   const { t } = useTranslation();
+
+  React.useEffect(() => {
+    if (clearOpenedRow) {
+      setOpenedRows({});
+    }
+  }, [clearOpenedRow]); // eslint-disable-line
 
   React.useEffect(() => {
     async function fetchHistory() {
@@ -377,16 +387,9 @@ export default function CollapsibleTable({ assets, category, loading }) {
     }
   };
 
-  const handleCloseTransactionModal = (event, reason) => {
-    if (reason === 'backdropClick') {
-      return;
-    }
-    setOpenTransactionModal(false);
-  };
-
   const openEditModal = (row) => {
-    setSelectedTransaction({ ...row });
-    setOpenTransactionModal(true);
+    selectedTransaction({ ...row });
+    openModal(true);
   };
 
   const openDeleteModal = (id) => {
@@ -476,19 +479,12 @@ export default function CollapsibleTable({ assets, category, loading }) {
           ))}
         </TableBody>
       </Table>
-      <TransactionModal
-        transaction={selectedTransaction}
-        open={openTransactionModal}
-        close={handleCloseTransactionModal}
-        tabs={true}
-      />
       <ConfirmDialog
         open={openConfirmModal}
         close={handleCloseConfirmModal}
         title="Are you sure you want to delete this transaction?"
         transactionId={clickedTransactionId}
         category={category}
-        refetchTransactions={true}
       />
     </TableContainer>
   );

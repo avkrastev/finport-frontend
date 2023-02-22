@@ -127,5 +127,13 @@
   "An error appeared while deleting multiple records. Please, try again. If the issue persists please contact us.": "Възникна грешка по време на изтриването на множество записи. Моля, опитайте отново. Ако проблемът продължава, моля свържете се с нас.",
   "Total Spent": "Общо изразходвани",
   "Successfully updated transaction!": "Успешно редактирана транзакция!",
-  "Balance": "Баланс"
+  "Balance": "Баланс",
+  "Weight": "Мярка",
+  "troy ounces": "тройунции",
+  "grams": "грамове",
+  "No": "Не",
+  "Yes": "Да",
+  "Are you sure you want to delete this transaction?": "Сигурни ли сте, че искате те изтриете тази транзакция?",
+  "Commodities Dashboard": "Портофиолио Стоки",
+  "Successfully deleted transaction(s)!": "Успешно изтриване на транзакция/и!"
 }

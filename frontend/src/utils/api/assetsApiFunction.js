@@ -216,11 +216,11 @@ export async function getTransactionsReport(period) {
   }
 }
 
-export async function getAssetPrices() {
+export async function getCommodityPrices() {
   const token = JSON.parse(localStorage.getItem('userData')).token;
   try {
     const response = await axios.get(
-      process.env.REACT_APP_BACKEND_URL + '/assets/prices',
+      process.env.REACT_APP_BACKEND_URL + '/assets/commodity/prices',
       {
         headers: {
           Authorization: `Basic ${token}`

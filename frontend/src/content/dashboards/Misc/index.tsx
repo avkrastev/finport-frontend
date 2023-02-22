@@ -52,6 +52,9 @@ function DashboardMisc() {
                 assets={misc.stats}
                 category="misc"
                 loading={miscStatus}
+                selectedTransaction={() => {}}
+                openModal={() => {}}
+                clearOpenedRow={() => {}}
               />
             </Grid>
           )}

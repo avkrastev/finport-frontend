@@ -46,7 +46,11 @@ function DashboardETF() {
           spacing={3}
         >
           <Grid item xs={12}>
-            <WatchListWithChart assets={ETFs} category="etf" loading={etfStatus} />
+            <WatchListWithChart
+              assets={ETFs}
+              category="etf"
+              loading={etfStatus}
+            />
           </Grid>
           {ETFs.stats && (
             <Grid item xs={12}>
@@ -54,6 +58,9 @@ function DashboardETF() {
                 assets={ETFs.stats}
                 category="etf"
                 loading={etfStatus}
+                selectedTransaction={() => {}}
+                openModal={() => {}}
+                clearOpenedRow={() => {}}
               />
             </Grid>
           )}

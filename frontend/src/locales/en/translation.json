@@ -127,5 +127,13 @@
   "An error appeared while deleting multiple records. Please, try again. If the issue persists please contact us.": "An error appeared while deleting multiple records. Please, try again. If the issue persists please contact us.",
   "Total Spent": "Total Spent",
   "Successfully updated transaction!": "Successfully updated transaction!",
-  "Balance": "Balance"
+  "Balance": "Balance",
+  "Weight": "Weight",
+  "troy ounces": "troy ounces",
+  "grams": "grams",
+  "No": "No",
+  "Yes": "Yes",
+  "Are you sure you want to delete this transaction?": "Are you sure you want to delete this transaction?",
+  "Commodities Dashboard": "Commodities Dashboard",
+  "Successfully deleted transaction(s)!": "Successfully deleted transaction(s)!"
 }

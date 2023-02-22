@@ -181,6 +181,7 @@ const transactionsSlice = createSlice({
         state.deleteStatus = 'loading';
       })
       .addCase(deleteTransactions.fulfilled, (state, action) => {
+        state.deleteStatus = 'succeeded';
         const transactions = state.transactions.filter(
           (transaction) => !action.payload.includes(transaction.id)
         );
