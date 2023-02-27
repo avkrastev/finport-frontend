@@ -41,6 +41,7 @@ import { VALIDATOR_REQUIRE } from 'src/utils/validators';
 import Selector from '../FormElements/Selector';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
+import { validateStateEntity } from 'src/utils/functions';
 
 function TransactionModal(props) {
   const dispatch = useDispatch();
@@ -84,62 +85,59 @@ function TransactionModal(props) {
 
   useEffect(() => {
     if (props.transaction) {
-      setFormData(
-        {
-          ...formState.inputs,
-          id: {
-            value: props.transaction.id,
-            isValid: true,
-            isTouched: false
-          },
-          name: {
-            value: props.transaction.name,
-            isValid: true,
-            isTouched: false
-          },
-          asset_id: {
-            value: props.transaction.asset_id,
-            isValid: true,
-            isTouched: false
-          },
-          symbol: {
-            value: props.transaction.symbol,
-            isValid: true,
-            isTouched: false
-          },
-          category: {
-            value: props.transaction.category,
-            isValid: true,
-            isTouched: false
-          },
-          price: {
-            value: props.transaction.price,
-            isValid: true,
-            isTouched: false
-          },
-          quantity: {
-            value: props.transaction.quantity,
-            isValid: true,
-            isTouched: false
-          },
-          currency: {
-            value: props.transaction.currency,
-            isValid: true,
-            isTouched: false
-          },
-          date: {
-            value: props.transaction.date,
-            isValid: true,
-            isTouched: false
-          },
-          type: {
-            value: props.transaction.type,
-            isValid: true,
-            isTouched: false
-          }
+      setFormData({
+        ...formState.inputs,
+        id: {
+          value: props.transaction.id,
+          isValid: true,
+          isTouched: false
         },
-        true
-      );
+        name: {
+          value: props.transaction.name,
+          isValid: true,
+          isTouched: false
+        },
+        asset_id: {
+          value: props.transaction.asset_id,
+          isValid: true,
+          isTouched: false
+        },
+        symbol: {
+          value: props.transaction.symbol,
+          isValid: true,
+          isTouched: false
+        },
+        category: {
+          value: props.transaction.category,
+          isValid: true,
+          isTouched: false
+        },
+        price: {
+          value: props.transaction.price,
+          isValid: true,
+          isTouched: false
+        },
+        quantity: {
+          value: props.transaction.quantity,
+          isValid: true,
+          isTouched: false
+        },
+        currency: {
+          value: props.transaction.currency,
+          isValid: true,
+          isTouched: false
+        },
+        date: {
+          value: props.transaction.date,
+          isValid: true,
+          isTouched: false
+        },
+        type: {
+          value: props.transaction.type,
+          isValid: true,
+          isTouched: false
+        }
+      });
       setTab(props.transaction.type);
       setIsEditForm(true);
     }
@@ -219,6 +217,15 @@ function TransactionModal(props) {
   }
 
   const submitTransactionForm = async () => {
+    const currentState = { ...formState.inputs };
+    const validationResult = validateStateEntity({
+      stateEntity: currentState
+    });
+    console.log(validationResult);
+    if (!validationResult.valid) {
+      setFormData(validationResult.stateEntity);
+      return;
+    }
     try {
       let transactionPayload = {};
       for (const [key, description] of Object.entries(formState.inputs)) {
@@ -346,7 +353,9 @@ function TransactionModal(props) {
                 label={t('Asset')}
                 sx={{ mt: 2, mb: 1 }}
                 change={handleAssetChange}
-                {...formState.inputs.symbol}
+                value={formState.inputs.symbol.value}
+                isValid={formState.inputs.name.isValid}
+                isTouched={formState.inputs.name.isTouched}
                 inputChange={handleAssetsDropdownChange}
               />
             )}
@@ -467,7 +476,6 @@ function TransactionModal(props) {
         <DialogActions sx={{ m: 3 }}>
           <Button onClick={handleCloseDialog}>{t('Cancel')}</Button>
           <Button
-            disabled={!formState.isValid}
             onClick={submitTransactionForm}
             variant="contained"
             color="primary"

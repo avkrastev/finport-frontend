@@ -238,3 +238,28 @@ export async function getCommodityPrices() {
     return error.response;
   }
 }
+
+export async function getCryptoPrice(asset) {
+  const token = JSON.parse(localStorage.getItem('userData')).token;
+  try {
+    const response = await axios.get(
+      process.env.REACT_APP_BACKEND_URL +
+        '/assets/crypto/prices?token=' +
+        asset,
+      {
+        headers: {
+          Authorization: `Basic ${token}`
+        }
+      }
+    );
+
+    return response.data.price;
+  } catch (error) {
+    if (error.response.status >= 500) {
+      dispatchApiError({
+        method: 'GET'
+      });
+    }
+    return error.response;
+  }
+}

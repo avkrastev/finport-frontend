@@ -22,8 +22,8 @@ import {
 import CollapsibleTable from '../CollapsibleTable';
 import WatchListWithChart from '../WatchListWithChart';
 import { Trans, useTranslation } from 'react-i18next';
-import CryptoModal from 'src/content/dialogs/crypto';
 import CommoditiesModal from 'src/content/dialogs/commodities';
+import { getSnackbarSuccessMessage } from 'src/utils/functions';
 
 function DashboardCommodities() {
   const { t } = useTranslation();
@@ -42,19 +42,6 @@ function DashboardCommodities() {
   const [showSuccessSnackbar, setShowSuccessSnackbar] = useState(false);
   const [showFailedSnackbar, setShowFailedSnackbar] = useState(false);
 
-  const currentPath = location.pathname.split('/')[2];
-
-  const modals = {
-    crypto: CryptoModal,
-    stocks: CommoditiesModal,
-    p2p: CommoditiesModal,
-    etf: CommoditiesModal,
-    misc: CommoditiesModal,
-    commodities: CommoditiesModal
-  };
-
-  const Modal = modals[currentPath];
-
   const handleCloseTransactionModal = (event, reason) => {
     if (reason === 'backdropClick') {
       return;
@@ -67,25 +54,6 @@ function DashboardCommodities() {
       dispatch(fetchCommodities());
     }
   }, [commoditiesStatus, dispatch]);
-
-  const getSnackbarSuccessMessage = () => {
-    let message = '';
-    switch (operation) {
-      case 'add':
-        message = 'Successfully added transaction!';
-        break;
-      case 'update':
-        message = 'Successfully updated transaction!';
-        break;
-      case 'delete':
-        message = 'Successfully deleted transaction(s)!';
-        break;
-      default:
-        message = 'Successful operation!';
-    }
-
-    return t(message);
-  };
 
   useEffect(() => {
     if (transactionAddStatus === 'succeeded') {
@@ -134,6 +102,11 @@ function DashboardCommodities() {
     setShowSuccessSnackbar(false);
   };
 
+  const openMainModal = () => {
+    setOpenTransactionModal(true);
+    setCurrentTransaction({});
+  };
+
   return (
     <>
       <Helmet>
@@ -161,7 +134,7 @@ function DashboardCommodities() {
               assets={commodities}
               category="commodities"
               loading={commoditiesStatus}
-              openModal={() => setOpenTransactionModal(true)}
+              openModal={openMainModal}
             />
           </Grid>
           {commodities.stats && (
@@ -177,7 +150,7 @@ function DashboardCommodities() {
             </Grid>
           )}
         </Grid>
-        <Modal
+        <CommoditiesModal
           transaction={currentTransaction}
           open={openTransactionModal}
           close={handleCloseTransactionModal}
@@ -191,7 +164,7 @@ function DashboardCommodities() {
             onClose={handleCloseSnackbar}
           >
             <Alert variant="filled" severity="success" sx={{ width: '100%' }}>
-              {getSnackbarSuccessMessage()}
+              {getSnackbarSuccessMessage(operation)}
             </Alert>
           </Snackbar>
           <Snackbar

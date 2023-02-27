@@ -1,5 +1,6 @@
 import { currencies } from 'src/constants/common';
 import numeral from 'numeral';
+import { t } from 'i18next';
 
 export const formatAmountAndCurrency = (
   amount,
@@ -89,3 +90,43 @@ export const getCryptoIcon = (symbol) => {
 
   return icon;
 };
+
+export const getSnackbarSuccessMessage = (operation) => {
+  let message = '';
+  switch (operation) {
+    case 'add':
+      message = 'Successfully added transaction!';
+      break;
+    case 'update':
+      message = 'Successfully updated transaction!';
+      break;
+    case 'delete':
+      message = 'Successfully deleted transaction(s)!';
+      break;
+    default:
+      message = 'Successful operation!';
+  }
+
+  return t(message);
+};
+
+export function validateStateEntity({ stateEntity = {}, toSkip = [] } = {}) {
+  let valid = true;
+  let validStateEntity = { ...stateEntity };
+
+  for (const [key, value] of Object.entries(stateEntity)) {
+    if (toSkip.includes(key)) continue;
+    if (!value.isValid) {
+      valid = false;
+      validStateEntity[key] = {
+        ...value,
+        isTouched: true
+      };
+    }
+  }
+
+  return {
+    valid: valid,
+    stateEntity: validStateEntity
+  };
+}

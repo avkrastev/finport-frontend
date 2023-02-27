@@ -76,6 +76,7 @@
   "Silver": "Silver",
   "Palladium": "Palladium",
   "Platinum": "Platinum",
+  "quantityToz": "<0>{{quantity}}</0> oz. t",
   "toz": "oz. t",
   "Add transaction": "Add transaction",
   "in troy ounces": "in troy ounces",
@@ -135,5 +136,9 @@
   "Yes": "Yes",
   "Are you sure you want to delete this transaction?": "Are you sure you want to delete this transaction?",
   "Commodities Dashboard": "Commodities Dashboard",
-  "Successfully deleted transaction(s)!": "Successfully deleted transaction(s)!"
+  "Successfully deleted transaction(s)!": "Successfully deleted transaction(s)!",
+  "Token": "Token",
+  "Crypto Portfolio": "Crypto Portfolio",
+  "Crypto Dashboard": "Crypto Dashboard",
+  "No matches found": "No matches found"
 }

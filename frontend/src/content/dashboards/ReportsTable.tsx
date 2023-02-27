@@ -72,7 +72,7 @@ function Row(props) {
                   {history.map((row, i) => (
                     <TableRow key={i}>
                       <TableCell component="th" scope="row">
-                        {format(new Date(row.date), 'dd MMM yyyy HH:ss')}
+                        {format(new Date(row.date), 'dd MMM yyyy HH:mm')}
                       </TableCell>
                       <TableCell>{row.name}</TableCell>
                       <TableCell>

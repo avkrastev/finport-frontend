@@ -94,19 +94,19 @@ export const transactionTypes = [
 
 export const commodities = [
   {
-    key: 'gold',
+    key: 'XAU',
     value: 'Gold'
   },
   {
-    key: 'silver',
+    key: 'XAG',
     value: 'Silver'
   },
   {
-    key: 'platinum',
+    key: 'XPT',
     value: 'Platinum'
   },
   {
-    key: 'palladium',
+    key: 'XPD',
     value: 'Palladium'
   }
 ];

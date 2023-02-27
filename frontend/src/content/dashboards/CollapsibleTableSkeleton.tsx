@@ -9,18 +9,20 @@ import {
   TableHead,
   TableRow
 } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 export default function CollapsibleTableSkeleton() {
+  const { t } = useTranslation();
   return (
     <TableContainer component={Paper}>
       <Table aria-label="collapsible table">
         <TableHead>
           <TableRow>
-            <TableCell>Asset</TableCell>
-            <TableCell align="right">Current Price</TableCell>
-            <TableCell align="right">Average Net Cost</TableCell>
-            <TableCell align="right">Holdings</TableCell>
-            <TableCell align="right">P&amp;L</TableCell>
+            <TableCell>{t('Asset')}</TableCell>
+            <TableCell align="right">{t('Current Price')}</TableCell>
+            <TableCell align="right">{t('Average Net Cost')}</TableCell>
+            <TableCell align="right">{t('Holdings')}</TableCell>
+            <TableCell align="right">{t('P&L')}</TableCell>
             <TableCell />
           </TableRow>
         </TableHead>

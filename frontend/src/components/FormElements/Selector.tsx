@@ -1,4 +1,4 @@
-import { Autocomplete, TextField, Box } from '@mui/material';
+import { Autocomplete, TextField, Box, CircularProgress } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { validate } from '../../utils/validators';
 
@@ -43,7 +43,8 @@ export function Selector(props: any) {
 
   return (
     <Autocomplete
-      freeSolo
+      freeSolo={!props.noOptionsText}
+      noOptionsText={props.noOptionsText}
       className="autocomplete"
       id={props.id}
       options={props.options}
@@ -77,7 +78,20 @@ export function Selector(props: any) {
             {...params}
             label={props.label}
             placeholder={props.placeholder}
-            inputProps={{ ...params.inputProps }}
+            inputProps={{
+              ...params.inputProps
+            }}
+            InputProps={{
+              ...params.InputProps,
+              endAdornment: (
+                <>
+                  {props.loading ? (
+                    <CircularProgress color="inherit" size={20} />
+                  ) : null}
+                  {params.InputProps.endAdornment}
+                </>
+              )
+            }}
             required={props.required}
             error={!props.isValid && props.isTouched}
             helperText={helpMessage}

@@ -232,10 +232,8 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
                           width: '25em'
                         }}
                       >
-                        {asset.category !== 'commodities'
-                          ? asset.name
-                          : t(asset.name)}{' '}
-                        {asset.category !== 'commodities' && asset.symbol
+                        {asset.name}{' '}
+                        {asset.category !== 'crypto' && asset.symbol
                           ? '(' + asset.symbol + ')'
                           : ''}
                       </p>

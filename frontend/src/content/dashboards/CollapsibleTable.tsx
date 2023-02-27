@@ -33,6 +33,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from 'src/app/store';
 import { useTranslation, Trans } from 'react-i18next';
+import { AuthContext } from 'src/utils/context/authContext';
 
 function Row(props: {
   row: any;
@@ -42,6 +43,7 @@ function Row(props: {
   handleShowHistory: any;
   openEditModal: any;
   openDeleteModal: any;
+  currency: string;
 }) {
   const {
     row,
@@ -50,11 +52,14 @@ function Row(props: {
     openedRows,
     handleShowHistory,
     openEditModal,
-    openDeleteModal
+    openDeleteModal,
+    currency
   } = props;
   const theme = useTheme();
 
   const open = Object.keys(openedRows).includes(row[identifier]);
+  const quantity = roundNumber(row.holdingQuantity);
+  const mustExchange = row.currency !== currency;
 
   return (
     <React.Fragment>
@@ -92,24 +97,30 @@ function Row(props: {
               )}
             </Typography>
             &nbsp;&nbsp;
-            {category !== 'commodities' && (
-              <Typography variant="body1" color="text.secondary" noWrap>
-                {row.symbol}
-              </Typography>
-            )}
+            <Typography variant="body1" color="text.secondary" noWrap>
+              {row.symbol}
+            </Typography>
           </div>
         </TableCell>
         {category !== 'p2p' && (
           <TableCell align="right">
             <Typography variant="body1" color="text.primary" noWrap>
-              {formatAmountAndCurrency(row.currentPrice, row.currency)}
+              {formatAmountAndCurrency(
+                row.currentPrice,
+                row.currency,
+                mustExchange
+              )}
             </Typography>
           </TableCell>
         )}
         <TableCell align="right">
           <Typography variant="body1" color="text.primary" noWrap>
             {category !== 'p2p'
-              ? formatAmountAndCurrency(row.averageNetCost, row.currency)
+              ? formatAmountAndCurrency(
+                  row.averageNetCost,
+                  row.currency,
+                  mustExchange
+                )
               : formatAmountAndCurrency(row.totalInvested, row.currency)}
           </Typography>
         </TableCell>
@@ -121,7 +132,11 @@ function Row(props: {
             noWrap
           >
             {category !== 'p2p'
-              ? formatAmountAndCurrency(row.holdingValue, row.currency)
+              ? formatAmountAndCurrency(
+                  row.holdingValue,
+                  row.currency,
+                  mustExchange
+                )
               : formatAmountAndCurrency(
                   row.totalSumInOriginalCurrency,
                   row.currency
@@ -129,11 +144,12 @@ function Row(props: {
           </Typography>
           {category !== 'p2p' && (
             <Typography variant="body2" noWrap gutterBottom>
-              {row.holdingQuantity}{' '}
               {category !== 'commodities' ? (
-                row.symbol
+                `${row.holdingQuantity} ${row.symbol}`
               ) : (
-                <Trans i18nKey={'toz'}>oz t.</Trans>
+                <Trans i18nKey={'quantityToz'} quantity={quantity}>
+                  {{ quantity }} oz t.
+                </Trans>
               )}
             </Typography>
           )}
@@ -145,7 +161,11 @@ function Row(props: {
             color="text.primary"
             noWrap
           >
-            {formatAmountAndCurrency(row.difference, row.currency)}
+            {formatAmountAndCurrency(
+              row.difference,
+              row.currency,
+              mustExchange
+            )}
           </Typography>
           {row.currency !== 'USD' && (
             <Typography variant="subtitle1">
@@ -220,7 +240,7 @@ function Row(props: {
                         <TableCell component="th" scope="row">
                           {format(
                             new Date(historyRow.date),
-                            'dd MMM yyyy HH:ss'
+                            'dd MMM yyyy HH:mm'
                           )}
                         </TableCell>
                         <TableCell>
@@ -343,6 +363,7 @@ export default function CollapsibleTable({
   openModal,
   clearOpenedRow
 }) {
+  const { authUserData } = React.useContext(AuthContext);
   const dispatch: AppDispatch = useDispatch();
   const historyData = useSelector(selectFilteredTransactions);
   const [openedRows, setOpenedRows] = React.useState({});
@@ -447,6 +468,8 @@ export default function CollapsibleTable({
     dispatch(fetchFilteredTransactions(params.toString()));
   };
 
+  const currency = authUserData.currency;
+
   return (
     <TableContainer component={Paper}>
       <Table aria-label="collapsible table">
@@ -475,6 +498,7 @@ export default function CollapsibleTable({
               handleShowHistory={handleShowHistory}
               openEditModal={openEditModal}
               openDeleteModal={openDeleteModal}
+              currency={currency}
             />
           ))}
         </TableBody>

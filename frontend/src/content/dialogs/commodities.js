@@ -30,10 +30,14 @@ import Input from '../../components/FormElements/Input';
 import { VALIDATOR_REQUIRE } from 'src/utils/validators';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
-import { transactionStateDescriptor } from 'src/components/TransactionModal/transactionStateDescriptor';
+import { transactionCommodityStateDescriptor } from 'src/components/TransactionModal/transactionStateDescriptor';
 import Selector from 'src/components/FormElements/Selector';
 import { getCommodityPrices } from 'src/utils/api/assetsApiFunction';
-import { formatAmountAndCurrency, roundNumber } from 'src/utils/functions';
+import {
+  formatAmountAndCurrency,
+  roundNumber,
+  validateStateEntity
+} from 'src/utils/functions';
 
 function CommoditiesModal(props) {
   const dispatch = useDispatch();
@@ -46,7 +50,7 @@ function CommoditiesModal(props) {
   const [balance, setBalance] = useState(null);
 
   const [formState, inputHandler, setFormData] = useForm(
-    transactionStateDescriptor()
+    transactionCommodityStateDescriptor()
   );
 
   useEffect(() => {
@@ -68,20 +72,21 @@ function CommoditiesModal(props) {
         setBalance(selectedAsset.holdingQuantity);
       }
 
-      setFormData(
-        {
-          ...formState.inputs,
-          category: { value: 'commodities', isValid: true },
-          name: { value: value.value, isValid: true },
-          asset_id: { value: value.id || '', isValid: true },
-          symbol: { value: value.key, isValid: true },
-          price_per_asset: {
-            value: roundNumber(currentPrices[value.key]?.price),
-            isValid: true
-          }
+      setFormData({
+        ...formState.inputs,
+        category: { value: 'commodities', isValid: true },
+        name: { value: value.value, isValid: true },
+        asset_id: { value: value.id || '', isValid: true },
+        symbol: { value: value.key, isValid: true },
+        price_per_asset: {
+          value: roundNumber(currentPrices[value.key]?.price),
+          isValid: true
         },
-        true
-      );
+        price: {
+          value: roundNumber(currentPrices[value.key]?.price),
+          isValid: true
+        }
+      });
     }
   };
 
@@ -94,24 +99,17 @@ function CommoditiesModal(props) {
         false
       )
     );
-    if (
-      formState.inputs.quantity.value > 0 &&
-      formState.inputs.price_per_asset.value > 0
-    ) {
-      setFormData(
-        {
-          ...formState.inputs,
-          price: {
-            value: roundNumber(
-              formState.inputs.quantity.value *
-                formState.inputs.price_per_asset.value
-            ),
-            isValid: true
-          }
-        },
-        true
-      );
-    }
+
+    setFormData({
+      ...formState.inputs,
+      price: {
+        value: roundNumber(
+          formState.inputs.quantity.value *
+            formState.inputs.price_per_asset.value
+        ),
+        isValid: true
+      }
+    });
   }, [
     formState.inputs.price_per_asset.value,
     formState.inputs.quantity.value,
@@ -121,117 +119,105 @@ function CommoditiesModal(props) {
   useEffect(() => {
     if (!isEditForm && currentPrices[formState.inputs.symbol.value]) {
       if (formState.inputs.weight.value === 'gr') {
-        setFormData(
-          {
-            ...formState.inputs,
-            price_per_asset: {
-              value: roundNumber(
-                currentPrices[formState.inputs.symbol.value]?.price *
-                  gramOunceRatio
-              ),
-              isValid: true
-            }
-          },
-          true
-        );
-      }
-      if (formState.inputs.weight.value === 'toz') {
-        setFormData(
-          {
-            ...formState.inputs,
-            price_per_asset: {
-              value: roundNumber(
-                currentPrices[formState.inputs.symbol.value]?.price
-              ),
-              isValid: true
-            }
-          },
-          true
-        );
-      }
-    }
-  }, [
-    formState.inputs.price_per_asset.value,
-    formState.inputs.weight.value,
-    formState.inputs.symbol.value
-  ]);
-
-  useEffect(() => {
-    if (Object.keys(props.transaction).length > 0) {
-      setFormData(
-        {
+        setFormData({
           ...formState.inputs,
-          id: {
-            value: props.transaction.id,
-            isValid: true,
-            isTouched: false
-          },
-          name: {
-            value: props.transaction.name,
-            isValid: true,
-            isTouched: false
-          },
-          asset_id: {
-            value: props.transaction.asset_id,
-            isValid: true,
-            isTouched: false
-          },
-          symbol: {
-            value: props.transaction.symbol,
-            isValid: true,
-            isTouched: false
-          },
-          category: {
-            value: props.transaction.category,
-            isValid: true,
-            isTouched: false
-          },
-          price: {
-            value:
-              props.transaction.type === 1
-                ? roundNumber(props.transaction.price) * -1
-                : roundNumber(props.transaction.price),
-            isValid: true,
-            isTouched: false
-          },
           price_per_asset: {
             value: roundNumber(
-              props.transaction.price / props.transaction.quantity
+              currentPrices[formState.inputs.symbol.value]?.price *
+                gramOunceRatio
             ),
-            isValid: true,
-            isTouched: false
-          },
-          quantity: {
-            value:
-              props.transaction.type === 1
-                ? props.transaction.quantity * -1
-                : props.transaction.quantity,
-            isValid: true,
-            isTouched: false
-          },
-          weight: {
-            value: props.transaction.weight || 'toz',
-            isValid: true,
-            isTouched: false
-          },
-          currency: {
-            value: props.transaction.currency,
-            isValid: true,
-            isTouched: false
-          },
-          date: {
-            value: props.transaction.date,
-            isValid: true,
-            isTouched: false
-          },
-          type: {
-            value: props.transaction.type,
-            isValid: true,
-            isTouched: false
+            isValid: true
           }
+        });
+      }
+      if (formState.inputs.weight.value === 'toz') {
+        setFormData({
+          ...formState.inputs,
+          price_per_asset: {
+            value: roundNumber(
+              currentPrices[formState.inputs.symbol.value]?.price
+            ),
+            isValid: true
+          }
+        });
+      }
+    }
+  }, [formState.inputs.weight.value, formState.inputs.symbol.value]);
+
+  useEffect(() => {
+    setIsEditForm(false);
+    if (Object.keys(props.transaction).length > 0) {
+      setFormData({
+        ...formState.inputs,
+        id: {
+          value: props.transaction.id,
+          isValid: true,
+          isTouched: false
         },
-        true
-      );
+        name: {
+          value: props.transaction.name,
+          isValid: true,
+          isTouched: false
+        },
+        asset_id: {
+          value: props.transaction.asset_id,
+          isValid: true,
+          isTouched: false
+        },
+        symbol: {
+          value: props.transaction.symbol,
+          isValid: true,
+          isTouched: false
+        },
+        category: {
+          value: props.transaction.category,
+          isValid: true,
+          isTouched: false
+        },
+        price: {
+          value:
+            props.transaction.type === 1
+              ? roundNumber(props.transaction.price) * -1
+              : roundNumber(props.transaction.price),
+          isValid: true,
+          isTouched: false
+        },
+        price_per_asset: {
+          value: roundNumber(
+            props.transaction.price / props.transaction.quantity
+          ),
+          isValid: true,
+          isTouched: false
+        },
+        quantity: {
+          value:
+            props.transaction.type === 1
+              ? props.transaction.quantity * -1
+              : props.transaction.quantity,
+          isValid: true,
+          isTouched: false
+        },
+        weight: {
+          value: props.transaction.weight || 'toz',
+          isValid: true,
+          isTouched: false
+        },
+        currency: {
+          value: props.transaction.currency,
+          isValid: true,
+          isTouched: false
+        },
+        date: {
+          value: props.transaction.date,
+          isValid: true,
+          isTouched: false
+        },
+        type: {
+          value: props.transaction.type,
+          isValid: true,
+          isTouched: false
+        }
+      });
       setTab(props.transaction.type);
       setIsEditForm(true);
     }
@@ -256,6 +242,15 @@ function CommoditiesModal(props) {
   }
 
   const submitTransactionForm = async () => {
+    const currentState = { ...formState.inputs };
+    const validationResult = validateStateEntity({
+      stateEntity: currentState
+    });
+
+    if (!validationResult.valid) {
+      setFormData(validationResult.stateEntity);
+      return;
+    }
     try {
       let transactionPayload = {};
       for (const [key, description] of Object.entries(formState.inputs)) {
@@ -269,7 +264,7 @@ function CommoditiesModal(props) {
       }
 
       props.close();
-      setFormData(transactionStateDescriptor());
+      setFormData(transactionCommodityStateDescriptor());
       setTab(0);
     } catch (err) {
       console.log(err);
@@ -277,19 +272,16 @@ function CommoditiesModal(props) {
   };
 
   const handleCloseDialog = () => {
-    setFormData(transactionStateDescriptor());
+    setFormData(transactionCommodityStateDescriptor());
     setTab(0);
     props.close();
   };
 
   const handleSetAllQuantity = () => {
-    setFormData(
-      {
-        ...formState.inputs,
-        quantity: { value: balance, isValid: true }
-      },
-      true
-    );
+    setFormData({
+      ...formState.inputs,
+      quantity: { value: balance, isValid: true }
+    });
   };
 
   return (
@@ -332,7 +324,9 @@ function CommoditiesModal(props) {
                 label={t('Commodity')}
                 sx={{ mt: 2, mb: 1 }}
                 change={handleAssetChange}
-                {...formState.inputs.symbol}
+                value={formState.inputs.symbol.value}
+                isValid={formState.inputs.name.isValid}
+                isTouched={formState.inputs.name.isTouched}
               />
             )}
 
@@ -482,7 +476,6 @@ function CommoditiesModal(props) {
         <DialogActions sx={{ m: 3 }}>
           <Button onClick={handleCloseDialog}>{t('Cancel')}</Button>
           <Button
-            disabled={!formState.isValid}
             onClick={submitTransactionForm}
             variant="contained"
             color="primary"
