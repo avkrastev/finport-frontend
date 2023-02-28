@@ -140,5 +140,8 @@
   "Token": "Токен",
   "Crypto Portfolio": "Портфолио Криптовалути",
   "Crypto Dashboard": "Криптовалути",
-  "No matches found": "Няма намерени съвпадения"
+  "No matches found": "Няма намерени съвпадения",
+  "Stocks Dashboard": "Акции",
+  "Stock": "Акция",
+  "Stocks Portfolio": "Портфолио Акции"
 }

@@ -113,13 +113,7 @@ function DashboardCommodities() {
         <title>{t('Commodities Dashboard')}</title>
       </Helmet>
       <PageTitleWrapper>
-        <PageHeader
-          title={
-            <Trans i18nKey={'Commodities Portfolio'}>
-              Commodities Portfolio
-            </Trans>
-          }
-        />
+        <PageHeader title={t('Commodities Portfolio')} />
       </PageTitleWrapper>
       <Container maxWidth="lg">
         <Grid

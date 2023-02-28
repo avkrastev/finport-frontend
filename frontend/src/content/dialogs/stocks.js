@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useContext } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import {
   Button,
@@ -19,7 +19,7 @@ import { transactionTypes, currencies } from '../../constants/common';
 import {
   addNewTransaction,
   updateTransaction
-} from '../../content/applications/Transactions/transactionSlice';
+} from '../applications/Transactions/transactionSlice';
 import { useForm } from 'src/utils/hooks/form-hook';
 import Input from '../../components/FormElements/Input';
 import { VALIDATOR_REQUIRE } from 'src/utils/validators';
@@ -32,12 +32,10 @@ import {
   roundNumber,
   validateStateEntity
 } from 'src/utils/functions';
-import { autocompleteCrypto } from 'src/utils/api/cryptoApiFunction';
-import { getCryptoPrice } from 'src/utils/api/assetsApiFunction';
-import { AuthContext } from 'src/utils/context/authContext';
+import { autocompleteStocks2 } from 'src/utils/api/stocksApiFunction';
+import { getStockPrice } from 'src/utils/api/assetsApiFunction';
 
-function CryptoModal(props) {
-  const { authUserData } = useContext(AuthContext);
+function StocksModal(props) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
@@ -46,7 +44,7 @@ function CryptoModal(props) {
   const [loading, setLoading] = useState(false);
   const [totalSpent, setTotalSpent] = useState(null);
   const [balance, setBalance] = useState(null);
-  const [tokenOptions, setTokenOptions] = useState([]);
+  const [stockOptions, setStockOptions] = useState([]);
 
   const [formState, inputHandler, setFormData] = useForm(
     transactionStateDescriptor()
@@ -54,18 +52,22 @@ function CryptoModal(props) {
 
   const fetchData = useCallback(
     debounce(async (search) => {
-      setTokenOptions([]);
-      const responseData = await autocompleteCrypto(search);
+      setStockOptions([]);
 
-      const options = responseData.data.coins.map((item) => {
+      const responseData = await autocompleteStocks2(
+        search,
+        props.stocks_api_key
+      );
+
+      const options = responseData.data.ResultSet.Result.map((item) => {
         let newItems = {};
-        newItems.key = item.id;
+        newItems.key = item.symbol;
         newItems.value = `${item.name} (${item.symbol})`;
         newItems.id = item.symbol;
         return newItems;
       });
 
-      setTokenOptions(options);
+      setStockOptions(options);
       setLoading(false);
     }, 600),
     []
@@ -75,26 +77,25 @@ function CryptoModal(props) {
     if (value) {
       setBalance(null);
       const selectedAsset = props.stats.find(
-        (asset) => asset.assetId === value.key
+        (asset) => asset.symbol === value.key
       );
 
       let currentPrice;
       if (selectedAsset) {
         setBalance(selectedAsset.holdingQuantity);
-        if (authUserData.currency !== selectedAsset.currency) {
+        if (props.currency !== selectedAsset.currency) {
           currentPrice =
-            selectedAsset.currentPrice *
-            authUserData.exchangeRates[authUserData.currency];
+            selectedAsset.currentPrice * props.exchangeRates[props.currency];
         } else {
           currentPrice = selectedAsset.currentPrice;
         }
       } else {
-        currentPrice = await getCryptoPrice(value.key);
+        currentPrice = await getStockPrice(value.key);
       }
 
       setFormData({
         ...formState.inputs,
-        category: { value: 'crypto', isValid: true },
+        category: { value: 'stocks', isValid: true },
         name: { value: value.value, isValid: true },
         asset_id: { value: value.key || '', isValid: true },
         symbol: { value: value.id, isValid: true },
@@ -324,8 +325,8 @@ function CryptoModal(props) {
                 autoHighlight
                 fullWidth
                 id="asset"
-                options={tokenOptions}
-                label={t('Token')}
+                options={stockOptions}
+                label={t('Stocks')}
                 sx={{ mt: 2, mb: 1 }}
                 change={handleAssetChange}
                 inputChange={handleAssetsDropdownChange}
@@ -478,4 +479,4 @@ function CryptoModal(props) {
   );
 }
 
-export default CryptoModal;
+export default StocksModal;

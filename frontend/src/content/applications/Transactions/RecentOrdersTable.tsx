@@ -197,6 +197,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
           </TableHead>
           <TableBody>
             {paginatedAssets.map((asset) => {
+              const mustExchange = asset.currency !== authUserData.currency;
               const isCryptoOrderSelected = selectedAssets.includes(asset.id);
               return (
                 <TableRow hover key={asset.id} selected={isCryptoOrderSelected}>
@@ -233,7 +234,9 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
                         }}
                       >
                         {asset.name}{' '}
-                        {asset.category !== 'crypto' && asset.symbol
+                        {asset.category !== 'crypto' &&
+                        asset.category !== 'stocks' &&
+                        asset.symbol
                           ? '(' + asset.symbol + ')'
                           : ''}
                       </p>
@@ -314,7 +317,11 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
                           gutterBottom
                           noWrap
                         >
-                          {formatAmountAndCurrency(asset.price, asset.currency)}
+                          {formatAmountAndCurrency(
+                            asset.price,
+                            asset.currency,
+                            mustExchange
+                          )}
                         </Typography>
 
                         <Typography

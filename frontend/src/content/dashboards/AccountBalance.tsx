@@ -288,17 +288,15 @@ function AccountBalance({ assets, category, loading, ...rest }) {
                               </ListItemAvatar>
                             )}
                             <ListItemText
-                              primary={
-                                category === 'commodities'
-                                  ? t(asset.name)
-                                  : asset.symbol
-                              }
+                              primary={asset.symbol}
                               primaryTypographyProps={{
                                 variant: 'h5',
                                 noWrap: true
                               }}
                               secondary={
-                                category !== 'commodities' ? asset.name : ''
+                                category !== 'commodities'
+                                  ? asset.name
+                                  : t(asset.name)
                               }
                               secondaryTypographyProps={{
                                 variant: 'subtitle2',
