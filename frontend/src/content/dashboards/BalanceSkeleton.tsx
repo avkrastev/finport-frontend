@@ -1,11 +1,10 @@
-import * as React from 'react';
 import Skeleton from '@mui/material/Skeleton';
 import { Box, Card, Grid } from '@mui/material';
 import styled from '@emotion/styled';
 import WatchListColumn1Chart from './WatchListColumn1Chart';
 
 const WatchListColumn1ChartWrapper = styled(WatchListColumn1Chart)(
-  ({ theme }) => `
+  () => `
         height: 210px;
         padding: 0 20px 10px;
 `

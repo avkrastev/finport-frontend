@@ -46,7 +46,7 @@ function RecentOrders() {
     if (transactionsStatus === 'idle') {
       dispatch(fetchTransactions());
     }
-  }, [transactionsStatus, dispatch]);
+  }, []);
 
   useEffect(() => {
     if (transactionAddStatus === 'succeeded') {
@@ -84,7 +84,7 @@ function RecentOrders() {
   const openDeleteModal = (id) => {
     setClickedTransactionId(id);
     setSelectedTransaction(
-      transactions.find((transaction) => transaction.id === id)
+      transactions?.assets?.find((transaction) => transaction.id === id)
     );
 
     setOpenConfirmModal(true);
@@ -101,7 +101,7 @@ function RecentOrders() {
 
   const openEditModal = (id) => {
     setSelectedTransaction(
-      transactions.find((transaction) => transaction.id === id)
+      transactions?.assets?.find((transaction) => transaction.id === id)
     );
     setOpenTransactionModal(true);
   };

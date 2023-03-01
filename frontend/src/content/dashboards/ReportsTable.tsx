@@ -16,9 +16,10 @@ import { monthNames, transactionTypes } from 'src/constants/common';
 import { formatAmountAndCurrency } from 'src/utils/functions';
 import { format } from 'date-fns';
 import { useTheme } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 function Row(props) {
-  const { history, count, total, month, year } = props;
+  const { history, count, total, month, year, t } = props;
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 
@@ -32,7 +33,7 @@ function Row(props) {
             color="text.primary"
             noWrap
           >
-            {month ? monthNames[month - 1] : year}
+            {month ? t(monthNames[month - 1]) : year}
           </Typography>
         </TableCell>
         <TableCell align="right">{count}</TableCell>
@@ -56,16 +57,16 @@ function Row(props) {
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
               <Typography variant="h6" gutterBottom component="div">
-                History
+                {t('History')}
               </Typography>
               <Table size="small" aria-label="purchases">
                 <TableHead>
                   <TableRow>
-                    <TableCell>Date</TableCell>
-                    <TableCell>Name</TableCell>
-                    <TableCell>Type</TableCell>
-                    <TableCell align="right">Quantity</TableCell>
-                    <TableCell align="right">Price ($)</TableCell>
+                    <TableCell>{t('Date')}</TableCell>
+                    <TableCell>{t('Name')}</TableCell>
+                    <TableCell>{t('Type')}</TableCell>
+                    <TableCell align="right">{t('Quantity')}</TableCell>
+                    <TableCell align="right">{t('Price')}</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -110,14 +111,15 @@ function Row(props) {
 }
 
 export default function ReportsTable(props) {
+  const { t } = useTranslation();
   return (
     <TableContainer component={Paper}>
       <Table aria-label="collapsible table" size="small">
         <TableHead>
           <TableRow>
-            <TableCell>Year {props.year}</TableCell>
-            <TableCell align="right">Number of Transactions</TableCell>
-            <TableCell align="right">Total Spent ($)</TableCell>
+            <TableCell>{t('Year {{year}}', { year: props.year })}</TableCell>
+            <TableCell align="right">{t('Number of Transactions')}</TableCell>
+            <TableCell align="right">{t('Total Spent')}</TableCell>
             <TableCell align="right" />
           </TableRow>
         </TableHead>
@@ -131,6 +133,7 @@ export default function ReportsTable(props) {
                 count={row.count}
                 total={row.totalPriceInUSD}
                 history={row.transactions}
+                t={t}
               />
             ))}
         </TableBody>

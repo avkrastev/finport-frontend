@@ -1,6 +1,5 @@
 import { FC, ChangeEvent, useState, useContext } from 'react';
 import { format } from 'date-fns';
-import PropTypes from 'prop-types';
 import {
   Tooltip,
   Divider,
@@ -21,8 +20,11 @@ import {
   MenuItem,
   Typography,
   useTheme,
-  CardHeader
+  CardHeader,
+  TableSortLabel
 } from '@mui/material';
+
+import { visuallyHidden } from '@mui/utils';
 
 import { Asset } from 'src/models/assets';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
@@ -30,61 +32,82 @@ import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
 import BulkActions from './BulkActions';
 import { AuthContext } from '../../../utils/context/authContext';
 import { transactionTypes } from '../../../constants/common';
-import { formatAmountAndCurrency } from '../../../utils/functions';
+import {
+  deserializeFilters,
+  formatAmountAndCurrency,
+  serializeFilters,
+  serializeSort
+} from '../../../utils/functions';
 import { useTranslation } from 'react-i18next';
+import { useLocation, useNavigate } from 'react-router';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  fetchTransactions,
+  getTransactionAddStatus,
+  getTransactionDeleteStatus,
+  getTransactionsStatus,
+  getTransactionUpdateStatus
+} from './transactionSlice';
+import { AppDispatch } from 'src/app/store';
+import useUpdateEffect from 'src/utils/hooks/update-effect-hook';
+import RecentOrdersTableSkeleton from './RecentOrdersTableSkeleton';
+
+interface Assets {
+  assets: Asset[];
+  records: number;
+  page: number;
+  limit: number;
+  filter: string;
+  sort: string;
+}
 
 interface RecentOrdersTableProps {
-  assets: Asset[];
+  assets: Assets;
   openDeleteModal: any;
   openEditModal: any;
 }
-
-interface Filters {
-  category?: string;
-}
-
-const applyFilters = (assets: Asset[], filters: Filters): Asset[] => {
-  return assets.filter((asset) => {
-    let matches = true;
-
-    if (filters.category && asset.category !== filters.category) {
-      matches = false;
-    }
-
-    return matches;
-  });
-};
-
-const applyPagination = (
-  assets: Asset[],
-  page: number,
-  limit: number
-): Asset[] => {
-  return assets.slice(page * limit, page * limit + limit);
-};
 
 const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
   assets,
   openDeleteModal,
   openEditModal
 }) => {
-  const { authUserData } = useContext(AuthContext);
+  const theme = useTheme();
+  const dispatch = useDispatch<AppDispatch>();
+  const transactionStatus = useSelector(getTransactionsStatus);
+  const transactionAddStatus = useSelector(getTransactionAddStatus);
+  const transactionUpdateStatus = useSelector(getTransactionUpdateStatus);
+  const transactionDeleteStatus = useSelector(getTransactionDeleteStatus);
 
+  const { authUserData } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useTranslation();
 
   const [selectedAssets, setSelectedAssets] = useState<string[]>([]);
-
   const selectedBulkActions = selectedAssets.length > 0;
-  const [page, setPage] = useState<number>(0);
-  const [limit, setLimit] = useState<number>(5);
-  const [filters, setFilters] = useState<Filters>({
-    category: null
-  });
 
   const categoryOptions = [
     { value: t('All'), key: 'all' },
-    ...authUserData.categories.filter((category: any) => category.show === true)
+    ...authUserData.categories
+      .filter((category: any) => category.show === true)
+      .map((category) => ({ value: t(category.value), key: category.key }))
   ];
+
+  useUpdateEffect(() => {
+    const params = new URLSearchParams(location.search);
+
+    dispatch(fetchTransactions(params.toString()));
+  }, [location.search]);
+
+  useUpdateEffect(() => {
+    if (
+      transactionAddStatus === 'succeeded' ||
+      transactionUpdateStatus === 'succeeded' ||
+      transactionDeleteStatus === 'succeeded'
+    )
+      dispatch(fetchTransactions(''));
+  }, [transactionAddStatus, transactionUpdateStatus, transactionDeleteStatus]);
 
   const handleCategoryChange = (e: ChangeEvent<HTMLInputElement>): void => {
     let value = null;
@@ -93,17 +116,31 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
       value = e.target.value;
     }
 
-    setFilters((prevFilters) => ({
-      ...prevFilters,
-      category: value
-    }));
+    const filters = [
+      {
+        columnField: 'category',
+        value
+      }
+    ];
+
+    let search = `?p=0&l=${assets.limit}`;
+
+    if (value) {
+      const serialized = serializeFilters(filters);
+      search = `?p=0&l=${assets.limit}&f=${serialized}`;
+    }
+
+    navigate({
+      pathname: location.pathname,
+      search
+    });
   };
 
   const handleSelectAllAssets = (
     event: ChangeEvent<HTMLInputElement>
   ): void => {
     setSelectedAssets(
-      event.target.checked ? assets.map((asset) => asset.id) : []
+      event.target.checked ? assets?.assets?.map((asset) => asset.id) : []
     );
   };
 
@@ -120,20 +157,69 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
     }
   };
 
-  const handlePageChange = (event: any, newPage: number): void => {
-    setPage(newPage);
+  const handlePageChange = (event: any, newPage: number) => {
+    let search = `?p=${newPage}&l=${assets.limit}`;
+    if (assets.filter) {
+      search = `?p=${newPage}&l=${assets.limit}&f=${assets.filter}`;
+    }
+    navigate({
+      pathname: location.pathname,
+      search
+    });
   };
 
   const handleLimitChange = (event: ChangeEvent<HTMLInputElement>): void => {
-    setLimit(parseInt(event.target.value));
+    let search = `?p=0&l=${parseInt(event.target.value)}`;
+    if (assets.filter) {
+      search = `?p=0&l=${parseInt(event.target.value)}&f=${assets.filter}`;
+    }
+    navigate({
+      pathname: location.pathname,
+      search
+    });
   };
 
-  const filteredAssets = applyFilters(assets, filters);
-  const paginatedAssets = applyPagination(filteredAssets, page, limit);
   const selectedSomeAssets =
-    selectedAssets.length > 0 && selectedAssets.length < assets.length;
-  const selectedAllAssets = selectedAssets.length === assets.length;
-  const theme = useTheme();
+    selectedAssets.length > 0 && selectedAssets.length < assets?.assets?.length;
+  const selectedAllAssets = selectedAssets.length === assets?.assets?.length;
+
+  const currentFilter = assets.filter
+    ? deserializeFilters(assets.filter)?.category
+    : 'all';
+
+  const currentSortColumn = assets.sort ? assets.sort.split(':')[0] : 'date';
+  const currentSortDirection = assets.sort ? assets.sort.split(':')[1] : 'desc';
+
+  const createSortHandler = (property) => (event) => {
+    onRequestSort(event, property);
+  };
+
+  const onRequestSort = (event, property) => {
+    const isAsc =
+      currentSortColumn === property && currentSortDirection === 'asc';
+
+    const sortBy = [
+      {
+        field: property,
+        sort: isAsc ? 'desc' : 'asc'
+      }
+    ];
+
+    const serializedSort = serializeSort(sortBy);
+
+    let search = `?p=0&l=${assets.limit}&s=${serializedSort}`;
+    if (assets.filter) {
+      search = `?p=0&l=${assets.limit}&f=${assets.filter}&s=${serializedSort}`;
+    }
+    navigate({
+      pathname: location.pathname,
+      search
+    });
+  };
+
+  if (transactionStatus !== 'succeeded') {
+    return <RecentOrdersTableSkeleton />;
+  }
 
   return (
     <Card>
@@ -154,7 +240,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
               <FormControl fullWidth variant="outlined">
                 <InputLabel>{t('Category')}</InputLabel>
                 <Select
-                  value={filters.category || 'all'}
+                  value={currentFilter}
                   onChange={handleCategoryChange}
                   label="Category"
                   autoWidth
@@ -187,16 +273,56 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
                   onChange={handleSelectAllAssets}
                 />
               </TableCell>
-              <TableCell>{t('Transaction Details')}</TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={currentSortColumn === 'date'}
+                  direction={
+                    currentSortColumn === 'date' &&
+                    currentSortDirection === 'desc'
+                      ? 'desc'
+                      : 'asc'
+                  }
+                  onClick={createSortHandler('date')}
+                >
+                  {t('Transaction Details')}
+                  {currentSortColumn === 'date' ? (
+                    <Box component="span" sx={visuallyHidden}>
+                      {currentSortDirection === 'desc'
+                        ? 'sorted descending'
+                        : 'sorted ascending'}
+                    </Box>
+                  ) : null}
+                </TableSortLabel>
+              </TableCell>
               <TableCell>{t('Category')}</TableCell>
               <TableCell align="right">{t('Price per asset')}</TableCell>
               <TableCell align="right">{t('Quantity')}</TableCell>
-              <TableCell align="right">{t('Amount')}</TableCell>
+              <TableCell align="right">
+                <TableSortLabel
+                  active={currentSortColumn === 'price_usd'}
+                  direction={
+                    currentSortColumn === 'price_usd' &&
+                    currentSortDirection === 'desc'
+                      ? 'desc'
+                      : 'asc'
+                  }
+                  onClick={createSortHandler('price_usd')}
+                >
+                  {t('Amount')}
+                  {currentSortColumn === 'price_usd' ? (
+                    <Box component="span" sx={visuallyHidden}>
+                      {currentSortDirection === 'desc'
+                        ? 'sorted descending'
+                        : 'sorted ascending'}
+                    </Box>
+                  ) : null}
+                </TableSortLabel>
+              </TableCell>
               <TableCell align="right">{t('Actions')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {paginatedAssets.map((asset) => {
+            {assets?.assets?.map((asset) => {
               const mustExchange = asset.currency !== authUserData.currency;
               const isCryptoOrderSelected = selectedAssets.includes(asset.id);
               return (
@@ -230,7 +356,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
                           whiteSpace: 'nowrap',
                           overflow: 'hidden',
                           textOverflow: 'ellipsis',
-                          width: '25em'
+                          width: '20em'
                         }}
                       >
                         {asset.name}{' '}
@@ -378,11 +504,11 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
       <Box p={2}>
         <TablePagination
           component="div"
-          count={filteredAssets.length}
+          count={assets.records}
           onPageChange={handlePageChange}
           onRowsPerPageChange={handleLimitChange}
-          page={page}
-          rowsPerPage={limit}
+          page={assets.page}
+          rowsPerPage={assets.limit}
           rowsPerPageOptions={[5, 10, 25, 30]}
         />
       </Box>
@@ -390,12 +516,8 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
   );
 };
 
-RecentOrdersTable.propTypes = {
-  assets: PropTypes.array.isRequired
-};
-
 RecentOrdersTable.defaultProps = {
-  assets: []
+  assets: { assets: [], page: 0, limit: 5, records: 0, filter: '', sort: '' }
 };
 
 export default RecentOrdersTable;

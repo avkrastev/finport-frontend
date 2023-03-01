@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Line } from 'react-chartjs-2';
 import { alpha, useTheme } from '@mui/material';
 import { formatAmountAndCurrency } from 'src/utils/functions';
+import { useTranslation } from 'react-i18next';
 
 interface WatchListColumn1ChartProps {
   data: any[];
@@ -19,6 +20,19 @@ const WatchListColumn1Chart: FC<WatchListColumn1ChartProps> = ({
   ...rest
 }) => {
   const theme = useTheme();
+  const { t } = useTranslation();
+
+  const labelsTranslated = [];
+  for (let label of labels) {
+    if (label.match(/[0-9]{4}/g)) {
+      const compositeLabel = label.split(' ');
+      labelsTranslated.push(
+        t(`${compositeLabel[0]} {{year}}`, { year: compositeLabel[1] })
+      );
+    } else {
+      labelsTranslated.push(label !== '' ? t(label) : label);
+    }
+  }
 
   const data = (canvas: HTMLCanvasElement) => {
     const ctx = canvas.getContext('2d');
@@ -42,7 +56,7 @@ const WatchListColumn1Chart: FC<WatchListColumn1ChartProps> = ({
           pointHoverRadius: 0
         }
       ],
-      labels
+      labels: labelsTranslated
     };
   };
 

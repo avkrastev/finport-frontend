@@ -231,7 +231,7 @@ function Row(props: {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {openedRows[row[identifier]]?.map((historyRow) => {
+                  {openedRows[row[identifier]]?.assets?.map((historyRow) => {
                     const typeOfTransaction = transactionTypes.find(
                       (type) => type.key === historyRow.type
                     )?.value;

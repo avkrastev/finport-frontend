@@ -13,6 +13,7 @@ import Footer from 'src/components/Footer';
 
 import WatchListSkeleton from './WatchListSkeleton';
 import ReportsTableSkeleton from './ReportsTableSkeleton';
+import { useTranslation } from 'react-i18next';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -48,10 +49,11 @@ function a11yProps(index: number) {
 }
 
 function ReportSkeleton(props) {
+  const { t } = useTranslation();
   return (
     <>
       <Helmet>
-        <title>Report</title>
+        <title>{t('Report')}</title>
       </Helmet>
       <Container maxWidth="lg" sx={{ pt: 5 }}>
         <Grid

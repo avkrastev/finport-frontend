@@ -10,6 +10,7 @@ import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { Skeleton } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 function Row() {
   return (
@@ -45,14 +46,15 @@ function Row() {
 }
 
 export default function ReportsTableSkeleton() {
+  const { t } = useTranslation();
   return (
     <TableContainer component={Paper}>
       <Table aria-label="collapsible table" size="small">
         <TableHead>
           <TableRow>
-            <TableCell>Year</TableCell>
-            <TableCell align="right">Number of Transactions</TableCell>
-            <TableCell align="right">Total Spent ($)</TableCell>
+            <TableCell>{t('Year')}</TableCell>
+            <TableCell align="right">{t('Number of Transactions')}</TableCell>
+            <TableCell align="right">{t('Total Spent')}</TableCell>
             <TableCell align="right" />
           </TableRow>
         </TableHead>

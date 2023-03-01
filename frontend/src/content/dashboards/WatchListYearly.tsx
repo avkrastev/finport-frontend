@@ -1,6 +1,7 @@
 import { Card, Box, Typography } from '@mui/material';
 
 import { styled } from '@mui/material/styles';
+import { useTranslation } from 'react-i18next';
 import Label from 'src/components/Label';
 import Text from 'src/components/Text';
 import { formatAmountAndCurrency } from 'src/utils/functions';
@@ -14,6 +15,7 @@ const WatchListColumn1ChartWrapper = styled(WatchListColumn1Chart)(
 );
 
 function WatchListYearly(props) {
+  const { t } = useTranslation();
   const { totalInvested, totalTransactions, yearlySpent, yearsLabels } = props;
 
   return (
@@ -30,7 +32,7 @@ function WatchListYearly(props) {
           <Typography variant="h2" sx={{ pr: 1, mb: 1 }}>
             {formatAmountAndCurrency(totalInvested)}
           </Typography>
-          <Text color="black">invested</Text>
+          <Text color="black">{t('invested')}</Text>
         </Box>
         <Box
           sx={{
@@ -41,7 +43,7 @@ function WatchListYearly(props) {
         >
           <Label color="info">{totalTransactions}</Label>
           <Typography variant="body2" color="text.secondary" sx={{ pl: 1 }}>
-            transactions
+            {t('transactions')}
           </Typography>
         </Box>
       </Box>

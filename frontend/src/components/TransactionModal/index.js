@@ -28,12 +28,6 @@ import {
   updateTransaction
 } from '../../content/applications/Transactions/transactionSlice';
 import { AuthContext } from 'src/utils/context/authContext';
-import { changeCryptoStatus } from 'src/content/dashboards/Crypto/cryptoSlice';
-import { changeStocksStatus } from 'src/content/dashboards/Stocks/stocksSlice';
-import { changeETFStatus } from 'src/content/dashboards/Etf/ETFsSlice';
-import { changeMiscStatus } from 'src/content/dashboards/Misc/miscSlice';
-import { changeCommoditiesStatus } from 'src/content/dashboards/Commodities/commoditiesSlice';
-import { changeP2PStatus } from 'src/content/dashboards/P2P/p2pSlice';
 import { useForm } from 'src/utils/hooks/form-hook';
 import { transactionStateDescriptor } from './transactionStateDescriptor';
 import Input from '../../components/FormElements/Input';
@@ -219,9 +213,10 @@ function TransactionModal(props) {
   const submitTransactionForm = async () => {
     const currentState = { ...formState.inputs };
     const validationResult = validateStateEntity({
-      stateEntity: currentState
+      stateEntity: currentState,
+      toSkip: ['price_per_asset']
     });
-    console.log(validationResult);
+
     if (!validationResult.valid) {
       setFormData(validationResult.stateEntity);
       return;
@@ -236,29 +231,6 @@ function TransactionModal(props) {
         dispatch(updateTransaction(transactionPayload));
       } else {
         dispatch(addNewTransaction(transactionPayload));
-      }
-
-      switch (formState.inputs.category.value) {
-        case 'crypto':
-          dispatch(changeCryptoStatus('idle'));
-          break;
-        case 'stocks':
-          dispatch(changeStocksStatus('idle'));
-          break;
-        case 'etf':
-          dispatch(changeETFStatus('idle'));
-          break;
-        case 'misc':
-          dispatch(changeMiscStatus('idle'));
-          break;
-        case 'commodities':
-          dispatch(changeCommoditiesStatus('idle'));
-          break;
-        case 'p2p':
-          dispatch(changeP2PStatus('idle'));
-          break;
-        default:
-          break;
       }
 
       props.close();

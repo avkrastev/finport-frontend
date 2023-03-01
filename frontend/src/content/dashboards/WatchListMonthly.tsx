@@ -7,6 +7,7 @@ import { formatAmountAndCurrency } from 'src/utils/functions';
 import WatchListColumn1Chart from './WatchListColumn1Chart';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { shortMonthNames } from 'src/constants/common';
+import { useTranslation } from 'react-i18next';
 
 const WatchListColumn1ChartWrapper = styled(WatchListColumn1Chart)(
   () => `
@@ -16,6 +17,7 @@ const WatchListColumn1ChartWrapper = styled(WatchListColumn1Chart)(
 );
 
 function WatchListMonthly(props) {
+  const { t } = useTranslation();
   const { year, totalInvested, totalTransactions, monthlySpent } = props;
 
   return (
@@ -40,7 +42,7 @@ function WatchListMonthly(props) {
           <Typography variant="h2" sx={{ pr: 1, mb: 1 }}>
             {formatAmountAndCurrency(totalInvested)}
           </Typography>
-          <Text color="black">invested</Text>
+          <Text color="black">{t('invested')}</Text>
         </Box>
         <Box
           sx={{
@@ -51,7 +53,7 @@ function WatchListMonthly(props) {
         >
           <Label color="info">{totalTransactions}</Label>
           <Typography variant="body2" color="text.secondary" sx={{ pl: 1 }}>
-            transactions
+            {t('transactions')}
           </Typography>
         </Box>
       </Box>

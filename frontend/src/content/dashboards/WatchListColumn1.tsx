@@ -38,7 +38,8 @@ function WatchListColumn1({ category, t, ...rest }) {
   const todayDayName = new Date().getDay();
   const labels = shortDayNames
     .slice(todayDayName)
-    .concat(shortDayNames.slice(0, todayDayName));
+    .concat(shortDayNames.slice(0, todayDayName))
+    .map((label) => t(label));
 
   for (let i = rest.history.length - 1; i >= 0; i--) {
     const categoryDate = rest.history[i].categories.find(

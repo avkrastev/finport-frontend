@@ -130,3 +130,22 @@ export function validateStateEntity({ stateEntity = {}, toSkip = [] } = {}) {
     stateEntity: validStateEntity
   };
 }
+
+export const serializeFilters = (obj) => {
+  return obj
+    .filter((item) => item.value !== undefined && item.value !== '')
+    .map((item) => `${item.columnField}:${item.value}`)
+    .join(',');
+};
+
+export const deserializeFilters = (filter) => {
+  let filters = {};
+  for (let item of filter.split(',')) {
+    filters[item.split(':')[0]] = item.split(':')[1];
+  }
+  return filters;
+};
+
+export const serializeSort = (obj) => {
+  return obj.map((item) => `${item.field}:${item.sort}`).join(',');
+};
