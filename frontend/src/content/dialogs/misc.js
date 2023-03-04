@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import {
   Button,
@@ -10,16 +10,13 @@ import {
   Box,
   Tab,
   Tabs,
-  Typography,
-  IconButton,
-  InputAdornment,
-  debounce
+  Typography
 } from '@mui/material';
 import { transactionTypes, currencies } from '../../constants/common';
 import {
   addNewTransaction,
   updateTransaction
-} from '../../content/applications/Transactions/transactionSlice';
+} from '../applications/Transactions/transactionSlice';
 import { useForm } from 'src/utils/hooks/form-hook';
 import Input from '../../components/FormElements/Input';
 import { VALIDATOR_REQUIRE } from 'src/utils/validators';
@@ -27,128 +24,29 @@ import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { transactionStateDescriptor } from 'src/components/TransactionModal/transactionStateDescriptor';
 import Selector from 'src/components/FormElements/Selector';
-import {
-  formatAmountAndCurrency,
-  roundNumber,
-  validateStateEntity
-} from 'src/utils/functions';
-import { autocompleteCrypto } from 'src/utils/api/cryptoApiFunction';
-import { getCryptoPrice } from 'src/utils/api/assetsApiFunction';
-import { AuthContext } from 'src/utils/context/authContext';
+import { roundNumber, validateStateEntity } from 'src/utils/functions';
 
-function CryptoModal(props) {
-  const { authUserData } = useContext(AuthContext);
+function MiscModal(props) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
   const [tab, setTab] = useState(0);
   const [isEditForm, setIsEditForm] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [totalSpent, setTotalSpent] = useState(null);
-  const [balance, setBalance] = useState(null);
-  const [tokenOptions, setTokenOptions] = useState([]);
 
   const [formState, inputHandler, setFormData] = useForm(
     transactionStateDescriptor()
   );
 
-  const fetchData = useCallback(
-    debounce(async (search) => {
-      setTokenOptions([]);
-      const responseData = await autocompleteCrypto(search);
-
-      const options = responseData.data.coins.map((item) => {
-        let newItems = {};
-        newItems.key = item.id;
-        newItems.value = `${item.name} (${item.symbol})`;
-        newItems.id = item.symbol;
-        newItems.name = item.name;
-        return newItems;
-      });
-
-      setTokenOptions(options);
-      setLoading(false);
-    }, 600),
-    []
-  );
-
-  const handleAssetChange = async (event, value) => {
-    if (value) {
-      setBalance(null);
-      const selectedAsset = props.stats.find(
-        (asset) => asset.assetId === value.key
-      );
-
-      let currentPrice;
-      if (selectedAsset) {
-        setBalance(selectedAsset.holdingQuantity);
-        if (authUserData.currency !== selectedAsset.currency) {
-          currentPrice =
-            selectedAsset.currentPrice *
-            authUserData.exchangeRates[authUserData.currency];
-        } else {
-          currentPrice = selectedAsset.currentPrice;
-        }
-      } else {
-        currentPrice = await getCryptoPrice(value.key);
-      }
-
-      setFormData({
-        ...formState.inputs,
-        category: { value: 'crypto', isValid: true },
-        name: { value: value.name, isValid: true },
-        asset_id: { value: value.key || '', isValid: true },
-        symbol: { value: value.id, isValid: true },
-        price_per_asset: {
-          value: roundNumber(currentPrice),
-          isValid: true
-        },
-        price: {
-          value: roundNumber(currentPrice),
-          isValid: true
-        }
-      });
-    }
-  };
-  const handleAssetsDropdownChange = (event) => {
-    const text = event.target.value;
-
-    if (text.length < 3) return;
-    if (text) {
-      setLoading(true);
-      fetchData(text);
-    }
-  };
-
   useEffect(() => {
-    setTotalSpent(
-      formatAmountAndCurrency(
-        formState.inputs.quantity.value *
-          formState.inputs.price_per_asset.value,
-        formState.inputs.currency.value,
-        false
-      )
-    );
-    if (
-      formState.inputs.quantity.value > 0 &&
-      formState.inputs.price_per_asset.value > 0
-    ) {
-      setFormData({
-        ...formState.inputs,
-        price: {
-          value: roundNumber(
-            formState.inputs.quantity.value *
-              formState.inputs.price_per_asset.value
-          ),
-          isValid: true
-        }
-      });
-    }
-  }, [
-    formState.inputs.price_per_asset.value,
-    formState.inputs.quantity.value,
-    formState.inputs.currency.value
-  ]);
+    setFormData({
+      ...formState.inputs,
+      category: {
+        value: 'misc',
+        isValid: true,
+        isTouched: true
+      }
+    });
+  }, []);
 
   useEffect(() => {
     setIsEditForm(false);
@@ -165,16 +63,6 @@ function CryptoModal(props) {
           isValid: true,
           isTouched: false
         },
-        asset_id: {
-          value: props.transaction.asset_id,
-          isValid: true,
-          isTouched: false
-        },
-        symbol: {
-          value: props.transaction.symbol,
-          isValid: true,
-          isTouched: false
-        },
         category: {
           value: props.transaction.category,
           isValid: true,
@@ -185,13 +73,6 @@ function CryptoModal(props) {
             props.transaction.type === 1
               ? roundNumber(props.transaction.price) * -1
               : roundNumber(props.transaction.price),
-          isValid: true,
-          isTouched: false
-        },
-        price_per_asset: {
-          value: roundNumber(
-            props.transaction.price / props.transaction.quantity
-          ),
           isValid: true,
           isTouched: false
         },
@@ -245,7 +126,8 @@ function CryptoModal(props) {
   const submitTransactionForm = async () => {
     const currentState = { ...formState.inputs };
     const validationResult = validateStateEntity({
-      stateEntity: currentState
+      stateEntity: currentState,
+      toSkip: ['price_per_asset']
     });
 
     if (!validationResult.valid) {
@@ -276,16 +158,6 @@ function CryptoModal(props) {
     setFormData(transactionStateDescriptor());
     setTab(0);
     props.close();
-  };
-
-  const handleSetAllQuantity = () => {
-    setFormData(
-      {
-        ...formState.inputs,
-        quantity: { value: balance, isValid: true }
-      },
-      true
-    );
   };
 
   return (
@@ -319,21 +191,16 @@ function CryptoModal(props) {
                 {t(formState.inputs.name.value)}
               </Typography>
             ) : (
-              <Selector
-                loading={loading}
+              <Input
                 required
                 autoHighlight
                 fullWidth
-                id="asset"
-                options={tokenOptions}
-                label={t('Token')}
+                id="name"
+                type="text"
+                label={t('Item')}
                 sx={{ mt: 2, mb: 1 }}
-                change={handleAssetChange}
-                inputChange={handleAssetsDropdownChange}
-                value={formState.inputs.asset_id.value}
-                isValid={formState.inputs.name.isValid}
-                isTouched={formState.inputs.name.isTouched}
-                noOptionsText={t('No matches found')}
+                onInput={inputHandler}
+                {...formState.inputs.name}
               />
             )}
 
@@ -353,14 +220,14 @@ function CryptoModal(props) {
                   required
                   sx={{ gridColumn: '2', input: { textAlign: 'right' } }}
                   margin="dense"
-                  id="price_per_asset"
+                  id="price"
                   label={t('Price')}
                   type="number"
                   valueType="number"
                   validators={[VALIDATOR_REQUIRE()]}
                   onInput={inputHandler}
                   onFocus={(event) => event.target.select()}
-                  {...formState.inputs.price_per_asset}
+                  {...formState.inputs.price}
                   emptyValue={0}
                 />
               </Box>
@@ -379,27 +246,6 @@ function CryptoModal(props) {
               />
             )}
 
-            {balance && formState.inputs.type.value === 1 && (
-              <Box
-                sx={{
-                  display: 'grid'
-                }}
-              >
-                <Typography
-                  sx={{
-                    gridColumn: '2',
-                    alignItems: 'center',
-                    display: 'flex',
-                    justifyContent: 'end',
-                    ml: 2
-                  }}
-                  variant="subtitle1"
-                >
-                  {t('Balance')}: {balance} {formState.inputs.symbol.value}
-                </Typography>
-              </Box>
-            )}
-
             <Input
               required
               sx={{ gridColumn: '1', input: { textAlign: 'right' } }}
@@ -408,21 +254,6 @@ function CryptoModal(props) {
               label={t('Quantity')}
               type="number"
               valueType="number"
-              endAdornment={
-                balance &&
-                formState.inputs.type.value === 1 && (
-                  <InputAdornment position="end">
-                    <IconButton
-                      color="primary"
-                      sx={{ fontSize: 15 }}
-                      onClick={handleSetAllQuantity}
-                      edge="end"
-                    >
-                      max
-                    </IconButton>
-                  </InputAdornment>
-                )
-              }
               onFocus={(event) => event.target.select()}
               onInput={inputHandler}
               fullWidth
@@ -430,18 +261,6 @@ function CryptoModal(props) {
               {...formState.inputs.quantity}
               emptyValue={0}
             />
-
-            {tab !== 2 && (
-              <Input
-                disabled
-                fullWidth
-                sx={{ input: { textAlign: 'right' } }}
-                margin="dense"
-                label={t('Total Spent')}
-                type="text"
-                value={totalSpent}
-              />
-            )}
 
             <Input
               margin="dense"
@@ -479,4 +298,4 @@ function CryptoModal(props) {
   );
 }
 
-export default CryptoModal;
+export default MiscModal;

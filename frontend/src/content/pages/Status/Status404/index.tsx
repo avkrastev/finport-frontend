@@ -13,6 +13,7 @@ import { Helmet } from 'react-helmet-async';
 import SearchTwoToneIcon from '@mui/icons-material/SearchTwoTone';
 
 import { styled } from '@mui/material/styles';
+import { useTranslation } from 'react-i18next';
 
 const MainContent = styled(Box)(
   ({ theme }) => `
@@ -39,30 +40,31 @@ const ButtonSearch = styled(Button)(
 );
 
 function Status404() {
-
+  const { t } = useTranslation();
   return (
     <>
       <Helmet>
-        <title>Status - 404</title>
+        <title>{t('Status - 404')}</title>
       </Helmet>
       <MainContent>
         <Container maxWidth="md">
           <Box textAlign="center">
             <img alt="404" height={180} src="/static/images/status/404.svg" />
             <Typography variant="h2" sx={{ my: 2 }}>
-              The page you were looking for doesn't exist.
+              {t("The page you were looking for doesn't exist.")}
             </Typography>
-            <Typography
+            {/* <Typography
               variant="h4"
               color="text.secondary"
               fontWeight="normal"
               sx={{ mb: 4 }}
             >
-              It's on us, we moved the content to a different page. The search below should help!
-            </Typography>
+              It's on us, we moved the content to a different page. The search
+              below should help!
+            </Typography> */}
           </Box>
-          <Container maxWidth="sm">
-            <Card sx={{ textAlign: 'center', mt: 3, p: 4 }}>
+          <Container maxWidth="sm" sx={{ textAlign: 'center', mt: 3, p: 4 }}>
+            {/* <Card sx={{ textAlign: 'center', mt: 3, p: 4 }}>
               <FormControl variant="outlined" fullWidth>
                 <OutlinedInputWrapper
                   type="text"
@@ -81,11 +83,14 @@ function Status404() {
                   }
                 />
               </FormControl>
-              <Divider sx={{ my: 4 }}>OR</Divider>
+              <Divider sx={{ my: 4 }}>OR</Divider> 
               <Button href="/overview" variant="outlined">
                 Go to homepage
               </Button>
-            </Card>
+            </Card>*/}
+            <Button href="/overview" variant="contained">
+              {t('Go to homepage')}
+            </Button>
           </Container>
         </Container>
       </MainContent>

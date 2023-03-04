@@ -65,7 +65,7 @@ function Input(props) {
       type={props.type}
       inputProps={
         !props.inputProps && props.type === 'number'
-          ? { min: 0, step: 0.1 }
+          ? { min: 0, step: 0.01 }
           : props.inputProps
       }
       InputLabelProps={{ style: { fontWeight: 'bold' } }}

@@ -64,7 +64,7 @@ function Row(props: {
   return (
     <React.Fragment>
       <TableRow
-        key={row.name}
+        key={row.key}
         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
       >
         <TableCell component="th" scope="row">
@@ -121,7 +121,11 @@ function Row(props: {
                   row.currency,
                   mustExchange
                 )
-              : formatAmountAndCurrency(row.totalInvested, row.currency)}
+              : formatAmountAndCurrency(
+                  row.totalInvested,
+                  row.currency,
+                  mustExchange
+                )}
           </Typography>
         </TableCell>
         <TableCell align="right">
@@ -139,10 +143,11 @@ function Row(props: {
                 )
               : formatAmountAndCurrency(
                   row.totalSumInOriginalCurrency,
-                  row.currency
+                  row.currency,
+                  mustExchange
                 )}
           </Typography>
-          {category !== 'p2p' && (
+          {category !== 'p2p' && category !== 'misc' && (
             <Typography variant="body2" noWrap gutterBottom>
               {category !== 'commodities' ? (
                 `${row.holdingQuantity} ${row.symbol}`
@@ -151,6 +156,13 @@ function Row(props: {
                   {{ quantity }} oz t.
                 </Trans>
               )}
+            </Typography>
+          )}
+          {category === 'misc' && (
+            <Typography variant="body2" noWrap gutterBottom>
+              <Trans i18nKey={'no.'} quantity={quantity}>
+                {{ quantity }} no.
+              </Trans>
             </Typography>
           )}
         </TableCell>
@@ -167,22 +179,24 @@ function Row(props: {
               mustExchange
             )}
           </Typography>
-          {row.currency !== 'USD' && (
+          {/* {row.currency !== 'USD' && (
             <Typography variant="subtitle1">
               ({formatAmountAndCurrency(row.differenceInUSD, 'USD', false)})
             </Typography>
+          )} */}
+          {category !== 'misc' && (
+            <Typography variant="body2" noWrap gutterBottom>
+              {row.differenceInPercents >= 0 ? (
+                <Text color="success">
+                  {roundNumber(row.differenceInPercents)}%
+                </Text>
+              ) : (
+                <Text color="error">
+                  {roundNumber(row.differenceInPercents)}%
+                </Text>
+              )}
+            </Typography>
           )}
-          <Typography variant="body2" noWrap gutterBottom>
-            {row.differenceInPercents >= 0 ? (
-              <Text color="success">
-                {roundNumber(row.differenceInPercents)}%
-              </Text>
-            ) : (
-              <Text color="error">
-                {roundNumber(row.differenceInPercents)}%
-              </Text>
-            )}
-          </Typography>
         </TableCell>
         <TableCell align="right">
           <IconButton
@@ -271,7 +285,8 @@ function Row(props: {
                                 {formatAmountAndCurrency(
                                   historyRow.price_usd /
                                     Math.abs(historyRow.quantity),
-                                  row.currency
+                                  row.currency,
+                                  true
                                 )}
                               </Typography>
                             ) : (
@@ -488,9 +503,9 @@ export default function CollapsibleTable({
           </TableRow>
         </TableHead>
         <TableBody>
-          {assets.map((row) => (
+          {assets.map((row, i) => (
             <Row
-              key={row.name}
+              key={i}
               row={row}
               openedRows={openedRows}
               category={category}

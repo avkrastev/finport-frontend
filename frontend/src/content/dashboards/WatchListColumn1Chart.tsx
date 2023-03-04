@@ -24,13 +24,15 @@ const WatchListColumn1Chart: FC<WatchListColumn1ChartProps> = ({
 
   const labelsTranslated = [];
   for (let label of labels) {
-    if (label.match(/[0-9]{4}/g)) {
+    if (typeof label === 'string' && label.match(/[0-9]{4}/g)) {
       const compositeLabel = label.split(' ');
       labelsTranslated.push(
         t(`${compositeLabel[0]} {{year}}`, { year: compositeLabel[1] })
       );
     } else {
-      labelsTranslated.push(label !== '' ? t(label) : label);
+      labelsTranslated.push(
+        label !== '' && typeof label === 'string' ? t(label) : label
+      );
     }
   }
 

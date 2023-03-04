@@ -20,6 +20,7 @@ import WatchListWithChart from '../WatchListWithChart';
 import { getSnackbarSuccessMessage } from 'src/utils/functions';
 import CryptoModal from 'src/content/dialogs/crypto';
 import { useTranslation } from 'react-i18next';
+import { resetReportsState } from '../Reports/reportsSlice';
 
 function DashboardCrypto() {
   const { t } = useTranslation();
@@ -62,6 +63,7 @@ function DashboardCrypto() {
     }
     setOperation('add');
     dispatch(resetStatuses());
+    dispatch(resetReportsState());
   }, [transactionAddStatus, dispatch]);
 
   useEffect(() => {
@@ -75,6 +77,7 @@ function DashboardCrypto() {
     }
     setOperation('update');
     dispatch(resetStatuses());
+    dispatch(resetReportsState());
   }, [transactionUpdateStatus, dispatch]);
 
   useEffect(() => {
@@ -88,6 +91,7 @@ function DashboardCrypto() {
     }
     setOperation('delete');
     dispatch(resetStatuses());
+    dispatch(resetReportsState());
   }, [transactionDeleteStatus, dispatch]);
 
   const handleCloseSnackbar = (event, reason) => {

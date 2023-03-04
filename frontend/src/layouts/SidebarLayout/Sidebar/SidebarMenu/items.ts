@@ -123,7 +123,7 @@ const menuItems: MenuItems[] = [
         icon: AccountBalanceWalletTwoToneIcon,
         link: '/management/balances',
         show: true
-      },
+      }
     ]
   },
   {
@@ -151,13 +151,13 @@ const menuItems: MenuItems[] = [
             show: true
           }
         ]
-      },
-      {
-        name: 'Snapshots',
-        icon: AddAPhotoTwoToneIcon,
-        link: '/history/snapshots',
-        show: true
       }
+      // {
+      //   name: 'Snapshots',
+      //   icon: AddAPhotoTwoToneIcon,
+      //   link: '/history/snapshots',
+      //   show: true
+      // }
     ]
   }
 ];

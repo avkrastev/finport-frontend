@@ -24,6 +24,7 @@ import WatchListWithChart from '../WatchListWithChart';
 import { Trans, useTranslation } from 'react-i18next';
 import CommoditiesModal from 'src/content/dialogs/commodities';
 import { getSnackbarSuccessMessage } from 'src/utils/functions';
+import { resetReportsState } from '../Reports/reportsSlice';
 
 function DashboardCommodities() {
   const { t } = useTranslation();
@@ -66,6 +67,7 @@ function DashboardCommodities() {
     }
     setOperation('add');
     dispatch(resetStatuses());
+    dispatch(resetReportsState());
   }, [transactionAddStatus, dispatch]);
 
   useEffect(() => {
@@ -79,6 +81,7 @@ function DashboardCommodities() {
     }
     setOperation('update');
     dispatch(resetStatuses());
+    dispatch(resetReportsState());
   }, [transactionUpdateStatus, dispatch]);
 
   useEffect(() => {
@@ -92,6 +95,7 @@ function DashboardCommodities() {
     }
     setOperation('delete');
     dispatch(resetStatuses());
+    dispatch(resetReportsState());
   }, [transactionDeleteStatus, dispatch]);
 
   const handleCloseSnackbar = (event, reason) => {

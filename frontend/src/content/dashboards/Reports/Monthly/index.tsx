@@ -21,6 +21,7 @@ import {
 } from '../reportsSlice';
 import WatchListMonthly from '../../WatchListMonthly';
 import ReportSkeleton from '../../ReportSkeleton';
+import { useTranslation } from 'react-i18next';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -56,6 +57,7 @@ function a11yProps(index: number) {
 }
 
 function ReportMonthly() {
+  const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const monthlyReport = useSelector(getMonthlyReportsData);
   const monthlyReportStatus = useSelector(getMonthlyReportStatus);
@@ -72,13 +74,13 @@ function ReportMonthly() {
   };
 
   if (monthlyReportStatus !== 'succeeded') {
-    return <ReportSkeleton tabs={true}/>;
+    return <ReportSkeleton tabs={true} />;
   }
 
   return (
     <>
       <Helmet>
-        <title>Monthly Report</title>
+        <title>{t('Monthly Report')}</title>
       </Helmet>
       <Container maxWidth="lg" sx={{ p: 5 }}>
         <Grid
@@ -100,10 +102,9 @@ function ReportMonthly() {
                   value={yearTab}
                   onChange={handleTabChange}
                 >
-                  {
-                    monthlyReport.map((report, i) => (
-                      <Tab key={i} label={report.year} {...a11yProps(i)} />
-                    ))}
+                  {monthlyReport.map((report, i) => (
+                    <Tab key={i} label={report.year} {...a11yProps(i)} />
+                  ))}
                 </Tabs>
                 {monthlyReport[yearTab] && (
                   <TabPanel value={yearTab} index={yearTab}>

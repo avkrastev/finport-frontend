@@ -18,6 +18,7 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import MailTwoToneIcon from '@mui/icons-material/MailTwoTone';
+import { useTranslation } from 'react-i18next';
 
 const MainContent = styled(Box)(
   () => `
@@ -44,18 +45,20 @@ const ButtonNotify = styled(Button)(
 );
 
 function StatusComingSoon() {
+  const { t } = useTranslation();
+
   return (
     <>
       <Helmet>
-        <title>Status - Coming Soon</title>
+        <title>{t('Status - Coming Soon')}</title>
       </Helmet>
       <MainContent>
         <Container maxWidth="md">
           {/* <Logo /> */}
           <Box textAlign="center" mb={3}>
-            <Container maxWidth="xs">
+            <Container maxWidth="sm">
               <Typography variant="h1" sx={{ mt: 4, mb: 2 }}>
-                Coming Soon
+                {t('Coming Soon')}
               </Typography>
               <Typography
                 variant="h3"
@@ -63,8 +66,9 @@ function StatusComingSoon() {
                 fontWeight="normal"
                 sx={{ mb: 4 }}
               >
-                We're working on implementing the last features before our
-                launch!
+                {t(
+                  "We're working on implementing this feature, please check again in a couple of weeks!"
+                )}
               </Typography>
             </Container>
             <img
@@ -74,7 +78,7 @@ function StatusComingSoon() {
             />
           </Box>
 
-          <Container maxWidth="sm">
+          {/* <Container maxWidth="sm">
             <Box sx={{ textAlign: 'center', p: 4 }}>
               <FormControl variant="outlined" fullWidth>
                 <OutlinedInputWrapper
@@ -116,7 +120,7 @@ function StatusComingSoon() {
                 </Tooltip>
               </Box>
             </Box>
-          </Container>
+          </Container> */}
         </Container>
       </MainContent>
     </>

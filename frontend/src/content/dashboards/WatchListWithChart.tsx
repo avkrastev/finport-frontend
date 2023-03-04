@@ -78,18 +78,20 @@ function WatchListWithChart(props) {
           <Typography></Typography>
         )}
 
-        <ToggleButtonGroup
-          value={tabs}
-          exclusive
-          onChange={handleViewOrientation}
-        >
-          <ToggleButton disableRipple value="watch_list_columns">
-            <DataSaverOffIcon />
-          </ToggleButton>
-          <ToggleButton disableRipple value="watch_list_rows">
-            <QueryStatsIcon />
-          </ToggleButton>
-        </ToggleButtonGroup>
+        {props?.category !== 'misc' && (
+          <ToggleButtonGroup
+            value={tabs}
+            exclusive
+            onChange={handleViewOrientation}
+          >
+            <ToggleButton disableRipple value="watch_list_columns">
+              <DataSaverOffIcon />
+            </ToggleButton>
+            <ToggleButton disableRipple value="watch_list_rows">
+              <QueryStatsIcon />
+            </ToggleButton>
+          </ToggleButtonGroup>
+        )}
       </Box>
       <Grid
         container

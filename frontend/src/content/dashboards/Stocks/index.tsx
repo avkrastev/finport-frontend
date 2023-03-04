@@ -22,6 +22,7 @@ import WatchListWithChart from '../WatchListWithChart';
 import { useTranslation } from 'react-i18next';
 import StocksModal from 'src/content/dialogs/stocks';
 import { getSnackbarSuccessMessage } from 'src/utils/functions';
+import { resetReportsState } from '../Reports/reportsSlice';
 
 function DashboardStocks() {
   const { t } = useTranslation();
@@ -65,6 +66,7 @@ function DashboardStocks() {
     }
     setOperation('add');
     dispatch(resetStatuses());
+    dispatch(resetReportsState());
   }, [transactionAddStatus, dispatch]);
 
   useEffect(() => {
@@ -78,6 +80,7 @@ function DashboardStocks() {
     }
     setOperation('update');
     dispatch(resetStatuses());
+    dispatch(resetReportsState());
   }, [transactionUpdateStatus, dispatch]);
 
   useEffect(() => {
@@ -91,6 +94,7 @@ function DashboardStocks() {
     }
     setOperation('delete');
     dispatch(resetStatuses());
+    dispatch(resetReportsState());
   }, [transactionDeleteStatus, dispatch]);
 
   const handleCloseSnackbar = (event, reason) => {

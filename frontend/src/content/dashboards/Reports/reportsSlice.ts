@@ -48,7 +48,9 @@ export const fetchTransactionsPerYears = createAsyncThunk(
 const reportsSlice = createSlice({
   name: 'reports',
   initialState,
-  reducers: {},
+  reducers: {
+    resetReportsState: () => initialState
+  },
   extraReducers(builder) {
     builder
       .addCase(fetchTransactionsPerMonths.pending, (state) => {
@@ -84,11 +86,15 @@ const reportsSlice = createSlice({
 
 export const getMonthlyReportsData = (state: RootState) => state.reports.months;
 export const getYearlyReportsData = (state: RootState) => state.reports.years;
-export const getMonthlyReportStatus = (state: RootState) => state.reports.statusMonthly;
-export const getMonthlyReportsError = (state: RootState) => state.reports.errorMonthly;
-export const getYearlyReportStatus = (state: RootState) => state.reports.statusYearly;
-export const getYearlyReportsError = (state: RootState) => state.reports.errorYearly;
+export const getMonthlyReportStatus = (state: RootState) =>
+  state.reports.statusMonthly;
+export const getMonthlyReportsError = (state: RootState) =>
+  state.reports.errorMonthly;
+export const getYearlyReportStatus = (state: RootState) =>
+  state.reports.statusYearly;
+export const getYearlyReportsError = (state: RootState) =>
+  state.reports.errorYearly;
 
-//export const { } = reportsSlice.actions;
+export const { resetReportsState } = reportsSlice.actions;
 
 export default reportsSlice.reducer;

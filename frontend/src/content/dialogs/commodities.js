@@ -64,11 +64,12 @@ function CommoditiesModal(props) {
 
   const handleAssetChange = async (event, value) => {
     if (value) {
+      setBalance(null);
       const selectedAsset = props.stats.find(
         (asset) => asset.symbol === value.key
       );
 
-      if (selectedAsset) {
+      if (selectedAsset && selectedAsset.holdingQuantity > 0) {
         setBalance(selectedAsset.holdingQuantity);
       }
 

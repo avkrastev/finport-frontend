@@ -13,8 +13,10 @@ import {
 import { useEffect } from 'react';
 import WatchListYearly from '../../WatchListYearly';
 import ReportSkeleton from '../../ReportSkeleton';
+import { useTranslation } from 'react-i18next';
 
 function ReportYearly() {
+  const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const report = useSelector(getYearlyReportsData);
   const reportStatus = useSelector(getYearlyReportStatus);
@@ -32,7 +34,7 @@ function ReportYearly() {
   return (
     <>
       <Helmet>
-        <title>Yearly Report</title>
+        <title>{t('Yearly Report')}</title>
       </Helmet>
       <Container maxWidth="lg" sx={{ pt: 5 }}>
         <Grid
@@ -43,7 +45,7 @@ function ReportYearly() {
           spacing={3}
         >
           <Grid item xs={12}>
-            <CardContent sx={{ml: 3, mr: 3}}>
+            <CardContent sx={{ ml: 3, mr: 3 }}>
               <Box sx={{ width: '100%' }}>
                 <WatchListYearly
                   totalInvested={report.totalInvested}

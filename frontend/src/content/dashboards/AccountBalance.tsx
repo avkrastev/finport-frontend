@@ -141,29 +141,48 @@ function AccountBalance({ assets, category, loading, ...rest }) {
       <Grid spacing={0} container>
         <Grid item xs={12} md={6}>
           <Box p={4}>
-            <Typography sx={{ pb: 3 }} variant="h4">
-              {t('Account Balance')} | {t('Total Invested')}
-            </Typography>
-            <Box>
-              <Typography variant="h1" gutterBottom>
-                {rest.totalBalance
-                  ? formatAmountAndCurrency(rest.totalBalance, currentCurrency)
-                  : formatAmountAndCurrency(
-                      assets?.sums?.holdingValue,
-                      currentCurrency
-                    )}
-                &nbsp;|&nbsp;
-                {formatAmountAndCurrency(
-                  assets?.sums?.totalSum,
-                  currentCurrency
-                )}
+            {category !== 'misc' ? (
+              <Typography sx={{ pb: 3 }} variant="h4">
+                {t('Account Balance')} | {t('Total Invested')}
               </Typography>
+            ) : (
+              <Typography sx={{ pb: 3 }} variant="h4">
+                {t('Total Invested')}
+              </Typography>
+            )}
+
+            <Box>
+              {category !== 'misc' ? (
+                <Typography variant="h1" gutterBottom>
+                  {rest.totalBalance
+                    ? formatAmountAndCurrency(
+                        rest.totalBalance,
+                        currentCurrency
+                      )
+                    : formatAmountAndCurrency(
+                        assets?.sums?.holdingValue,
+                        currentCurrency
+                      )}
+                  &nbsp;|&nbsp;
+                  {formatAmountAndCurrency(
+                    assets?.sums?.totalSum,
+                    currentCurrency
+                  )}
+                </Typography>
+              ) : (
+                <Typography variant="h1" gutterBottom>
+                  {formatAmountAndCurrency(
+                    assets?.sums?.totalSum,
+                    currentCurrency
+                  )}
+                </Typography>
+              )}
 
               {sumsInDifferentCurrencies
                 .filter((item) => item.currency !== currentCurrency)
                 .slice(0, 3)
                 .map((item, i) => {
-                  return (
+                  return category !== 'misc' ? (
                     <Typography
                       sx={{ mb: 1 }}
                       key={i}
@@ -183,6 +202,20 @@ function AccountBalance({ assets, category, loading, ...rest }) {
                         false
                       )}
                     </Typography>
+                  ) : (
+                    <Typography
+                      sx={{ mb: 1 }}
+                      key={i}
+                      variant="h4"
+                      fontWeight="normal"
+                      color="text.secondary"
+                    >
+                      {formatAmountAndCurrency(
+                        item.totalAmount,
+                        item.currency,
+                        false
+                      )}
+                    </Typography>
                   );
                 })}
 
@@ -195,37 +228,39 @@ function AccountBalance({ assets, category, loading, ...rest }) {
                   {assets?.sums?.inBitcoin} {assets.sums ? 'BTC' : ''}
                 </Typography>
               )}
-              <Box display="flex" sx={{ py: 4 }} alignItems="center">
-                {difference > 0 && (
-                  <AvatarSuccess sx={{ mr: 2 }} variant="rounded">
-                    <TrendingUp fontSize="large" />
-                  </AvatarSuccess>
-                )}
-                {difference < 0 && (
-                  <AvatarFail sx={{ mr: 2 }} variant="rounded">
-                    <TrendingDown fontSize="large" />
-                  </AvatarFail>
-                )}
-                {difference === 0 && (
-                  <AvatarEqual sx={{ mr: 2 }} variant="rounded">
-                    <TrendingFlat fontSize="large" />
-                  </AvatarEqual>
-                )}
-                {(assets?.sums?.holdingValue >= 0 ||
-                  rest.totalBalance >= 0) && (
-                  <Box>
-                    <Typography variant="h4">
-                      {formatAmountAndCurrency(difference)}
-                    </Typography>
-                    <Typography variant="subtitle2" noWrap align="right">
-                      {differenceInPercents !== null
-                        ? roundNumber(differenceInPercents)
-                        : 0}{' '}
-                      %
-                    </Typography>
-                  </Box>
-                )}
-              </Box>
+              {category !== 'misc' && (
+                <Box display="flex" sx={{ py: 4 }} alignItems="center">
+                  {difference > 0 && (
+                    <AvatarSuccess sx={{ mr: 2 }} variant="rounded">
+                      <TrendingUp fontSize="large" />
+                    </AvatarSuccess>
+                  )}
+                  {difference < 0 && (
+                    <AvatarFail sx={{ mr: 2 }} variant="rounded">
+                      <TrendingDown fontSize="large" />
+                    </AvatarFail>
+                  )}
+                  {difference === 0 && (
+                    <AvatarEqual sx={{ mr: 2 }} variant="rounded">
+                      <TrendingFlat fontSize="large" />
+                    </AvatarEqual>
+                  )}
+                  {(assets?.sums?.holdingValue >= 0 ||
+                    rest.totalBalance >= 0) && (
+                    <Box>
+                      <Typography variant="h4">
+                        {formatAmountAndCurrency(difference)}
+                      </Typography>
+                      <Typography variant="subtitle2" noWrap align="right">
+                        {!isNaN(differenceInPercents)
+                          ? roundNumber(differenceInPercents)
+                          : 0}{' '}
+                        %
+                      </Typography>
+                    </Box>
+                  )}
+                </Box>
+              )}
               {assets.stats && category === 'p2p' && (
                 <Typography variant="h5">
                   *

@@ -360,11 +360,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
                         }}
                       >
                         {asset.name}{' '}
-                        {asset.category !== 'crypto' &&
-                        asset.category !== 'stocks' &&
-                        asset.symbol
-                          ? '(' + asset.symbol + ')'
-                          : ''}
+                        {asset.symbol ? '(' + asset.symbol + ')' : ''}
                       </p>
                     </Typography>
                     <Typography variant="body1" color="text.secondary" noWrap>

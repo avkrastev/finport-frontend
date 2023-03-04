@@ -64,6 +64,7 @@ function StocksModal(props) {
         newItems.key = item.symbol;
         newItems.value = `${item.name} (${item.symbol})`;
         newItems.id = item.symbol;
+        newItems.name = item.name;
         return newItems;
       });
 
@@ -95,9 +96,8 @@ function StocksModal(props) {
 
       setFormData({
         ...formState.inputs,
-        category: { value: 'stocks', isValid: true },
-        name: { value: value.value, isValid: true },
-        asset_id: { value: value.key || '', isValid: true },
+        category: { value: props?.category || 'stocks', isValid: true },
+        name: { value: value.name, isValid: true },
         symbol: { value: value.id, isValid: true },
         price_per_asset: {
           value: roundNumber(currentPrice),
@@ -162,11 +162,6 @@ function StocksModal(props) {
         },
         name: {
           value: props.transaction.name,
-          isValid: true,
-          isTouched: false
-        },
-        asset_id: {
-          value: props.transaction.asset_id,
           isValid: true,
           isTouched: false
         },
@@ -326,11 +321,11 @@ function StocksModal(props) {
                 fullWidth
                 id="asset"
                 options={stockOptions}
-                label={t('Stocks')}
+                label={props.category === 'etf' ? t('ETFs') : t('Stocks')}
                 sx={{ mt: 2, mb: 1 }}
                 change={handleAssetChange}
                 inputChange={handleAssetsDropdownChange}
-                value={formState.inputs.asset_id.value}
+                value={formState.inputs.symbol.value}
                 isValid={formState.inputs.name.isValid}
                 isTouched={formState.inputs.name.isTouched}
                 noOptionsText={t('No matches found')}

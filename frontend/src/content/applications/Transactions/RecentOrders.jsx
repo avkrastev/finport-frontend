@@ -16,6 +16,7 @@ import {
 } from './transactionSlice';
 import TransactionModal from 'src/components/TransactionModal';
 import SuspenseLoader from 'src/components/SuspenseLoader';
+import { resetReportsState } from 'src/content/dashboards/Reports/reportsSlice';
 
 function RecentOrders() {
   const dispatch = useDispatch();
@@ -57,6 +58,7 @@ function RecentOrders() {
     }
     setOperation('add');
     dispatch(resetStatuses());
+    dispatch(resetReportsState());
   }, [transactionAddStatus, dispatch]);
 
   useEffect(() => {
@@ -68,6 +70,7 @@ function RecentOrders() {
     }
     setOperation('update');
     dispatch(resetStatuses());
+    dispatch(resetReportsState());
   }, [transactionUpdateStatus, dispatch]);
 
   useEffect(() => {
@@ -79,6 +82,7 @@ function RecentOrders() {
     }
     setOperation('delete');
     dispatch(resetStatuses());
+    dispatch(resetReportsState());
   }, [transactionDeleteStatus, dispatch]);
 
   const openDeleteModal = (id) => {
