@@ -249,6 +249,34 @@ function Row(props: {
                     const typeOfTransaction = transactionTypes.find(
                       (type) => type.key === historyRow.type
                     )?.value;
+
+                    const averageNetCost =
+                      historyRow.currency === currency
+                        ? formatAmountAndCurrency(
+                            historyRow.price / Math.abs(historyRow.quantity),
+                            row.currency,
+                            false
+                          )
+                        : formatAmountAndCurrency(
+                            historyRow.price_usd /
+                              Math.abs(historyRow.quantity),
+                            row.currency,
+                            true
+                          );
+
+                    const totalCost =
+                      historyRow.currency === currency
+                        ? formatAmountAndCurrency(
+                            historyRow.price,
+                            row.currency,
+                            false
+                          )
+                        : formatAmountAndCurrency(
+                            historyRow.price_usd,
+                            row.currency,
+                            true
+                          );
+
                     return (
                       <TableRow key={historyRow.id}>
                         <TableCell component="th" scope="row">
@@ -282,12 +310,7 @@ function Row(props: {
                                 color="text.secondary"
                                 noWrap
                               >
-                                {formatAmountAndCurrency(
-                                  historyRow.price_usd /
-                                    Math.abs(historyRow.quantity),
-                                  row.currency,
-                                  true
-                                )}
+                                {averageNetCost}
                               </Typography>
                             ) : (
                               <Typography
@@ -305,12 +328,7 @@ function Row(props: {
                             {historyRow.quantity}
                           </TableCell>
                         )}
-                        <TableCell align="right">
-                          {formatAmountAndCurrency(
-                            historyRow.price_usd,
-                            historyRow.currency
-                          )}
-                        </TableCell>
+                        <TableCell align="right">{totalCost}</TableCell>
                         <TableCell align="right">
                           <Tooltip
                             title={

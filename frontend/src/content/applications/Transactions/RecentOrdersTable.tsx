@@ -325,6 +325,18 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
             {assets?.assets?.map((asset) => {
               const mustExchange = asset.currency !== authUserData.currency;
               const isCryptoOrderSelected = selectedAssets.includes(asset.id);
+              const averageNetCost =
+                asset.currency === authUserData.currency
+                  ? formatAmountAndCurrency(
+                      asset.price / Math.abs(asset.quantity),
+                      asset.currency,
+                      false
+                    )
+                  : formatAmountAndCurrency(
+                      asset.price_usd / Math.abs(asset.quantity),
+                      asset.currency,
+                      true
+                    );
               return (
                 <TableRow hover key={asset.id} selected={isCryptoOrderSelected}>
                   <TableCell padding="checkbox">
@@ -394,9 +406,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
                   <TableCell align="right">
                     {asset.quantity !== 0 && asset.price !== 0 ? (
                       <Typography variant="body1" color="text.secondary" noWrap>
-                        {formatAmountAndCurrency(
-                          asset.price_usd / Math.abs(asset.quantity)
-                        )}
+                        {averageNetCost}
                       </Typography>
                     ) : (
                       <Typography variant="body1" color="text.secondary" noWrap>

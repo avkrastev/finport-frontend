@@ -17,6 +17,10 @@ export const formatAmountAndCurrency = (
     const selectedCurrencyRate = userData.exchangeRates[userData.currency];
     amount = selectedCurrencyRate * amount;
     curr = userData.currency;
+  } else if (userData.currency === 'USD' && userData.currency !== curr) {
+    const selectedCurrencyRate = userData.exchangeRates[curr];
+    amount = selectedCurrencyRate * amount;
+    curr = userData.currency;
   }
 
   const selectedCurrency = currencies.find((currency) => currency.key === curr);
