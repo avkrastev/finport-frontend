@@ -4,6 +4,8 @@ import AutoGraphTwoToneIcon from '@mui/icons-material/AutoGraphTwoTone';
 import AddchartTwoToneIcon from '@mui/icons-material/AddchartTwoTone';
 import GroupTwoToneIcon from '@mui/icons-material/GroupTwoTone';
 import ShowChartTwoToneIcon from '@mui/icons-material/ShowChartTwoTone';
+import MapsHomeWorkTwoToneIcon from '@mui/icons-material/MapsHomeWorkTwoTone';
+import BookTwoToneIcon from '@mui/icons-material/BookTwoTone';
 import { t } from 'i18next';
 
 export const gramOunceRatio = 0.0321507466;
@@ -108,6 +110,45 @@ export const commodities = [
   {
     key: 'XPD',
     value: 'Palladium'
+  }
+];
+
+export const propertyTypes = [
+  {
+    key: 1,
+    value: t('Apartment')
+  },
+  {
+    key: 2,
+    value: t('House')
+  },
+  {
+    key: 3,
+    value: t('Villa')
+  },
+  {
+    key: 4,
+    value: t('Garage')
+  },
+  {
+    key: 5,
+    value: t('Atelier')
+  },
+  {
+    key: 6,
+    value: t('Shop')
+  },
+  {
+    key: 7,
+    value: t('Office')
+  },
+  {
+    key: 8,
+    value: t('Warehouse')
+  },
+  {
+    key: 9,
+    value: t('Land')
   }
 ];
 
@@ -447,5 +488,7 @@ export const assetIcons = {
   p2p: GroupTwoToneIcon,
   etf: AddchartTwoToneIcon,
   misc: AutoGraphTwoToneIcon,
-  commodities: AgricultureTwoToneIcon
+  commodities: AgricultureTwoToneIcon,
+  realestate: MapsHomeWorkTwoToneIcon,
+  bonds: BookTwoToneIcon
 };

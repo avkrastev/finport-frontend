@@ -31,6 +31,9 @@ const Commodities = Loader(
 );
 const Misc = Loader(lazy(() => import('src/content/dashboards/Misc')));
 const P2P = Loader(lazy(() => import('src/content/dashboards/P2P')));
+const RealEstates = Loader(
+  lazy(() => import('src/content/dashboards/RealEstates'))
+);
 
 // Reports
 const Monthly = Loader(
@@ -168,7 +171,7 @@ const routes = (isLoggedIn: any) => [
           },
           {
             path: 'realestate',
-            element: <StatusComingSoon />
+            element: <RealEstates />
           }
         ]
       },

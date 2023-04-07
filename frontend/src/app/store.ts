@@ -6,6 +6,7 @@ import ETFsSlice from 'src/content/dashboards/Etf/ETFsSlice';
 import miscSlice from 'src/content/dashboards/Misc/miscSlice';
 import stocksSlice from 'src/content/dashboards/Stocks/stocksSlice';
 import p2pSlice from 'src/content/dashboards/P2P/p2pSlice';
+import realEstateSlice from 'src/content/dashboards/RealEstates/RealEstatesSlice';
 import summarySlice from 'src/content/overview/summarySlice';
 import reportsSlice from 'src/content/dashboards/Reports/reportsSlice';
 
@@ -18,15 +19,13 @@ export const store = configureStore({
     commodities: commoditiesSlice,
     misc: miscSlice,
     p2p: p2pSlice,
+    real: realEstateSlice,
     summary: summarySlice,
     reports: reportsSlice
   }
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
-export type RootState = ReturnType<typeof store.getState>
+export type RootState = ReturnType<typeof store.getState>;
 // Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
-export type AppDispatch = typeof store.dispatch
-
-
-
+export type AppDispatch = typeof store.dispatch;

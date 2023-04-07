@@ -14,20 +14,24 @@ import {
 } from 'src/content/applications/Transactions/transactionSlice';
 import { useEffect, useState } from 'react';
 import { AppDispatch } from 'src/app/store';
-import { fetchP2P, getP2PStatus, selectAllP2P } from './p2pSlice';
+import {
+  fetchRealEstate,
+  getRealEstateStatus,
+  selectAllRealEstate
+} from './RealEstatesSlice';
 import CollapsibleTable from '../CollapsibleTable';
 import WatchListWithChart from '../WatchListWithChart';
-import { getSnackbarSuccessMessage } from 'src/utils/functions';
 import { useTranslation } from 'react-i18next';
-import P2PModal from 'src/content/dialogs/p2p';
+import { getSnackbarSuccessMessage } from 'src/utils/functions';
+import RealModal from 'src/content/dialogs/real';
 import { resetReportsState } from '../Reports/reportsSlice';
-import P2pCard from './P2pCard';
+import RealEstateCard from './RealEstateCard';
 
-function DashboardP2P() {
+function DashboardRealEstates() {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
-  const p2p = useSelector(selectAllP2P);
-  const p2pStatus = useSelector(getP2PStatus);
+  const realEstates = useSelector(selectAllRealEstate);
+  const realEstatesStatus = useSelector(getRealEstateStatus);
   const transactionAddStatus = useSelector(getTransactionAddStatus);
   const transactionUpdateStatus = useSelector(getTransactionUpdateStatus);
   const transactionDeleteStatus = useSelector(getTransactionDeleteStatus);
@@ -40,15 +44,15 @@ function DashboardP2P() {
   const [showFailedSnackbar, setShowFailedSnackbar] = useState(false);
 
   useEffect(() => {
-    if (p2pStatus === 'idle') {
-      dispatch(fetchP2P());
+    if (realEstatesStatus === 'idle') {
+      dispatch(fetchRealEstate());
     }
-  }, [p2pStatus, dispatch]);
+  }, [realEstatesStatus, dispatch]);
 
   useEffect(() => {
     if (transactionAddStatus === 'succeeded') {
       setShowSuccessSnackbar(true);
-      dispatch(fetchP2P());
+      dispatch(fetchRealEstate());
       setClearOpenedRow(true);
     }
     if (transactionAddStatus === 'failed') {
@@ -62,7 +66,7 @@ function DashboardP2P() {
   useEffect(() => {
     if (transactionUpdateStatus === 'succeeded') {
       setShowSuccessSnackbar(true);
-      dispatch(fetchP2P());
+      dispatch(fetchRealEstate());
       setClearOpenedRow(true);
     }
     if (transactionUpdateStatus === 'failed') {
@@ -76,7 +80,7 @@ function DashboardP2P() {
   useEffect(() => {
     if (transactionDeleteStatus === 'succeeded') {
       setShowSuccessSnackbar(true);
-      dispatch(fetchP2P());
+      dispatch(fetchRealEstate());
       setClearOpenedRow(true);
     }
     if (transactionDeleteStatus === 'failed') {
@@ -110,10 +114,10 @@ function DashboardP2P() {
   return (
     <>
       <Helmet>
-        <title>{t('P2P Dashboard')}</title>
+        <title>{t('Real Estate Dashboard')}</title>
       </Helmet>
       <PageTitleWrapper>
-        <PageHeader title={t('P2P Portfolio')} />
+        <PageHeader title={t('Real Estate Portfolio')} />
       </PageTitleWrapper>
       <Container maxWidth="lg">
         <Grid
@@ -125,23 +129,23 @@ function DashboardP2P() {
         >
           <Grid item xs={12}>
             <WatchListWithChart
-              assets={p2p}
-              category="p2p"
-              loading={p2pStatus}
+              assets={realEstates}
+              category="real"
+              loading={realEstatesStatus}
               openModal={openMainModal}
             />
           </Grid>
-          {p2p && (
+          {realEstates && (
             <Grid item lg={12} xs={12}>
-              <P2pCard assets={p2p} status={p2pStatus} />
+              <RealEstateCard assets={realEstates} status={realEstatesStatus} />
             </Grid>
           )}
-          {p2p.stats && (
+          {realEstates.stats && (
             <Grid item xs={12}>
               <CollapsibleTable
-                assets={p2p.stats}
-                category="p2p"
-                loading={p2pStatus}
+                assets={realEstates.stats}
+                category="real"
+                loading={realEstatesStatus}
                 selectedTransaction={(row) => setCurrentTransaction(row)}
                 openModal={() => setOpenTransactionModal(true)}
                 clearOpenedRow={clearOpenedRow}
@@ -149,12 +153,12 @@ function DashboardP2P() {
             </Grid>
           )}
         </Grid>
-        <P2PModal
+        <RealModal
           transaction={currentTransaction}
           open={openTransactionModal}
           close={handleCloseTransactionModal}
           tabs={true}
-          stats={p2p.stats}
+          stats={realEstates.stats}
         />
         <Stack spacing={2} sx={{ width: '100%' }}>
           <Snackbar
@@ -182,4 +186,4 @@ function DashboardP2P() {
   );
 }
 
-export default DashboardP2P;
+export default DashboardRealEstates;

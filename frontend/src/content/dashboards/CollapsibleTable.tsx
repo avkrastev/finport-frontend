@@ -19,7 +19,7 @@ import {
 } from 'src/utils/functions';
 import Text from 'src/components/Text';
 import { format } from 'date-fns';
-import { transactionTypes } from 'src/constants/common';
+import { propertyTypes, transactionTypes } from 'src/constants/common';
 import { Tooltip, useTheme } from '@mui/material';
 import CollapsibleTableSkeleton from './CollapsibleTableSkeleton';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
@@ -100,6 +100,16 @@ function Row(props: {
             <Typography variant="body1" color="text.secondary" noWrap>
               {row.symbol}
             </Typography>
+            {row.property_type && (
+              <Typography variant="body1" color="text.secondary" noWrap>
+                (
+                {
+                  propertyTypes.find((type) => type.key === row.property_type)
+                    .value
+                }
+                )
+              </Typography>
+            )}
           </div>
         </TableCell>
         {category !== 'p2p' && (
@@ -147,7 +157,7 @@ function Row(props: {
                   mustExchange
                 )}
           </Typography>
-          {category !== 'p2p' && category !== 'misc' && (
+          {category !== 'p2p' && category !== 'misc' && category !== 'real' && (
             <Typography variant="body2" noWrap gutterBottom>
               {category !== 'commodities' ? (
                 `${row.holdingQuantity} ${row.symbol}`
@@ -158,7 +168,7 @@ function Row(props: {
               )}
             </Typography>
           )}
-          {category === 'misc' && (
+          {(category === 'misc' || category === 'real') && (
             <Typography variant="body2" noWrap gutterBottom>
               <Trans i18nKey={'no.'} quantity={quantity}>
                 {{ quantity }} no.
@@ -487,6 +497,7 @@ export default function CollapsibleTable({
       case 'commodities':
       case 'misc':
       case 'p2p':
+      case 'real':
         params = new URLSearchParams({
           category,
           name: row.name

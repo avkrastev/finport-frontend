@@ -63,6 +63,10 @@ function EditProfileTab() {
       if (responseData.status <= 299) {
         setUserData(responseData.data, Object.keys(responseData.data)[0]);
         setDashboard(responseData.data.categories);
+        setStatus({
+          severity: 'success',
+          text: 'Successfully modified data!'
+        });
       } else {
         setStatus({
           severity: 'error',
