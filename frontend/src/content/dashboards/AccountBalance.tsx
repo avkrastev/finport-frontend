@@ -93,7 +93,11 @@ function AccountBalance({ assets, category, loading, ...rest }) {
 
   if (assets.stats) {
     for (let asset of assets.stats) {
-      let percent = (asset.holdingValueInUSD / holdingValue) * 100;
+      const value = asset.holdingValueInUSD
+        ? asset.holdingValueInUSD
+        : asset.holdingValue;
+
+      let percent = (value / holdingValue) * 100;
       percent = onlyExpense ? percent * -1 : percent;
       if (!isNaN(percent)) {
         percentages.push(parseFloat(percent.toFixed(2)));

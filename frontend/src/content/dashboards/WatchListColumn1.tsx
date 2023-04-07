@@ -16,6 +16,7 @@ import AutoGraphTwoToneIcon from '@mui/icons-material/AutoGraphTwoTone';
 import AddchartTwoToneIcon from '@mui/icons-material/AddchartTwoTone';
 import GroupTwoToneIcon from '@mui/icons-material/GroupTwoTone';
 import ShowChartTwoToneIcon from '@mui/icons-material/ShowChartTwoTone';
+import MapsHomeWorkTwoToneIcon from '@mui/icons-material/MapsHomeWorkTwoTone';
 import { shortDayNames } from 'src/constants/common';
 
 const AvatarWrapper = styled(Avatar)(
@@ -101,6 +102,15 @@ function WatchListColumn1({ category, t, ...rest }) {
         : 0;
       icon = AgricultureTwoToneIcon;
       loading = rest.commoditiesLoading;
+      break;
+    case 'real':
+      holdingValue = rest.realEstate.holdingValue;
+      difference = rest.realEstate.difference;
+      differenceInPercents = rest.realEstate.differenceInPercents
+        ? roundNumber(rest.realEstate.differenceInPercents)
+        : 0;
+      icon = MapsHomeWorkTwoToneIcon;
+      loading = rest.realEstateLoading;
       break;
     default:
       holdingValue = 0;

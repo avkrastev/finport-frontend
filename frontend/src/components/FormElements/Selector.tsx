@@ -47,6 +47,7 @@ export function Selector(props: any) {
       noOptionsText={props.noOptionsText}
       className="autocomplete"
       id={props.id}
+      size={props.size}
       options={props.options}
       disabled={props.disabled}
       disableClearable={props.required || props.disableClearable}

@@ -19,7 +19,8 @@ import { useDispatch } from 'react-redux';
 import { addAPR, changeP2PStatus, updateAPR } from '../P2P/p2pSlice';
 import WalletsSkeleton from '../WalletsSkeleton';
 import { useTranslation } from 'react-i18next';
-import { propertyTypes } from 'src/constants/common';
+import { currencies, propertyTypes } from 'src/constants/common';
+import Selector from 'src/components/FormElements/Selector';
 
 function RealEstateCard({ assets, status }) {
   const { t } = useTranslation();
@@ -99,17 +100,28 @@ function RealEstateCard({ assets, status }) {
                           fontSize="small"
                         />
                       </Tooltip>
+                      <Selector
+                        required
+                        showKey
+                        size="small"
+                        id="currency"
+                        options={currencies}
+                        //label={t('Currency')}
+                        sx={{ gridColumn: '3', mt: 1, mb: 1, ml: 1 }}
+                        //onInput={inputHandler}
+                        //{...formState.inputs.currency}
+                      />
                       <TextField
                         type="number"
                         id="outlined-basic"
                         size="small"
                         variant="outlined"
-                        sx={{ gridColumn: '3', ml: 1 }}
+                        sx={{ gridColumn: '4' }}
                         //defaultValue={percentage && percentage.apr}
                         onChange={(event) => {}}
                       />
                       <InputLabel
-                        sx={{ gridColumn: '4', mt: 1.1, mb: 1, ml: 1 }}
+                        sx={{ gridColumn: '5', mt: 1.1, mb: 1, ml: 1 }}
                       >
                         ({t('per month')})
                       </InputLabel>

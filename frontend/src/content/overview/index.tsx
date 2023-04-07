@@ -47,6 +47,11 @@ import {
 import { currencies } from 'src/constants/common';
 import WatchListWithChart from '../dashboards/WatchListWithChart';
 import { useTranslation } from 'react-i18next';
+import {
+  fetchRealEstate,
+  getRealEstateStatus,
+  selectAllRealEstate
+} from '../dashboards/RealEstates/RealEstatesSlice';
 
 function Overview() {
   const { t } = useTranslation();
@@ -66,6 +71,8 @@ function Overview() {
   const commoditiesStatus = useSelector(getCommoditiesStatus);
   const etf = useSelector(selectAllETFs);
   const etfStatus = useSelector(getETFsStatus);
+  const realEstates = useSelector(selectAllRealEstate);
+  const realEstatesStatus = useSelector(getRealEstateStatus);
 
   const [totalBalance, setTotalBalance] = useState(0);
   const [totalDifference, setTotalDifference] = useState(0);
@@ -259,6 +266,36 @@ function Overview() {
     }
   }, [etfStatus, dispatch, etf, summaryStatus, summary]);
 
+  useEffect(() => {
+    if (
+      realEstatesStatus === 'idle' &&
+      summaryStatus === 'succeeded' &&
+      summary.stats.length > 0 &&
+      summary.stats.find((item) => item.alias === 'real')
+    ) {
+      dispatch(fetchRealEstate());
+    }
+    if (
+      realEstatesStatus === 'succeeded' &&
+      summary.stats.length > 0 &&
+      summary.stats.find((item) => item.alias === 'real')
+    ) {
+      setTotalBalance((prevState) => prevState + realEstates.sums.holdingValue);
+      setTotalDifference(
+        (prevState) => prevState + realEstates.sums.difference
+      );
+      setTotalSumsInDifferentInCurrencies((prevState) => {
+        for (let i in prevState) {
+          prevState[i].holdingAmount +=
+            realEstates.sums.sumsInDifferentCurrencies[i].holdingAmount;
+          prevState[i].totalAmount +=
+            realEstates.sums.sumsInDifferentCurrencies[i].totalAmount;
+        }
+        return prevState;
+      });
+    }
+  }, [realEstatesStatus, dispatch, realEstates, summaryStatus, summary]);
+
   return (
     <>
       <Helmet>
@@ -291,6 +328,7 @@ function Overview() {
               etf={etf.sums}
               misc={misc.sums}
               commodities={commodities.sums}
+              realEstates={realEstates.sums}
             />
           </Grid>
           {summary.stats.length > 0 && (
@@ -309,6 +347,8 @@ function Overview() {
                 miscLoading={miscStatus}
                 commodities={commodities.sums}
                 commoditiesLoading={commoditiesStatus}
+                realEstate={realEstates.sums}
+                realEstateLoading={realEstatesStatus}
                 history={history}
               />
             </Grid>
