@@ -480,7 +480,8 @@ export default function CollapsibleTable({
       case 'crypto':
         params = new URLSearchParams({
           category,
-          asset_id: row.assetId
+          asset_id: row.assetId,
+          l: '0'
         });
         setAssetId(row.assetId);
         setIdentifier('assetId');
@@ -489,7 +490,8 @@ export default function CollapsibleTable({
       case 'etf':
         params = new URLSearchParams({
           category,
-          symbol: row.symbol
+          symbol: row.symbol,
+          l: '0'
         });
         setAssetId(row.symbol);
         setIdentifier('symbol');
@@ -500,7 +502,8 @@ export default function CollapsibleTable({
       case 'real':
         params = new URLSearchParams({
           category,
-          name: row.name
+          name: row.name,
+          l: '0'
         });
         setAssetId(row.name);
         setIdentifier('name');
