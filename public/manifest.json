@@ -1,0 +1,25 @@
+{
+  "theme_color": "#1975ff",
+  "background_color": "#f2f5f9",
+  "display": "standalone",
+  "start_url": ".",
+  "short_name": "finport",
+  "name": "My financial portfolio",
+  "icons": [
+    {
+      "src": "/icons8-money-box-16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons8-money-box-32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons8-money-box-96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    }
+  ]
+}
