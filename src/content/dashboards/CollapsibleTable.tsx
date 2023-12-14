@@ -261,7 +261,7 @@ function Row(props: {
                     )?.value;
 
                     const averageNetCost =
-                      historyRow.currency === currency
+                      historyRow.currency !== currency
                         ? formatAmountAndCurrency(
                             historyRow.price / Math.abs(historyRow.quantity),
                             row.currency,
@@ -275,7 +275,7 @@ function Row(props: {
                           );
 
                     const totalCost =
-                      historyRow.currency === currency
+                      historyRow.currency !== currency
                         ? formatAmountAndCurrency(
                             historyRow.price,
                             row.currency,
@@ -286,7 +286,6 @@ function Row(props: {
                             row.currency,
                             true
                           );
-
                     return (
                       <TableRow key={historyRow.id}>
                         <TableCell component="th" scope="row">

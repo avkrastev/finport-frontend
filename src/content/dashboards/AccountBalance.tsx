@@ -80,6 +80,7 @@ function AccountBalance({ assets, category, loading, ...rest }) {
   let assetsBalance = {};
   let assetsSlice = [];
   let onlyExpense = false;
+  let newPercents = [];
 
   let holdingValue =
     rest && rest.totalBalance && rest.totalDifference
@@ -89,6 +90,15 @@ function AccountBalance({ assets, category, loading, ...rest }) {
   if (holdingValue === 0) {
     holdingValue = assets?.sums?.totalSum;
     onlyExpense = true;
+  }
+
+  if (rest) {
+    for (let i in rest) {
+      const percent = (rest[i].holdingValue / rest.totalBalance) * 100;
+      if (!isNaN(percent)) {
+        newPercents.push({ asset: i, percent: parseFloat(percent.toFixed(2)) });
+      }
+    }
   }
 
   if (assets.stats) {
@@ -307,6 +317,11 @@ function AccountBalance({ assets, category, loading, ...rest }) {
                   <Grid xs={12} sm={7} item display="flex" alignItems="center">
                     <List disablePadding sx={{ width: '100%' }}>
                       {assetsSlice.map((asset, i) => {
+                        let newPercent
+                        if (category === '')
+                          newPercent = newPercents.find(
+                            (i) => i.asset === asset.alias
+                          ).percent;
                         return (
                           <ListItem disableGutters key={i}>
                             {category === 'crypto' && (
@@ -346,6 +361,15 @@ function AccountBalance({ assets, category, loading, ...rest }) {
                               <Typography align="right" variant="h4" noWrap>
                                 {percentages[i]}%
                               </Typography>
+                              {category === '' && (
+                                <Typography
+                                  align="right"
+                                  variant="subtitle2"
+                                  noWrap
+                                >
+                                  {roundNumber(newPercent)}%
+                                </Typography>
+                              )}
                               {category !== '' && !onlyExpense && (
                                 <Typography
                                   align="right"
