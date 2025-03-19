@@ -77,7 +77,20 @@ function AccountBalance({ assets, category, loading, ...rest }) {
     '#9b2226',
     '#ca6702'
   ];
-  let assetsBalance = {};
+  let assetsBalance: {
+    datasets: Array<{ data: number[]; backgroundColor: string[] }>;
+    labels: string[];
+  } = {
+    datasets: [
+      {
+        data: percentages,
+        backgroundColor: colors
+      }
+    ],
+    labels: names
+  };
+
+  //let assetsBalance = {};
   let assetsSlice = [];
   let onlyExpense = false;
   let newPercents = [];
@@ -317,7 +330,7 @@ function AccountBalance({ assets, category, loading, ...rest }) {
                   <Grid xs={12} sm={7} item display="flex" alignItems="center">
                     <List disablePadding sx={{ width: '100%' }}>
                       {assetsSlice.map((asset, i) => {
-                        let newPercent
+                        let newPercent;
                         if (category === '')
                           newPercent = newPercents.find(
                             (i) => i.asset === asset.alias

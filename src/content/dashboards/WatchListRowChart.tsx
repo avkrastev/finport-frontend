@@ -2,9 +2,28 @@ import { FC } from 'react';
 import PropTypes from 'prop-types';
 import { Line } from 'react-chartjs-2';
 import { useTheme } from '@mui/material';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Tooltip,
+  ChartData,
+  ChartOptions,
+} from 'chart.js';
+
+// Register Chart.js components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Tooltip
+);
 
 interface WatchListRowChartProps {
-  data: any[];
+  data: number[];
   labels: string[];
 }
 
@@ -15,76 +34,76 @@ const WatchListRowChart: FC<WatchListRowChartProps> = ({
 }) => {
   const theme = useTheme();
 
-  const data = () => {
-    return {
-      datasets: [
-        {
-          data: dataProp,
-          borderWidth: 3,
-          backgroundColor: 'transparent',
-          borderColor: theme.colors.primary.main,
-          pointBorderWidth: 0,
-          pointRadius: 0,
-          pointHoverRadius: 0
-        }
-      ],
-      labels
-    };
+  // Chart data
+  const data: ChartData<'line'> = {
+    labels,
+    datasets: [
+      {
+        data: dataProp,
+        borderWidth: 3,
+        backgroundColor: 'transparent',
+        borderColor: theme.colors.primary.main,
+        pointBorderWidth: 0,
+        pointRadius: 0,
+        pointHoverRadius: 0,
+      },
+    ],
   };
 
-  const options = {
+  // Chart options
+  const options: ChartOptions<'line'> = {
     responsive: true,
     maintainAspectRatio: false,
-    legend: {
-      display: false
-    },
-    layout: {
-      padding: 5
+    plugins: {
+      legend: {
+        display: false, // Disable the legend
+      },
+      tooltip: {
+        enabled: true,
+        mode: 'nearest',
+        intersect: false,
+        caretSize: 6,
+        displayColors: false,
+        padding: {
+          top: 8,
+          bottom: 8,
+          left: 16,
+          right: 16,
+        },
+        borderWidth: 4,
+        borderColor: theme.palette.common.black,
+        backgroundColor: theme.palette.common.black,
+        titleColor: theme.palette.common.white,
+        bodyColor: theme.palette.common.white,
+        footerColor: theme.palette.common.white,
+        callbacks: {
+          title: () => '', // Empty title
+          label: (context) => `Price: $${context.raw}`, // Custom label
+        },
+      },
     },
     scales: {
-      xAxes: [
-        {
-          gridLines: {
-            display: false,
-            drawBorder: false
-          },
-          ticks: {
-            display: true
-          }
-        }
-      ],
-      yAxes: [
-        {
-          gridLines: {
-            display: false
-          },
-          ticks: {
-            display: false
-          }
-        }
-      ]
+      x: {
+        grid: {
+          display: false,
+          drawBorder: false,
+        },
+        ticks: {
+          display: true,
+        },
+      },
+      y: {
+        grid: {
+          display: false,
+        },
+        ticks: {
+          display: false,
+        },
+      },
     },
-    tooltips: {
-      enabled: true,
-      mode: 'nearest',
-      intersect: false,
-      caretSize: 6,
-      displayColors: false,
-      yPadding: 8,
-      xPadding: 16,
-      borderWidth: 4,
-      borderColor: theme.palette.common.black,
-      backgroundColor: theme.palette.common.black,
-      titleFontColor: theme.palette.common.white,
-      bodyFontColor: theme.palette.common.white,
-      footerFontColor: theme.palette.common.white,
-      callbacks: {
-        title: () => { },
-        label: (tooltipItem: any) => {
-          return `Price: $${tooltipItem.yLabel}`;
-        }
-      }
-    }
+    layout: {
+      padding: 5,
+    },
   };
 
   return (
@@ -96,7 +115,7 @@ const WatchListRowChart: FC<WatchListRowChartProps> = ({
 
 WatchListRowChart.propTypes = {
   data: PropTypes.array.isRequired,
-  labels: PropTypes.array.isRequired
+  labels: PropTypes.array.isRequired,
 };
 
 export default WatchListRowChart;

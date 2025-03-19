@@ -65,7 +65,7 @@ const Text: FC<TextProps> = ({
 };
 
 Text.propTypes = {
-  children: PropTypes.node,
+  children: PropTypes.any,
   className: PropTypes.string,
   color: PropTypes.oneOf([
     'primary',

@@ -6,12 +6,11 @@ import BaseLayout from 'src/layouts/BaseLayout';
 
 import SuspenseLoader from 'src/components/SuspenseLoader';
 
-const Loader = (Component) => (props) =>
-  (
-    <Suspense fallback={<SuspenseLoader />}>
-      <Component {...props} />
-    </Suspense>
-  );
+const Loader = (Component) => (props) => (
+  <Suspense fallback={<SuspenseLoader />}>
+    <Component {...props} />
+  </Suspense>
+);
 
 // Pages
 const Login = Loader(lazy(() => import('src/content/login')));
@@ -77,14 +76,14 @@ const routes = (isLoggedIn: any) => [
     element: <BaseLayout />,
     children: [
       {
-        path: '/',
+        path: '', // Change path from '/' to ''
         element: isLoggedIn ? <Navigate to="/overview" /> : <Login />
       },
       {
         path: 'status',
         children: [
           {
-            path: '/',
+            path: '', // Change path from '/' to ''
             element: <Navigate to="404" replace />
           },
           {
@@ -109,7 +108,7 @@ const routes = (isLoggedIn: any) => [
         path: 'verify',
         children: [
           {
-            path: '/',
+            path: '', // Change path from '/' to ''
             element: <StatusVerification />
           }
         ]
@@ -118,7 +117,7 @@ const routes = (isLoggedIn: any) => [
         path: 'reset-password',
         children: [
           {
-            path: '/',
+            path: '', // Change path from '/' to ''
             element: <ResetPassword />
           }
         ]
@@ -128,7 +127,7 @@ const routes = (isLoggedIn: any) => [
         element: isLoggedIn ? <SidebarLayout /> : <Login />,
         children: [
           {
-            path: '/',
+            path: '', // Change path from '/' to ''
             element: <Overview />
           }
         ]
@@ -138,7 +137,7 @@ const routes = (isLoggedIn: any) => [
         element: isLoggedIn ? <SidebarLayout /> : <Login />,
         children: [
           {
-            path: '/',
+            path: '', // Change path from '/' to ''
             element: <Navigate to="/dashboards/crypto" replace />
           },
           {
@@ -184,7 +183,7 @@ const routes = (isLoggedIn: any) => [
         element: isLoggedIn ? <SidebarLayout /> : <Login />,
         children: [
           {
-            path: '/',
+            path: '', // Change path from '/' to ''
             element: <Navigate to="/management/transactions" replace />
           },
           {
@@ -203,7 +202,7 @@ const routes = (isLoggedIn: any) => [
             path: 'profile',
             children: [
               {
-                path: '/',
+                path: '', // Change path from '/' to ''
                 element: <Navigate to="details" replace />
               },
               {
@@ -226,7 +225,7 @@ const routes = (isLoggedIn: any) => [
             path: 'reports',
             children: [
               {
-                path: '/',
+                path: '', // Change path from '/' to ''
                 element: <Navigate to="/reports/monthly" replace />
               },
               {

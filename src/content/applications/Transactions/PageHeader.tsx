@@ -21,8 +21,6 @@ function PageHeader() {
     setOpenModal(false);
   };
 
-  const name = authUserData.name;
-
   return (
     <Grid container justifyContent="space-between" alignItems="center">
       <Grid item>
@@ -31,7 +29,7 @@ function PageHeader() {
         </Typography>
         <Typography variant="subtitle2">
           <Trans i18nKey="recentTransactions">
-            <strong>{{ name }}</strong>, all your transaction are here
+            <strong>{authUserData.name}</strong>, all your transaction are here
           </Trans>
         </Typography>
       </Grid>

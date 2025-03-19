@@ -67,7 +67,7 @@ const Label: FC<LabelProps> = ({
 };
 
 Label.propTypes = {
-  children: PropTypes.node,
+  children: PropTypes.any,
   className: PropTypes.string,
   color: PropTypes.oneOf([
     'primary',

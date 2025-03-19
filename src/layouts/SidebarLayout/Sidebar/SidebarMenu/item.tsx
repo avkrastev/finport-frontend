@@ -23,12 +23,12 @@ const SidebarMenuItem: FC<SidebarMenuItemProps> = ({
   link,
   icon: Icon,
   badge,
-  open: openParent,
-  active,
+  open = false,    // Default value for `open` prop
+  active = false,  // Default value for `active` prop
   name,
   ...rest
 }) => {
-  const [menuToggle, setMenuToggle] = useState<boolean>(openParent);
+  const [menuToggle, setMenuToggle] = useState<boolean>(open);
 
   const { toggleSidebar } = useContext(SidebarContext);
 
@@ -40,11 +40,8 @@ const SidebarMenuItem: FC<SidebarMenuItemProps> = ({
     return (
       <ListItem component="div" className="Mui-children" key={name} {...rest}>
         <Button
-          //className={clsx({ 'Mui-active': menuToggle })}
           startIcon={Icon && <Icon />}
-          endIcon={
-            menuToggle ? <ExpandLessTwoToneIcon /> : <ExpandMoreTwoToneIcon />
-          }
+          endIcon={menuToggle ? <ExpandLessTwoToneIcon /> : <ExpandMoreTwoToneIcon />}
           onClick={toggleMenu}
         >
           {name}
@@ -57,7 +54,6 @@ const SidebarMenuItem: FC<SidebarMenuItemProps> = ({
   return (
     <ListItem component="div" key={name} {...rest}>
       <Button
-        activeClassName="Mui-active"
         component={RouterLink}
         onClick={toggleSidebar}
         to={link}
@@ -71,18 +67,13 @@ const SidebarMenuItem: FC<SidebarMenuItemProps> = ({
 };
 
 SidebarMenuItem.propTypes = {
-  children: PropTypes.node,
+  children: PropTypes.any,
   active: PropTypes.bool,
   link: PropTypes.string,
   icon: PropTypes.elementType,
   badge: PropTypes.string,
   open: PropTypes.bool,
-  name: PropTypes.string.isRequired
-};
-
-SidebarMenuItem.defaultProps = {
-  open: false,
-  active: false,
+  name: PropTypes.string.isRequired,
 };
 
 export default SidebarMenuItem;

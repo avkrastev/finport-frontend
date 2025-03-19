@@ -13,13 +13,22 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
 
-export default function ApiError(props) {
+// Define the shape of the details prop
+export interface ApiErrorDetails {
+  url?: string;
+  method?: string;
+  statusCode?: number;
+}
+
+interface ApiErrorProps {
+  details: ApiErrorDetails;
+}
+
+export default function ApiError({ details }: ApiErrorProps) {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  const url = props.details.url;
-  const method = props.details.method;
-  const statusCode = props.details.statusCode;
+  const { url, method, statusCode } = details;
 
   const apiErrorObject = extractError(url, method, statusCode);
 

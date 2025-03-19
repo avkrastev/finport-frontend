@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, ElementType } from 'react';
 
 import DonutSmallTwoToneIcon from '@mui/icons-material/DonutSmallTwoTone';
 import CurrencyBitcoinTwoToneIcon from '@mui/icons-material/CurrencyBitcoinTwoTone';
@@ -17,7 +17,7 @@ import SavingsIcon from '@mui/icons-material/Savings';
 
 export interface MenuItem {
   link?: string;
-  icon?: ReactNode;
+  icon?: ElementType; // Updated here to handle components like MUI icons
   badge?: string;
   items?: MenuItem[];
   name: string;
