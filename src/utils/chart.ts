@@ -84,8 +84,6 @@ function draw(ctx) {
     ctx.fillStyle = vm?.backgroundColor;
     ctx.strokeStyle = vm?.borderColor;
     ctx.lineWidth = borderWidth;
-  } else {
-    console.error('Canvas context is undefined');
   }
 
   const corners = [
@@ -108,8 +106,6 @@ function draw(ctx) {
   let corner = cornerAt(0);
   if (ctx) {
     ctx.moveTo(corner[0], corner[1]);
-  } else {
-    console.error('Canvas context is not available or undefined.');
   }
 
   for (let i = 1; i < 4; i += 1) {

@@ -5,13 +5,10 @@ import { Grid, Container } from '@mui/material';
 import Footer from 'src/components/Footer';
 
 import RecentOrders from './RecentOrders.jsx';
-import MissingApiKeyMessage from 'src/content/dashboards/MissingApiKeyMessage';
 import { useContext } from 'react';
 import { AuthContext } from 'src/utils/context/authContext';
 
 function ApplicationsTransactions() {
-  const { authUserData } = useContext(AuthContext);
-
   return (
     <>
       <Helmet>
@@ -21,9 +18,6 @@ function ApplicationsTransactions() {
         <PageHeader />
       </PageTitleWrapper>
       <Container maxWidth="lg">
-        {!authUserData.stocks_api_key && (
-          <MissingApiKeyMessage text="To be able to use stocks and ETF data please add an API key" />
-        )}
         <Grid
           container
           direction="row"

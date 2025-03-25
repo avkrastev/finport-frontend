@@ -27,11 +27,6 @@ function PageHeader() {
         <Typography variant="h3" component="h3" gutterBottom>
           <Trans i18nKey={'Transactions'}>Transactions</Trans>
         </Typography>
-        <Typography variant="subtitle2">
-          <Trans i18nKey="recentTransactions">
-            <strong>{authUserData.name}</strong>, all your transaction are here
-          </Trans>
-        </Typography>
       </Grid>
       <Grid item>
         <Button

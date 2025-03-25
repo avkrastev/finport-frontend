@@ -1,178 +1,103 @@
 import axios from 'axios';
 import dispatchApiError from 'src/error-management/dispatchApiError';
 
-export async function userLogin(email, password) {
-  try {
-    const response = await axios.post(
-      process.env.REACT_APP_BACKEND_URL + '/users/login',
-      {
-        email,
-        password
-      }
-    );
+// Base URL for API requests
+const BASE_URL = process.env.REACT_APP_BACKEND_URL;
 
+// Helper function to get the token from localStorage
+const getToken = () => {
+  const userData = JSON.parse(localStorage.getItem('userData'));
+  return userData ? userData.token : null;
+};
+
+// Generic API request function
+const apiRequest = async (
+  method,
+  url,
+  data = {},
+  headers = {},
+  withCredentials = false
+) => {
+  try {
+    const response = await axios({
+      method,
+      url: `${BASE_URL}${url}`,
+      data,
+      headers,
+      withCredentials
+    });
     return response;
   } catch (error) {
-    if (error.response.status >= 500) {
-      dispatchApiError({
-        method: 'POST'
-      });
+    if (error.response && error.response.status >= 500) {
+      dispatchApiError({ method });
     }
     return error.response;
   }
-}
+};
 
-export async function userSignUp(name, email, password) {
-  try {
-    const response = await axios.post(
-      process.env.REACT_APP_BACKEND_URL + '/users/signup',
-      {
-        name,
-        email,
-        password
-      }
-    );
+// User login
+export const userLogin = async (email, password) => {
+  return apiRequest('post', '/users/login', { email, password }, {}, true);
+};
 
-    return response;
-  } catch (error) {
-    if (error.response.status >= 500) {
-      dispatchApiError({
-        method: 'POST'
-      });
-    }
-    return error.response;
-  }
-}
+// User signup
+export const userSignUp = async (name, email, password) => {
+  return apiRequest('post', '/users/signup', { name, email, password });
+};
 
-export async function resetPassword(email) {
-  try {
-    const response = await axios.post(
-      process.env.REACT_APP_BACKEND_URL + '/users/reset',
-      {
-        email
-      }
-    );
+// Reset password
+export const resetPassword = async (email) => {
+  return apiRequest('post', '/users/reset', { email });
+};
 
-    return response;
-  } catch (error) {
-    if (error.response.status >= 500) {
-      dispatchApiError({
-        method: 'POST'
-      });
-    }
-    return error.response;
-  }
-}
+// Change password
+export const changePassword = async (id, password) => {
+  return apiRequest('post', '/users/changePassword', { id, password });
+};
 
-export async function changePassword(id, password) {
-  try {
-    const response = await axios.post(
-      process.env.REACT_APP_BACKEND_URL + '/users/changePassword',
-      {
-        id,
-        password
-      }
-    );
+// Get logged-in user data
+export const getLoggedInUserData = async () => {
+  const token = getToken();
+  return apiRequest(
+    'get',
+    '/users/',
+    {},
+    { Authorization: `Basic ${token}` },
+    true
+  );
+};
 
-    return response;
-  } catch (error) {
-    if (error.response.status >= 500) {
-      dispatchApiError({
-        method: 'POST'
-      });
-    }
-    return error.response;
-  }
-}
+// Update user data
+export const updateUser = async (data, key) => {
+  const token = getToken();
+  return apiRequest(
+    'patch',
+    '/users/',
+    { key, data },
+    { Authorization: `Basic ${token}` },
+    true
+  );
+};
 
-export async function getLoggedInUserData() {
-  const token = JSON.parse(localStorage.getItem('userData')).token;
+// Verify email
+export const verifyEmail = async (id) => {
+  return apiRequest('get', `/users/verify?id=${id}`);
+};
 
-  try {
-    const response = await axios.get(
-      process.env.REACT_APP_BACKEND_URL + '/users/',
-      {
-        headers: {
-          Authorization: `Basic ${token}`
-        }
-      }
-    );
+// Send verification email
+export const sendVerificationEmail = async () => {
+  const token = getToken();
+  return apiRequest(
+    'post',
+    '/users/sendVerificationEmail',
+    {},
+    { Authorization: `Basic ${token}` },
+    true
+  );
+};
 
-    return response;
-  } catch (error) {
-    if (error.response.status >= 500) {
-      dispatchApiError({
-        method: 'GET'
-      });
-    }
-    return error.response;
-  }
-}
+export const userLogout = async () => {
+  const token = getToken();
+  return apiRequest('post', '/users/logout', {}, { Authorization: `Basic ${token}` }, true);
+};
 
-export async function updateUser(data, key) {
-  const token = JSON.parse(localStorage.getItem('userData')).token;
-  try {
-    const response = await axios.patch(
-      process.env.REACT_APP_BACKEND_URL + '/users/',
-      {
-        key,
-        data
-      },
-      {
-        headers: {
-          Authorization: `Basic ${token}`
-        }
-      }
-    );
-
-    return response;
-  } catch (error) {
-    if (error.response.status >= 500) {
-      dispatchApiError({
-        method: 'PATCH'
-      });
-    }
-    return error.response;
-  }
-}
-
-export async function verifyEmail(id) {
-  try {
-    const response = await axios.get(
-      process.env.REACT_APP_BACKEND_URL + '/users/verify?id=' + id
-    );
-
-    return response;
-  } catch (error) {
-    if (error.response.status >= 500) {
-      dispatchApiError({
-        method: 'GET'
-      });
-    }
-    return error.response;
-  }
-}
-
-export async function sendVerificationEmail() {
-  const token = JSON.parse(localStorage.getItem('userData')).token;
-  try {
-    const response = await axios.post(
-      process.env.REACT_APP_BACKEND_URL + '/users/sendVerificationEmail',
-      {},
-      {
-        headers: {
-          Authorization: `Basic ${token}`
-        }
-      }
-    );
-
-    return response;
-  } catch (error) {
-    if (error.response.status >= 500) {
-      dispatchApiError({
-        method: 'POST'
-      });
-    }
-    return error.response;
-  }
-}

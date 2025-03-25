@@ -54,17 +54,14 @@ function StocksModal(props) {
     debounce(async (search) => {
       setStockOptions([]);
 
-      const responseData = await autocompleteStocks2(
-        search,
-        props.stocks_api_key
-      );
+      const responseData = await autocompleteStocks2(search);
 
-      const options = responseData.data.ResultSet.Result.map((item) => {
+      const options = responseData.data.map((item) => {
         let newItems = {};
         newItems.key = item.symbol;
-        newItems.value = `${item.name} (${item.symbol})`;
+        newItems.value = `${item.shortname} (${item.symbol})`;
         newItems.id = item.symbol;
-        newItems.name = item.name;
+        newItems.name = item.shortname;
         return newItems;
       });
 

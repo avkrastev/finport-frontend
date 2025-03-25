@@ -92,7 +92,7 @@ function Overview() {
   useEffect(() => {
     if (summaryStatus === 'idle') {
       dispatch(fetchSummary());
-      dispatch(fetchHistory());
+      //dispatch(fetchHistory());
     }
   }, [summaryStatus, dispatch]);
 
@@ -322,32 +322,32 @@ function Overview() {
               totalSumsInDifferentInCurrencies={
                 totalSumsInDifferentInCurrencies
               }
-              crypto={crypto.sums}
-              stocks={stocks.sums}
-              p2p={p2p.sums}
-              etf={etf.sums}
-              misc={misc.sums}
-              commodities={commodities.sums}
-              realEstates={realEstates.sums}
+              crypto={crypto?.sums}
+              stocks={stocks?.sums}
+              p2p={p2p?.sums}
+              etf={etf?.sums}
+              misc={misc?.sums}
+              commodities={commodities?.sums}
+              realEstates={realEstates?.sums}
             />
           </Grid>
-          {summary.stats.length > 0 && (
+          {summary?.stats?.length > 0 && (
             <Grid item xs={12}>
               <WatchList
-                categories={summary.stats}
-                crypto={crypto.sums}
+                categories={summary?.stats}
+                crypto={crypto?.sums}
                 cryptoLoading={cryptoStatus}
-                stocks={stocks.sums}
+                stocks={stocks?.sums}
                 stocksLoading={stocksStatus}
-                p2p={p2p.sums}
+                p2p={p2p?.sums}
                 p2pLoading={p2pStatus}
-                etf={etf.sums}
+                etf={etf?.sums}
                 etfLoading={etfStatus}
-                misc={misc.sums}
+                misc={misc?.sums}
                 miscLoading={miscStatus}
-                commodities={commodities.sums}
+                commodities={commodities?.sums}
                 commoditiesLoading={commoditiesStatus}
-                realEstate={realEstates.sums}
+                realEstate={realEstates?.sums}
                 realEstateLoading={realEstatesStatus}
                 history={history}
               />

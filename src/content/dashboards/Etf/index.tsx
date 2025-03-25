@@ -10,7 +10,6 @@ import { AppDispatch } from 'src/app/store';
 import { fetchETFs, getETFsStatus, selectAllETFs } from './ETFsSlice';
 import CollapsibleTable from '../CollapsibleTable';
 import { AuthContext } from 'src/utils/context/authContext';
-import MissingApiKeyMessage from '../MissingApiKeyMessage';
 import WatchListWithChart from '../WatchListWithChart';
 import { useTranslation } from 'react-i18next';
 import StocksModal from 'src/content/dialogs/stocks';
@@ -119,13 +118,6 @@ function DashboardETF() {
         <PageHeader title={t('ETFs Portfolio')} />
       </PageTitleWrapper>
       <Container maxWidth="lg">
-        {!authUserData.stocks_api_key && (
-          <MissingApiKeyMessage
-            text={t(
-              'To be able to see ETF prices in real time please add an API key'
-            )}
-          />
-        )}
         <Grid
           container
           direction="row"

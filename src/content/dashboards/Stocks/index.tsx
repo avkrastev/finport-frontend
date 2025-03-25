@@ -17,7 +17,6 @@ import { AppDispatch } from 'src/app/store';
 import { fetchStocks, getStocksStatus, selectAllStocks } from './stocksSlice';
 import CollapsibleTable from '../CollapsibleTable';
 import { AuthContext } from 'src/utils/context/authContext';
-import MissingApiKeyMessage from '../MissingApiKeyMessage';
 import WatchListWithChart from '../WatchListWithChart';
 import { useTranslation } from 'react-i18next';
 import StocksModal from 'src/content/dialogs/stocks';
@@ -119,13 +118,6 @@ function DashboardStocks() {
         <PageHeader title={t('Stocks Portfolio')} />
       </PageTitleWrapper>
       <Container maxWidth="lg">
-        {!authUserData.stocks_api_key && (
-          <MissingApiKeyMessage
-            text={t(
-              'To be able to see Stock prices in real time please add an API key'
-            )}
-          />
-        )}
         <Grid
           container
           direction="row"

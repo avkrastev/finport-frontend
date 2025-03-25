@@ -1,288 +1,69 @@
 import axios from 'axios';
 import dispatchApiError from 'src/error-management/dispatchApiError';
 
-export async function getAssets(query = '') {
-  const token = JSON.parse(localStorage.getItem('userData')).token;
-  try {
-    const response = await axios.get(
-      process.env.REACT_APP_BACKEND_URL + '/assets?' + query,
-      {
-        headers: {
-          Authorization: `Basic ${token}`
-        }
-      }
-    );
+const API_URL = process.env.REACT_APP_BACKEND_URL + '/assets';
 
-    return response;
-  } catch (error) {
-    if (error.response.status >= 500) {
-      dispatchApiError({
-        method: 'GET'
-      });
-    }
-    return error.response;
-  }
-}
+const getToken = () => JSON.parse(localStorage.getItem('userData'))?.token;
 
-export async function getAssetsByCategory(category) {
-  const token = JSON.parse(localStorage.getItem('userData')).token;
+const axiosInstance = axios.create({
+  baseURL: API_URL,
+  withCredentials: true,
+  headers: { Authorization: `Basic ${getToken()}` }
+});
 
-  try {
-    const response = await axios.get(
-      process.env.REACT_APP_BACKEND_URL + '/assets/' + category,
-      {
-        headers: {
-          Authorization: `Basic ${token}`
-        }
-      }
-    );
+const handleError = (error, method) => {
+  if (error.response?.status >= 500) dispatchApiError({ method });
+  return error.response;
+};
 
-    return response;
-  } catch (error) {
-    dispatchApiError({
-      method: 'GET'
-    });
-    return error.response;
-  }
-}
+export const getAssets = (query = '') =>
+  axiosInstance.get(`?${query}`).catch((error) => handleError(error, 'GET'));
 
-export async function getAssetsSummary() {
-  const token = JSON.parse(localStorage.getItem('userData')).token;
+export const getAssetsByCategory = (category) =>
+  axiosInstance.get(`/${category}`).catch((error) => handleError(error, 'GET'));
 
-  try {
-    const response = await axios.get(
-      process.env.REACT_APP_BACKEND_URL + '/assets/summary',
-      {
-        headers: {
-          Authorization: `Basic ${token}`
-        }
-      }
-    );
+export const getAssetsSummary = () =>
+  axiosInstance.get('/summary').catch((error) => handleError(error, 'GET'));
 
-    return response;
-  } catch (error) {
-    dispatchApiError({
-      method: 'GET'
-    });
-    return error.response;
-  }
-}
+export const addNewAsset = (transaction) =>
+  axiosInstance
+    .post('', { transaction })
+    .catch((error) => handleError(error, 'POST'));
 
-export async function addNewAsset(transaction) {
-  const token = JSON.parse(localStorage.getItem('userData')).token;
-  try {
-    const response = await axios.post(
-      process.env.REACT_APP_BACKEND_URL + '/assets',
-      {
-        transaction
-      },
-      {
-        headers: {
-          Authorization: `Basic ${token}`
-        }
-      }
-    );
+export const updateAsset = (transaction) =>
+  axiosInstance
+    .patch(`/${transaction.id}`, transaction)
+    .catch((error) => handleError(error, 'PATCH'));
 
-    return response;
-  } catch (error) {
-    if (error.response.status >= 500) {
-      dispatchApiError({
-        method: 'POST'
-      });
-    }
-    return error.response;
-  }
-}
+export const deleteAsset = (id) =>
+  axiosInstance.delete(`/${id}`).catch((error) => handleError(error, 'DELETE'));
 
-export async function updateAsset(transaction) {
-  const token = JSON.parse(localStorage.getItem('userData')).token;
-  try {
-    const response = await axios.patch(
-      `${process.env.REACT_APP_BACKEND_URL}/assets/${transaction.id}`,
-      {
-        ...transaction
-      },
-      {
-        headers: {
-          Authorization: `Basic ${token}`
-        }
-      }
-    );
+export const deleteAssets = (ids) =>
+  axiosInstance
+    .post('/deleteMany', { ids })
+    .catch((error) => handleError(error, 'DELETE_MANY'));
 
-    return response;
-  } catch (error) {
-    if (error.response.status >= 500) {
-      dispatchApiError({
-        method: 'PATCH'
-      });
-    }
-    return error.response;
-  }
-}
+export const getAssetById = (id) =>
+  axiosInstance.get(`/${id}`).catch((error) => handleError(error, 'GET'));
 
-export async function deleteAsset(id) {
-  const token = JSON.parse(localStorage.getItem('userData')).token;
-  try {
-    const response = await axios.delete(
-      `${process.env.REACT_APP_BACKEND_URL}/assets/${id}`,
-      {
-        headers: {
-          Authorization: `Basic ${token}`
-        }
-      }
-    );
+export const getTransactionsReport = (period) =>
+  axiosInstance
+    .get('/report', { params: { period } })
+    .catch((error) => handleError(error, 'GET'));
 
-    return response;
-  } catch (error) {
-    if (error.response.status >= 500) {
-      dispatchApiError({
-        method: 'DELETE'
-      });
-    }
-    return error.response;
-  }
-}
+export const getCommodityPrices = () =>
+  axiosInstance
+    .get('/commodity/prices')
+    .catch((error) => handleError(error, 'GET'));
 
-export async function deleteAssets(ids) {
-  const token = JSON.parse(localStorage.getItem('userData')).token;
-  try {
-    const response = await axios.post(
-      process.env.REACT_APP_BACKEND_URL + '/assets/deleteMany',
-      {
-        ids
-      },
-      {
-        headers: {
-          Authorization: `Basic ${token}`
-        }
-      }
-    );
+export const getCryptoPrice = (asset) =>
+  axiosInstance
+    .get('/crypto/prices', { params: { token: asset } })
+    .then((res) => res.data.price)
+    .catch((error) => handleError(error, 'GET'));
 
-    return response;
-  } catch (error) {
-    if (error.response.status >= 500) {
-      dispatchApiError({
-        method: 'DELETE_MANY'
-      });
-    }
-    return error.response;
-  }
-}
-
-export async function getAssetById(id) {
-  const token = JSON.parse(localStorage.getItem('userData')).token;
-  try {
-    const response = await axios.get(
-      `${process.env.REACT_APP_BACKEND_URL}/assets/${id}`,
-      {
-        headers: {
-          Authorization: `Basic ${token}`
-        }
-      }
-    );
-
-    return response;
-  } catch (error) {
-    if (error.response.status >= 500) {
-      dispatchApiError({
-        method: 'GET'
-      });
-    }
-    return error.response;
-  }
-}
-
-export async function getTransactionsReport(period) {
-  const token = JSON.parse(localStorage.getItem('userData')).token;
-
-  try {
-    const response = await axios.get(
-      process.env.REACT_APP_BACKEND_URL + '/assets/report?period=' + period,
-      {
-        headers: {
-          Authorization: `Basic ${token}`
-        }
-      }
-    );
-
-    return response;
-  } catch (error) {
-    if (error.response.status >= 500) {
-      dispatchApiError({
-        method: 'GET'
-      });
-    }
-    return error.response;
-  }
-}
-
-export async function getCommodityPrices() {
-  const token = JSON.parse(localStorage.getItem('userData')).token;
-  try {
-    const response = await axios.get(
-      process.env.REACT_APP_BACKEND_URL + '/assets/commodity/prices',
-      {
-        headers: {
-          Authorization: `Basic ${token}`
-        }
-      }
-    );
-
-    return response;
-  } catch (error) {
-    if (error.response.status >= 500) {
-      dispatchApiError({
-        method: 'GET'
-      });
-    }
-    return error.response;
-  }
-}
-
-export async function getCryptoPrice(asset) {
-  const token = JSON.parse(localStorage.getItem('userData')).token;
-  try {
-    const response = await axios.get(
-      process.env.REACT_APP_BACKEND_URL +
-        '/assets/crypto/prices?token=' +
-        asset,
-      {
-        headers: {
-          Authorization: `Basic ${token}`
-        }
-      }
-    );
-
-    return response.data.price;
-  } catch (error) {
-    if (error.response.status >= 500) {
-      dispatchApiError({
-        method: 'GET'
-      });
-    }
-    return error.response;
-  }
-}
-
-export async function getStockPrice(asset) {
-  const token = JSON.parse(localStorage.getItem('userData')).token;
-  try {
-    const response = await axios.get(
-      process.env.REACT_APP_BACKEND_URL + '/assets/stock/prices?stock=' + asset,
-      {
-        headers: {
-          Authorization: `Basic ${token}`
-        }
-      }
-    );
-
-    return response.data.price;
-  } catch (error) {
-    if (error.response.status >= 500) {
-      dispatchApiError({
-        method: 'GET'
-      });
-    }
-    return error.response;
-  }
-}
+export const getStockPrice = (asset) =>
+  axiosInstance
+    .get('/stock/prices', { params: { stock: asset } })
+    .then((res) => res.data.price)
+    .catch((error) => handleError(error, 'GET'));

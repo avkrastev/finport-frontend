@@ -280,66 +280,6 @@ function EditProfileTab() {
             display="flex"
             alignItems="center"
             justifyContent="space-between"
-            id="stocks-api-key"
-          >
-            <Box>
-              <Typography variant="h4" gutterBottom>
-                {t('API keys')}:
-              </Typography>
-              <Typography variant="subtitle2">
-                {t('Manage keys for reading data from 3rd party interfaces')}
-              </Typography>
-            </Box>
-          </Box>
-          <Divider />
-          <CardContent sx={{ p: 4 }}>
-            <Typography variant="subtitle2">
-              <Grid container sx={{ p: 2 }}>
-                <Grid item xs={12} sm={12} md={12}>
-                  <Box pr={3} pb={2}>
-                    <TextField
-                      fullWidth
-                      id="outlined-basic"
-                      label={t('Stocks API key')}
-                      margin="dense"
-                      variant="outlined"
-                      defaultValue={authUserData.stocks_api_key}
-                      name="stocks_api_key"
-                      onChange={(event) => handleUserSettingsChange(event)}
-                    />
-                  </Box>
-                </Grid>
-                <Grid item xs={12} sm={12} md={12}>
-                  <Typography variant="subtitle2">
-                    <Trans i18nKey="stockAPI">
-                      You must obtain it from
-                      <Link
-                        fontWeight={'bold'}
-                        color="inherit"
-                        underline="none"
-                        href="https://financeapi.net/"
-                        target="_blank"
-                      >
-                        https://financeapi.net/
-                      </Link>
-                      You have to go and create an account. Then you will be
-                      redirected to the Dashboard where you can see the API key.
-                      Just paste it here.
-                    </Trans>
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Typography>
-          </CardContent>
-        </Card>
-      </Grid>
-      <Grid item xs={12}>
-        <Card>
-          <Box
-            p={3}
-            display="flex"
-            alignItems="center"
-            justifyContent="space-between"
           >
             <Box>
               <Typography variant="h4" gutterBottom>

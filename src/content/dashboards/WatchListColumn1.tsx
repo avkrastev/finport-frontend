@@ -60,54 +60,54 @@ function WatchListColumn1({ category, t, ...rest }) {
   let icon;
   switch (category.alias) {
     case 'crypto':
-      holdingValue = rest.crypto.holdingValue;
-      difference = rest.crypto.difference;
-      differenceInPercents = roundNumber(rest.crypto.differenceInPercents);
+      holdingValue = rest.crypto?.holdingValue;
+      difference = rest.crypto?.difference;
+      differenceInPercents = roundNumber(rest.crypto?.differenceInPercents);
       icon = CurrencyBitcoinTwoToneIcon;
       loading = rest.cryptoLoading;
       break;
     case 'stocks':
-      holdingValue = rest.stocks.holdingValue;
-      difference = rest.stocks.difference;
-      differenceInPercents = roundNumber(rest.stocks.differenceInPercents);
+      holdingValue = rest.stocks?.holdingValue;
+      difference = rest.stocks?.difference;
+      differenceInPercents = roundNumber(rest.stocks?.differenceInPercents);
       icon = ShowChartTwoToneIcon;
       loading = rest.stocksLoading;
       break;
     case 'p2p':
-      holdingValue = rest.p2p.holdingValue;
-      difference = rest.p2p.difference;
-      differenceInPercents = roundNumber(rest.p2p.differenceInPercents);
+      holdingValue = rest.p2p?.holdingValue;
+      difference = rest.p2p?.difference;
+      differenceInPercents = roundNumber(rest.p2p?.differenceInPercents);
       icon = GroupTwoToneIcon;
       loading = rest.p2pLoading;
       break;
     case 'etf':
-      holdingValue = rest.etf.holdingValue;
-      difference = rest.etf.difference;
-      differenceInPercents = roundNumber(rest.etf.differenceInPercents);
+      holdingValue = rest.etf?.holdingValue;
+      difference = rest.etf?.difference;
+      differenceInPercents = roundNumber(rest.etf?.differenceInPercents);
       icon = AddchartTwoToneIcon;
       loading = rest.etfLoading;
       break;
     case 'misc':
-      holdingValue = rest.misc.holdingValue;
-      difference = rest.misc.difference;
-      differenceInPercents = roundNumber(rest.misc.differenceInPercents);
+      holdingValue = rest.misc?.holdingValue;
+      difference = rest.misc?.difference;
+      differenceInPercents = roundNumber(rest.misc?.differenceInPercents);
       icon = AutoGraphTwoToneIcon;
       loading = rest.miscLoading;
       break;
     case 'commodities':
-      holdingValue = rest.commodities.holdingValue;
-      difference = rest.commodities.difference;
-      differenceInPercents = rest.commodities.differenceInPercents
-        ? roundNumber(rest.commodities.differenceInPercents)
+      holdingValue = rest.commodities?.holdingValue;
+      difference = rest.commodities?.difference;
+      differenceInPercents = rest.commodities?.differenceInPercents
+        ? roundNumber(rest.commodities?.differenceInPercents)
         : 0;
       icon = AgricultureTwoToneIcon;
       loading = rest.commoditiesLoading;
       break;
     case 'real':
-      holdingValue = rest.realEstate.holdingValue;
-      difference = rest.realEstate.difference;
-      differenceInPercents = rest.realEstate.differenceInPercents
-        ? roundNumber(rest.realEstate.differenceInPercents)
+      holdingValue = rest.realEstate?.holdingValue;
+      difference = rest.realEstate?.difference;
+      differenceInPercents = rest.realEstate?.differenceInPercents
+        ? roundNumber(rest.realEstate?.differenceInPercents)
         : 0;
       icon = MapsHomeWorkTwoToneIcon;
       loading = rest.realEstateLoading;

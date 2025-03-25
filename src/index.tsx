@@ -17,17 +17,15 @@ const rootElement = document.getElementById('root');
 if (rootElement) {
   const root = ReactDOM.createRoot(rootElement); // Use createRoot instead of render
   root.render(
-    <React.StrictMode>
-      <Provider store={store}>
-        <HelmetProvider>
-          <SidebarProvider>
-            <BrowserRouter>
-              <App />
-            </BrowserRouter>
-          </SidebarProvider>
-        </HelmetProvider>
-      </Provider>
-    </React.StrictMode>
+    <Provider store={store}>
+      <HelmetProvider>
+        <SidebarProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </SidebarProvider>
+      </HelmetProvider>
+    </Provider>
   );
 }
 

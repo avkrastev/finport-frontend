@@ -107,7 +107,7 @@ function AccountBalance({ assets, category, loading, ...rest }) {
 
   if (rest) {
     for (let i in rest) {
-      const percent = (rest[i].holdingValue / rest.totalBalance) * 100;
+      const percent = (rest[i]?.holdingValue / rest.totalBalance) * 100;
       if (!isNaN(percent)) {
         newPercents.push({ asset: i, percent: parseFloat(percent.toFixed(2)) });
       }
@@ -334,7 +334,7 @@ function AccountBalance({ assets, category, loading, ...rest }) {
                         if (category === '')
                           newPercent = newPercents.find(
                             (i) => i.asset === asset.alias
-                          ).percent;
+                          )?.percent;
                         return (
                           <ListItem disableGutters key={i}>
                             {category === 'crypto' && (

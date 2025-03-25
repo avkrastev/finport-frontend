@@ -77,7 +77,7 @@ const routes = (isLoggedIn: any) => [
     children: [
       {
         path: '', // Change path from '/' to ''
-        element: isLoggedIn ? <Navigate to="/overview" /> : <Login />
+        element: isLoggedIn ? <Navigate to="/management/transactions" /> : <Login />
       },
       {
         path: 'status',

@@ -21,6 +21,7 @@ import LockOpenTwoToneIcon from '@mui/icons-material/LockOpenTwoTone';
 import AccountTreeTwoToneIcon from '@mui/icons-material/AccountTreeTwoTone';
 import { AuthContext } from '../../../../utils/context/authContext';
 import { useTranslation } from 'react-i18next';
+import { userLogout } from 'src/utils/api/userApiFunction';
 
 const UserBoxButton = styled(Button)(
   ({ theme }) => `
@@ -64,6 +65,15 @@ function HeaderUserbox() {
 
   const handleClose = (): void => {
     setOpen(false);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await userLogout();
+      logout();
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   return (
@@ -122,7 +132,7 @@ function HeaderUserbox() {
         </List>
         <Divider />
         <Box sx={{ m: 1 }}>
-          <Button color="primary" fullWidth onClick={() => logout()}>
+          <Button color="primary" fullWidth onClick={handleLogout}>
             <LockOpenTwoToneIcon sx={{ mr: 1 }} />
             {t('Sign out')}
           </Button>

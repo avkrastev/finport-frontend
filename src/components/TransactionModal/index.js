@@ -170,15 +170,12 @@ function TransactionModal(props) {
         case 'stocks':
         case 'etf':
           if (currentVal.length > 2) {
-            const responseData = await autocompleteStocks2(
-              currentVal,
-              authUserData.stocks_api_key
-            );
+            const responseData = await autocompleteStocks2(currentVal);
 
-            assets = responseData.data.ResultSet.Result.map((item) => {
+            assets = responseData.data.map((item) => {
               let newItems = {};
               newItems.key = item.symbol;
-              newItems.value = item.name;
+              newItems.value = item.shortname;
               newItems.id = item.symbol;
               return newItems;
             });
@@ -299,10 +296,8 @@ function TransactionModal(props) {
                   : ''}
               </Typography>
             ) : formState.inputs.category.value === 'misc' ||
-              (formState.inputs.category.value === 'stocks' &&
-                !authUserData.stocks_api_key) ||
-              (formState.inputs.category.value === 'etf' &&
-                !authUserData.stocks_api_key) ? (
+              formState.inputs.category.value === 'stocks' ||
+              formState.inputs.category.value === 'etf' ? (
               <Input
                 fullWidth
                 required

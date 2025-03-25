@@ -115,22 +115,14 @@ function Row(props: {
         {category !== 'p2p' && (
           <TableCell align="right">
             <Typography variant="body1" color="text.primary" noWrap>
-              {formatAmountAndCurrency(
-                row.currentPrice,
-                row.currency,
-                mustExchange
-              )}
+              {formatAmountAndCurrency(row.currentPrice)}
             </Typography>
           </TableCell>
         )}
         <TableCell align="right">
           <Typography variant="body1" color="text.primary" noWrap>
             {category !== 'p2p'
-              ? formatAmountAndCurrency(
-                  row.averageNetCost,
-                  row.currency,
-                  mustExchange
-                )
+              ? formatAmountAndCurrency(row.averageNetCost)
               : formatAmountAndCurrency(
                   row.totalInvested,
                   row.currency,
@@ -146,11 +138,7 @@ function Row(props: {
             noWrap
           >
             {category !== 'p2p'
-              ? formatAmountAndCurrency(
-                  row.holdingValue,
-                  row.currency,
-                  mustExchange
-                )
+              ? formatAmountAndCurrency(row.holdingValue)
               : formatAmountAndCurrency(
                   row.totalSumInOriginalCurrency,
                   row.currency,
@@ -183,11 +171,7 @@ function Row(props: {
             color="text.primary"
             noWrap
           >
-            {formatAmountAndCurrency(
-              row.difference,
-              row.currency,
-              mustExchange
-            )}
+            {formatAmountAndCurrency(row.differenceInUSD)}
           </Typography>
           {/* {row.currency !== 'USD' && (
             <Typography variant="subtitle1">
