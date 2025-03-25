@@ -3,8 +3,8 @@ import { Navigate } from 'react-router-dom';
 
 import SidebarLayout from 'src/layouts/SidebarLayout';
 import BaseLayout from 'src/layouts/BaseLayout';
-
 import SuspenseLoader from 'src/components/SuspenseLoader';
+import ProtectedRoute from './ProtectedRoute';
 
 const Loader = (Component) => (props) => (
   <Suspense fallback={<SuspenseLoader />}>
@@ -70,20 +70,24 @@ const StatusVerification = Loader(
   lazy(() => import('src/content/pages/Status/Verification'))
 );
 
-const routes = (isLoggedIn: any) => [
+const routes = () => [
   {
     path: '*',
     element: <BaseLayout />,
     children: [
       {
-        path: '', // Change path from '/' to ''
-        element: isLoggedIn ? <Navigate to="/management/transactions" /> : <Login />
+        path: '',
+        element: <Login />
+      },
+      {
+        path: 'login',
+        element: <Login />
       },
       {
         path: 'status',
         children: [
           {
-            path: '', // Change path from '/' to ''
+            path: '',
             element: <Navigate to="404" replace />
           },
           {
@@ -108,7 +112,7 @@ const routes = (isLoggedIn: any) => [
         path: 'verify',
         children: [
           {
-            path: '', // Change path from '/' to ''
+            path: '',
             element: <StatusVerification />
           }
         ]
@@ -117,27 +121,31 @@ const routes = (isLoggedIn: any) => [
         path: 'reset-password',
         children: [
           {
-            path: '', // Change path from '/' to ''
+            path: '',
             element: <ResetPassword />
           }
         ]
       },
       {
         path: 'overview',
-        element: isLoggedIn ? <SidebarLayout /> : <Login />,
+        element: <SidebarLayout />,
         children: [
           {
-            path: '', // Change path from '/' to ''
+            path: '',
             element: <Overview />
           }
         ]
       },
       {
         path: 'dashboards',
-        element: isLoggedIn ? <SidebarLayout /> : <Login />,
+        element: (
+          <ProtectedRoute>
+            <SidebarLayout />
+          </ProtectedRoute>
+        ),
         children: [
           {
-            path: '', // Change path from '/' to ''
+            path: '',
             element: <Navigate to="/dashboards/crypto" replace />
           },
           {
@@ -180,10 +188,14 @@ const routes = (isLoggedIn: any) => [
       },
       {
         path: 'management',
-        element: isLoggedIn ? <SidebarLayout /> : <Login />,
+        element: (
+          <ProtectedRoute>
+            <SidebarLayout />
+          </ProtectedRoute>
+        ),
         children: [
           {
-            path: '', // Change path from '/' to ''
+            path: '',
             element: <Navigate to="/management/transactions" replace />
           },
           {
@@ -202,7 +214,7 @@ const routes = (isLoggedIn: any) => [
             path: 'profile',
             children: [
               {
-                path: '', // Change path from '/' to ''
+                path: '',
                 element: <Navigate to="details" replace />
               },
               {
@@ -211,7 +223,7 @@ const routes = (isLoggedIn: any) => [
               },
               {
                 path: 'settings',
-                element: isLoggedIn ? <UserSettings /> : <Login />
+                element: <UserSettings />
               }
             ]
           }
@@ -219,13 +231,17 @@ const routes = (isLoggedIn: any) => [
       },
       {
         path: 'history',
-        element: isLoggedIn ? <SidebarLayout /> : <Login />,
+        element: (
+          <ProtectedRoute>
+            <SidebarLayout />
+          </ProtectedRoute>
+        ),
         children: [
           {
             path: 'reports',
             children: [
               {
-                path: '', // Change path from '/' to ''
+                path: '',
                 element: <Navigate to="/reports/monthly" replace />
               },
               {

@@ -12,12 +12,11 @@ import CustomErrorBoundary from './error-management/CustomErrorBoundary';
 const App = () => {
   const { token, login, logout, authUserData, setUserData } = useAuth();
 
-  const content = useRoutes(routes(token));
+  const content = useRoutes(routes());
 
   return (
     <AuthContext.Provider
       value={{
-        isLoggedIn: !!token,
         token,
         login,
         logout,

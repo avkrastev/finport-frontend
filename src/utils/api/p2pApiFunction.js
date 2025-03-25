@@ -1,223 +1,56 @@
 import axios from 'axios';
 import dispatchApiError from 'src/error-management/dispatchApiError';
+import { getToken } from './userApiFunction';
 
-export async function addPlatformAPR(platformData) {
-  const token = JSON.parse(localStorage.getItem('userData')).token;
+const axiosInstance = axios.create({
+  baseURL: process.env.REACT_APP_BACKEND_URL
+});
 
-  try {
-    const response = await axios.post(
-      process.env.REACT_APP_BACKEND_URL + '/p2p',
-      {
-        ...platformData
-      },
-      {
-        headers: {
-          Authorization: `Basic ${token}`
-        }
-      }
-    );
-
-    return response;
-  } catch (error) {
-    if (error.response.status >= 500) {
-      dispatchApiError({
-        method: 'POST'
-      });
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = getToken();
+    if (token) {
+      config.headers.Authorization = `Basic ${token}`;
+    } else {
+      console.error('Token not found');
     }
-    console.log(error);
-  }
-}
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
-export async function updatePlatformAPR(platformData) {
-  const token = JSON.parse(localStorage.getItem('userData')).token;
-
+const apiRequest = async (method, url, data = null) => {
   try {
-    const response = await axios.patch(
-      `${process.env.REACT_APP_BACKEND_URL}/p2p/${platformData.id}`,
-      {
-        ...platformData
-      },
-      {
-        headers: {
-          Authorization: `Basic ${token}`
-        }
-      }
-    );
-
+    const response = await axiosInstance.request({ method, url, data });
     return response;
   } catch (error) {
-    if (error.response.status >= 500) {
-      dispatchApiError({
-        method: 'PATCH'
-      });
+    if (error.response?.status >= 500) {
+      dispatchApiError({ method: method.toUpperCase() });
     }
-    console.log(error);
+    console.error(error);
   }
-}
+};
 
-export async function getAssetsByCategory(category) {
-  const token = JSON.parse(localStorage.getItem('userData')).token;
+export const addPlatformAPR = (platformData) =>
+  apiRequest('POST', '/p2p', platformData);
 
-  try {
-    const response = await axios.get(
-      process.env.REACT_APP_BACKEND_URL + '/assets/' + category,
-      {
-        headers: {
-          Authorization: `Basic ${token}`
-        }
-      }
-    );
+export const updatePlatformAPR = (platformData) =>
+  apiRequest('PATCH', `/p2p/${platformData.id}`, platformData);
 
-    return response;
-  } catch (error) {
-    if (error.response.status >= 500) {
-      dispatchApiError({
-        method: 'GET'
-      });
-    }
-    console.log(error);
-  }
-}
+export const getAssetsByCategory = (category) =>
+  apiRequest('GET', `/assets/${category}`);
 
-export async function getAssetsSummary() {
-  const token = JSON.parse(localStorage.getItem('userData')).token;
+export const getAssetsSummary = () => apiRequest('GET', '/assets/summary');
 
-  try {
-    const response = await axios.get(
-      process.env.REACT_APP_BACKEND_URL + '/assets/summary',
-      {
-        headers: {
-          Authorization: `Basic ${token}`
-        }
-      }
-    );
+export const addNewAsset = (transaction) =>
+  apiRequest('POST', '/assets', { transaction });
 
-    return response;
-  } catch (error) {
-    if (error.response.status >= 500) {
-      dispatchApiError({
-        method: 'GET'
-      });
-    }
-    console.log(error);
-  }
-}
+export const updateAsset = (transaction) =>
+  apiRequest('PATCH', `/assets/${transaction.id}`, transaction);
 
-export async function addNewAsset(transaction) {
-  const token = JSON.parse(localStorage.getItem('userData')).token;
-  try {
-    const response = await axios.post(
-      process.env.REACT_APP_BACKEND_URL + '/assets',
-      {
-        transaction
-      },
-      {
-        headers: {
-          Authorization: `Basic ${token}`
-        }
-      }
-    );
+export const deleteAsset = (id) => apiRequest('DELETE', `/assets/${id}`);
 
-    return response;
-  } catch (error) {
-    if (error.response.status >= 500) {
-      dispatchApiError({
-        method: 'POST'
-      });
-    }
-    console.log(error);
-  }
-}
+export const deleteAssets = (ids) =>
+  apiRequest('POST', '/assets/deleteMany', { ids });
 
-export async function updateAsset(transaction) {
-  const token = JSON.parse(localStorage.getItem('userData')).token;
-  try {
-    const response = await axios.patch(
-      `${process.env.REACT_APP_BACKEND_URL}/assets/${transaction.id}`,
-      {
-        ...transaction
-      },
-      {
-        headers: {
-          Authorization: `Basic ${token}`
-        }
-      }
-    );
-
-    return response;
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-export async function deleteAsset(id) {
-  const token = JSON.parse(localStorage.getItem('userData')).token;
-  try {
-    const response = await axios.delete(
-      `${process.env.REACT_APP_BACKEND_URL}/assets/${id}`,
-      {
-        headers: {
-          Authorization: `Basic ${token}`
-        }
-      }
-    );
-
-    return response;
-  } catch (error) {
-    if (error.response.status >= 500) {
-      dispatchApiError({
-        method: 'DELETE'
-      });
-    }
-    console.log(error);
-  }
-}
-
-export async function deleteAssets(ids) {
-  const token = JSON.parse(localStorage.getItem('userData')).token;
-  try {
-    const response = await axios.post(
-      process.env.REACT_APP_BACKEND_URL + '/assets/deleteMany',
-      {
-        ids
-      },
-      {
-        headers: {
-          Authorization: `Basic ${token}`
-        }
-      }
-    );
-
-    return response;
-  } catch (error) {
-    if (error.response.status >= 500) {
-      dispatchApiError({
-        method: 'DELETE_MANY'
-      });
-    }
-    console.log(error);
-  }
-}
-
-export async function getAssetById(id) {
-  const token = JSON.parse(localStorage.getItem('userData')).token;
-  try {
-    const response = await axios.get(
-      `${process.env.REACT_APP_BACKEND_URL}/assets/${id}`,
-      {
-        headers: {
-          Authorization: `Basic ${token}`
-        }
-      }
-    );
-
-    return response;
-  } catch (error) {
-    if (error.response.status >= 500) {
-      dispatchApiError({
-        method: 'GET'
-      });
-    }
-    console.log(error);
-  }
-}
+export const getAssetById = (id) => apiRequest('GET', `/assets/${id}`);

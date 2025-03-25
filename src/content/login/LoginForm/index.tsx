@@ -1,10 +1,10 @@
 import { Box, Button, Container, Grid, Typography, Link } from '@mui/material';
 
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { experimentalStyled } from '@mui/material/styles';
 import { useState, useContext, useEffect } from 'react';
 import Input from '../../../components/FormElements/Input';
-import { userLogin, userSignUp } from '../../../utils/api/userApiFunction';
+import { getToken, userLogin, userSignUp } from '../../../utils/api/userApiFunction';
 import {
   VALIDATOR_REQUIRE,
   VALIDATOR_EMAIL,
@@ -61,6 +61,7 @@ function LoginForm() {
   const { t } = useTranslation();
   const auth = useContext(AuthContext);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -152,6 +153,7 @@ function LoginForm() {
         );
       } else {
         setErrorMessage(responseData.data.message);
+        return;
       }
 
       setLoading(false);
@@ -169,10 +171,13 @@ function LoginForm() {
         );
       } else {
         setErrorMessage(responseData.data.message);
+        return;
       }
 
       setLoading(false);
     }
+
+    navigate('/overview');
 
     dispatch(changeTransactionStatus('idle'));
     dispatch(changeSummaryStatus('idle'));

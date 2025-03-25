@@ -1,15 +1,27 @@
 import axios from 'axios';
 import dispatchApiError from 'src/error-management/dispatchApiError';
+import { getToken } from './userApiFunction';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL + '/assets';
 
-const getToken = () => JSON.parse(localStorage.getItem('userData'))?.token;
-
 const axiosInstance = axios.create({
   baseURL: API_URL,
-  withCredentials: true,
-  headers: { Authorization: `Basic ${getToken()}` }
+  withCredentials: true
 });
+
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = getToken();  
+
+    if (token) {
+      config.headers.Authorization = `Basic ${token}`;
+    } else {
+      return Promise.reject(new Error('Unauthorized: No token provided'));
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 const handleError = (error, method) => {
   if (error.response?.status >= 500) dispatchApiError({ method });

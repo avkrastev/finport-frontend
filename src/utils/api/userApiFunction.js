@@ -1,103 +1,52 @@
 import axios from 'axios';
 import dispatchApiError from 'src/error-management/dispatchApiError';
 
-// Base URL for API requests
 const BASE_URL = process.env.REACT_APP_BACKEND_URL;
 
-// Helper function to get the token from localStorage
-const getToken = () => {
+export const getToken = () => {
   const userData = JSON.parse(localStorage.getItem('userData'));
-  return userData ? userData.token : null;
+  return userData?.token || null;
 };
 
-// Generic API request function
-const apiRequest = async (
-  method,
-  url,
-  data = {},
-  headers = {},
-  withCredentials = false
-) => {
+const apiRequest = async (method, url, data = {}, requiresAuth = false) => {
   try {
+    const headers = {};
+    
+    if (requiresAuth) {
+      const token = getToken();
+      if (token) {
+        headers.Authorization = `Basic ${token}`;
+      } else {
+        console.warn('No token found for authenticated request.');
+      }
+    }
+
     const response = await axios({
       method,
       url: `${BASE_URL}${url}`,
       data,
       headers,
-      withCredentials
+      withCredentials: true, 
     });
+
     return response;
   } catch (error) {
-    if (error.response && error.response.status >= 500) {
-      dispatchApiError({ method });
+    if (error.response?.status >= 500) {
+      dispatchApiError({ method: method.toUpperCase() });
     }
-    return error.response;
+    console.error(error);
   }
 };
 
-// User login
-export const userLogin = async (email, password) => {
-  return apiRequest('post', '/users/login', { email, password }, {}, true);
-};
+// Authentication & User Management APIs
+export const userLogin = (email, password) => apiRequest('post', '/users/login', { email, password });
+export const userSignUp = (name, email, password) => apiRequest('post', '/users/signup', { name, email, password });
+export const resetPassword = (email) => apiRequest('post', '/users/reset', { email });
+export const changePassword = (id, password) => apiRequest('post', '/users/changePassword', { id, password });
 
-// User signup
-export const userSignUp = async (name, email, password) => {
-  return apiRequest('post', '/users/signup', { name, email, password });
-};
-
-// Reset password
-export const resetPassword = async (email) => {
-  return apiRequest('post', '/users/reset', { email });
-};
-
-// Change password
-export const changePassword = async (id, password) => {
-  return apiRequest('post', '/users/changePassword', { id, password });
-};
-
-// Get logged-in user data
-export const getLoggedInUserData = async () => {
-  const token = getToken();
-  return apiRequest(
-    'get',
-    '/users/',
-    {},
-    { Authorization: `Basic ${token}` },
-    true
-  );
-};
-
-// Update user data
-export const updateUser = async (data, key) => {
-  const token = getToken();
-  return apiRequest(
-    'patch',
-    '/users/',
-    { key, data },
-    { Authorization: `Basic ${token}` },
-    true
-  );
-};
-
-// Verify email
-export const verifyEmail = async (id) => {
-  return apiRequest('get', `/users/verify?id=${id}`);
-};
-
-// Send verification email
-export const sendVerificationEmail = async () => {
-  const token = getToken();
-  return apiRequest(
-    'post',
-    '/users/sendVerificationEmail',
-    {},
-    { Authorization: `Basic ${token}` },
-    true
-  );
-};
-
-export const userLogout = async () => {
-  const token = getToken();
-  return apiRequest('post', '/users/logout', {}, { Authorization: `Basic ${token}` }, true);
-};
-
+// User-related requests that require authentication
+export const getLoggedInUserData = () => apiRequest('get', '/users/', {}, true);
+export const updateUser = (data, key) => apiRequest('patch', '/users/', { key, data }, true);
+export const verifyEmail = (id) => apiRequest('get', `/users/verify?id=${id}`);
+export const sendVerificationEmail = () => apiRequest('post', '/users/sendVerificationEmail', {}, true);
+export const userLogout = () => apiRequest('post', '/users/logout', {}, true);
