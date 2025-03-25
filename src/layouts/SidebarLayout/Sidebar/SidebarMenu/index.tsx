@@ -223,10 +223,13 @@ function SidebarMenu() {
   let dashboards = menuItems.find(
     (section) => section.heading === 'Dashboards'
   );
-  dashboards.items = dashboards.items.map((item, i) =>
-    Object.assign({}, item, authUserData.categories[i])
-  );
 
+  if (authUserData && authUserData.categories) {
+    dashboards.items = dashboards.items.map((item, i) =>
+      Object.assign({}, item, authUserData.categories[i])
+    );
+  }
+  
   return (
     <>
       {menuItems.map((section) => {
