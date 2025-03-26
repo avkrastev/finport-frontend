@@ -3,7 +3,6 @@ import {
   Box,
   Grid,
   Typography,
-  Hidden,
   Avatar,
   Divider,
   ListItem,
@@ -30,7 +29,7 @@ import { useTranslation, Trans } from 'react-i18next';
 const AccountBalanceChartWrapper = styled(AccountBalanceChart)(
   () => `
       width: 100%;
-      height: 100%;
+      margin-right: 25px
 `
 );
 const AvatarSuccess = styled(Avatar)(
@@ -310,9 +309,7 @@ function AccountBalance({ assets, category, loading, ...rest }) {
         >
           {percentages.length > 0 && (
             <>
-              <Hidden mdDown>
-                <Divider absolute orientation="vertical" />
-              </Hidden>
+              <Divider absolute orientation="vertical" />
               <Box p={4} flex={1}>
                 <Grid container spacing={0}>
                   <Grid

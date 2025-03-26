@@ -10,7 +10,6 @@ import {
   ChartOptions,
 } from 'chart.js';
 
-// Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 interface ChartProps {
@@ -32,7 +31,7 @@ const AccountBalanceChart: FC<ChartProps> = ({ data: dataProp, ...rest }) => {
 
   const options: ChartOptions<'doughnut'> = {
     responsive: true,
-    maintainAspectRatio: false,
+    maintainAspectRatio: true,
     animation: false,
     cutout: '60%',
     plugins: {
@@ -48,8 +47,8 @@ const AccountBalanceChart: FC<ChartProps> = ({ data: dataProp, ...rest }) => {
         padding: {
           top: 8,
           bottom: 8,
-          left: 16,
-          right: 16,
+          left: 8,
+          right: 8,
         },
         borderWidth: 2,
         bodySpacing: 10,

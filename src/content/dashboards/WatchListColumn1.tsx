@@ -8,7 +8,6 @@ import {
   padArrayStart,
   roundNumber
 } from 'src/utils/functions';
-import WatchListColumn1Chart from './WatchListColumn1Chart';
 import WatchListColumnSkeleton from './WatchListColumnSkeleton';
 import CurrencyBitcoinTwoToneIcon from '@mui/icons-material/CurrencyBitcoinTwoTone';
 import AgricultureTwoToneIcon from '@mui/icons-material/AgricultureTwoTone';
@@ -23,13 +22,6 @@ const AvatarWrapper = styled(Avatar)(
   ({ theme }) => `
         background: transparent;
         margin-right: ${theme.spacing(0.5)};
-`
-);
-
-const WatchListColumn1ChartWrapper = styled(WatchListColumn1Chart)(
-  ({ theme }) => `
-        height: 150px;
-        padding: 0 20px 10px;
 `
 );
 
@@ -177,12 +169,6 @@ function WatchListColumn1({ category, t, ...rest }) {
               {t('since start')}
             </Typography>
           </Box>
-        </Box>
-        <Box height={150}>
-          <WatchListColumn1ChartWrapper
-            data={categories[category.alias]}
-            labels={[...labels]}
-          />
         </Box>
       </Card>
     </Link>
